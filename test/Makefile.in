@@ -42,7 +42,6 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_boost_base.m4 \
 	$(top_srcdir)/m4/ax_boost_filesystem.m4 \
 	$(top_srcdir)/m4/ax_boost_program_options.m4 \
-	$(top_srcdir)/m4/ax_boost_regex.m4 \
 	$(top_srcdir)/m4/ax_boost_system.m4 \
 	$(top_srcdir)/m4/ax_boost_thread.m4 $(top_srcdir)/m4/ipp.m4 \
 	$(top_srcdir)/configure.ac
@@ -86,7 +85,7 @@ siggen_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(siggen_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_subject_OBJECTS = subject-subject.$(OBJEXT)
 subject_OBJECTS = $(am_subject_OBJECTS)
-subject_DEPENDENCIES = $(am__DEPENDENCIES_1)
+subject_DEPENDENCIES =
 subject_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(subject_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_time_OBJECTS = time-time.$(OBJEXT) time-fft_noth.$(OBJEXT) \
@@ -124,7 +123,6 @@ BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 BOOST_FILESYSTEM_LIB = @BOOST_FILESYSTEM_LIB@
 BOOST_LDFLAGS = @BOOST_LDFLAGS@
 BOOST_PROGRAM_OPTIONS_LIB = @BOOST_PROGRAM_OPTIONS_LIB@
-BOOST_REGEX_LIB = @BOOST_REGEX_LIB@
 BOOST_SYSTEM_LIB = @BOOST_SYSTEM_LIB@
 BOOST_THREAD_LIB = @BOOST_THREAD_LIB@
 CC = @CC@
