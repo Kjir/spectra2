@@ -1,6 +1,8 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
+#include <boost/threadpool.hpp>
+#include <boost/bind.hpp>
 #include <ipp.h>
 
 using boost::asio::ip::udp;
@@ -41,18 +43,23 @@ template<class T> T *udp_sock<T>::read()
     return _buf.data();
 }
 
+void process(Ipp16s *data, int i) {
+    std::cout << "Processing thread " << i << std::endl;
+}
+
 int main(int argc, char **argv)
 {
     try {
 
+        boost::threadpool::pool tp(5);
         udp_sock<Ipp16s> s("localhost", 50000);
+        int i = 1;
 
         while(true)
         {
             Ipp16s *d;
             d = s.read();
-            std::cout << (char *)d;
-            std::cout.flush();
+            tp.schedule(boost::bind(process, d, i++));
         }
     }
     catch( std::exception &e )
