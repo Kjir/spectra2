@@ -17,6 +17,8 @@ AX_BOOST_FILESYSTEM
 AX_BOOST_THREAD
 AX_BOOST_ASIO
 
+AC_CHECK_HEADER([boost/threadpool.hpp], ,AC_MSG_ERROR(Boost::threadpool is not installed))
+
 AG_CHECK_IPP
 
 if test "x$HAVE_IPP" = "xfalse"; then
