@@ -25,7 +25,7 @@ if test "x$HAVE_IPP" = "xfalse"; then
 	AC_MSG_ERROR(***Integrated Performance Primitives could not be found***)
 else
 	IPP_INCLUDES=-I$IPP_PREFIX/$ver/$IPP_CPU/include
-    IPP_LDFLAGS="-L$IPP_PREFIX/$ver/$IPP_CPU/sharedlib -L$IPP_PREFIX/$ver/$IPP_CPU/lib -Wl,-R$IPP_PREFIX/$ver/$IPP_CPU/sharedlib -Wl,-R$IPP_PREFIX/$ver/$IPP_CPU/lib"
+    IPP_LDFLAGS="-L$IPP_PREFIX/$ver/$IPP_CPU/sharedlib -L$IPP_PREFIX/$ver/$IPP_CPU/lib -Wl,-R$IPP_PREFIX/$ver/$IPP_CPU/sharedlib"
 	IPP_LIBS="-lippac$IPP_SUFFIX -lipps$IPP_SUFFIX -lippcore$IPP_SUFFIX -lpthread"
 fi
 AC_SUBST(IPP_INCLUDES)
