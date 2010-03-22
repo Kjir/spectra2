@@ -1,12 +1,8 @@
 Requirements
 
-This project requires Intel Integrated Performance Primitives and Boost version 1.36.0 or greater
-
-Environmente variables
-
-In order to compile and run the programs you need to add to the LD_LIBRARY_PATH environment variable
-the path to the shared library of your Intel IPP installation. Here's an example command to do so:
-export LD_LIBRARY_PATH=/opt/intel/ipp/6.0.2.076/em64t/sharedlib
+ - Intel Integrated Performance Primitives (http://software.intel.com/en-us/intel-ipp/) [Tested with  6.0.2.076 and 6.1.2.051]
+ - Boost version 1.36.0 or greater (http:/www.boost.org/) [Tested with 1.39.0 and 1.42.0]
+ - Boost::threadpool library (http://threadpool.sourceforge.net/) [Tested with 0.2.5]
 
 Compiling
 
