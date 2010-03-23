@@ -1,23 +1,8 @@
 #include <iostream>
-#include <boost/asio.hpp>
-#include <boost/array.hpp>
 #include <boost/threadpool.hpp>
 #include <boost/bind.hpp>
 #include <ipp.h>
-
-using boost::asio::ip::udp;
-
-template<class T>
-class udp_sock
-{
-    public:
-        udp_sock(std::string host, unsigned short port);
-        T *read();
-    private:
-        boost::asio::io_service _io_service;
-        udp::socket _sock;
-        boost::array<T,256> _buf;
-};
+#include "server.hpp"
 
 template<class T> udp_sock<T>::udp_sock(std::string host = "localhost", unsigned short port = 50000) : _sock(_io_service)
 {
