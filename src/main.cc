@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
         for(i=0; i < MAX_ITER; i++)
         {
-            std::cout.write((char *)src[i], sizeof(src) * siglen);
+            std::cout.write((char *)src[i], sizeof(Ipp16s) * siglen);
             std::cout << "break" << std::endl;
         }
         std::cout.flush();
