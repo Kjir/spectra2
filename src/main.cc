@@ -29,7 +29,7 @@ int main(int argc, char **argv)
         for(i = 0; i < MAX_ITER; i++)
         {
             std::cerr << "Reading: " << std::endl;
-            src[i] = s.read();
+            s.read(src[i], siglen);
 
             tp.schedule(boost::bind(&fft::transform, &f, src[i], dst[i], order, 1, 12));
         }
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
         for(i=0; i < MAX_ITER; i++)
         {
-            std::cout.write((char *)src[i], sizeof(src) * 9000);
+            std::cout.write((char *)src[i], sizeof(src) * siglen);
             std::cout << "break" << std::endl;
         }
         std::cout.flush();
