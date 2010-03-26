@@ -17,10 +17,13 @@ int main(int argc, char **argv)
         int i = 0;
         int siglen = fft::order_to_length(order);
         boost::array<Ipp16s *, MAX_ITER> src, dst;
+
+        ippStaticInit();
         IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order);
 
         for( int k = 0; k < MAX_ITER; k++) {
             dst[k] = fft::alloc(dst[k], siglen);
+            src[k] = fft::alloc(src[k], siglen);
             fft::zero_mem(dst[k], siglen);
         }
         fft f(spec);

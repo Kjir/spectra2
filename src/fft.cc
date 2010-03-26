@@ -109,5 +109,5 @@ Ipp16sc *fft::alloc(Ipp16sc *d, int length) {
 }
 
 void fft::zero_mem(Ipp16s *d, int length) {
-    ippsSet_16s(0, d, length);
+    ippsZero_16s(d, length);
 }

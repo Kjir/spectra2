@@ -1,4 +1,5 @@
 #include <boost/asio.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/array.hpp>
 #include <iostream>
 #define UDP_MAX_DGRAM 15000
@@ -23,9 +24,8 @@ template<class T> udp_sock<T>::udp_sock(std::string host = "localhost", unsigned
 {
     using boost::asio::ip::udp;
     udp::resolver res(_io_service);
-    udp::resolver::query query(udp::v4(), host, "50000");
+    udp::resolver::query query(udp::v4(), host, boost::lexical_cast<std::string>(port));
     udp::endpoint ep = *res.resolve(query);
-    ep.port(port);
     _sock.open(udp::v4());
     _sock.bind(ep);
 }
