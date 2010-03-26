@@ -9,7 +9,7 @@ class udp_sock
 {
     public:
         udp_sock(std::string host, unsigned short port);
-        T *read_dgram();
+        size_t read_dgram(T *dgram);
         T *read(T *ret, size_t length);
     private:
         boost::asio::io_service _io_service;
@@ -30,21 +30,21 @@ template<class T> udp_sock<T>::udp_sock(std::string host = "localhost", unsigned
     _sock.bind(ep);
 }
 
-template<class T> T *udp_sock<T>::read_dgram()
+template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
 {
     using boost::asio::ip::udp;
     udp::endpoint remote;
     boost::system::error_code error;
     boost::array<T,UDP_MAX_DGRAM> buf;
-    _sock.receive_from(boost::asio::buffer(buf), remote, 0, error);
+    size_t data_read = _sock.receive_from(boost::asio::buffer(buf), remote, 0, error);
 
     if (error && error != boost::asio::error::message_size)
     {
         throw boost::system::system_error(error);
     }
 
-    //FIXME: Add memcpy()
-    return buf.data();
+    memcpy(dgram, buf.data(), data_read);
+    return data_read;
 }
 
 template<class T> T *udp_sock<T>::read(T *ret, size_t size)
