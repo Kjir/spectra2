@@ -13,7 +13,7 @@ fft::fft(const IppsFFTSpec_R_16s *spec) : FFTSpec(spec), buffer(NULL) {
         std::cerr << "IPP Error in FFTGetBufSize: " << ippGetStatusString(status) << "\n";
         exit(2);
     }
-    buffer = ippsMalloc_8u(bufsize);
+    buffer = ippsMalloc_8u(bufsize); //FIXME: Check if buffer is thread safe
     if( buffer == NULL ) {
         std::cerr << "Not enough memory\n";
         exit(3);
@@ -42,14 +42,14 @@ IppsFFTSpec_R_16s *fft::allocSpec(IppsFFTSpec_R_16s **spec, int order, bool fast
     return *spec;
 }
 
-Ipp16s *fft::transform(const Ipp16s *src, FFTBuf<Ipp16s> & dst, int order, int scaling, int pscaling) {
+Ipp16s *fft::transform(SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);
+    
+    tmpdst = fft::alloc(data.cdata(), siglen);
 
-    tmpdst = fft::alloc(dst.get_data(), siglen);
-
-    status = ippsFFTFwd_RToPack_16s_Sfs(src, tmpdst, FFTSpec, scaling, buffer);
+    status = ippsFFTFwd_RToPack_16s_Sfs(src.data, tmpdst, FFTSpec, scaling, buffer);
     if( status != ippStsNoErr ) {
         std::cerr << "IPP Error in FFTFwd: " << ippGetStatusString(status) << "\n";
         exit(4);
@@ -72,21 +72,29 @@ Ipp16s *fft::transform(const Ipp16s *src, FFTBuf<Ipp16s> & dst, int order, int s
         std::cerr << "IPP Error in PowerSpectr: " << ippGetStatusString(status) << "\n";
         exit(6);
     }
-    ippsFree(vc);
+    fft::free(vc);
     vc = NULL;
 
-    dst.lock();
-    status = ippsAdd_16s_I(tmpdst, dst.get_data(), siglen);
-    dst.inc_processed();
-    dst.unlock();
+    data.lock();
+    status = ippsAdd_16s_I(tmpdst, data.cdata(), siglen);
+    data.unlock();
     if( status != ippStsNoErr ) {
         std::cerr << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
         exit(7);
     }
 
-    ippFree(tmpdst);
+    fft::free(tmpdst);
     tmpdst = NULL;
-    return dst.get_data();
+    fft::free(src.data);
+    src.erasable = true;
+    data.lock();
+    data.inc_processed();
+    if(data.is_fully_processed())
+    {
+        data.write_ready.notify_one();
+    }
+    data.unlock();
+    return data.cdata();
 }
 
 int fft::order_to_length(int order) {

@@ -1,8 +1,9 @@
 #include <iostream>
+#include <list>
 #include <boost/threadpool.hpp>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
-#include <boost/array.hpp>
+#include <boost/circular_buffer.hpp>
 #include <ipp.h>
 #include "server.hpp"
 #include "fft.hpp"
@@ -13,48 +14,61 @@
 int main(int argc, char **argv)
 {
     int order = 8;
+    int num_threads = 5;
+    int sums = 1;
     try {
 
-        boost::threadpool::pool tp(5);
+        boost::threadpool::pool tp(num_threads);
         int i = 0;
         int siglen = fft::order_to_length(order);
-        boost::array<Ipp16s *, MAX_ITER> src;
-        boost::array<FFTBuf<Ipp16s>, MAX_ITER> dst;
+        std::list<FFTBuf<Ipp16s> *> dst;
+        boost::circular_buffer<SrcType<Ipp16s> > cbuf(num_threads * 3);
 
         ippStaticInit();
         IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order);
 
-        for( int k = 0; k < MAX_ITER; k++) {
-            dst[k] = fft::alloc(dst[k].get_data(), siglen);
-            src[k] = fft::alloc(src[k], siglen);
-            fft::zero_mem(dst[k].get_data(), siglen);
-            dst[k].set_siglen(siglen);
-            dst[k].set_expected_sums(1);
-        }
+        FFTBuf<Ipp16s> b(siglen, sums);
+        b = fft::alloc(b.cdata(), siglen);
+        fft::zero_mem(b.cdata(), siglen);
+        dst.push_back(&b);
+
         fft f(spec);
         udp_sock<Ipp16s> s("localhost", 50000);
 
-        for(i = 0; i < MAX_ITER; i++)
+        while(true)
         {
             std::cerr << "Reading: " << std::endl;
-            s.read(src[i], siglen);
+            SrcType<Ipp16s> src;
+            src.data = fft::alloc(src.data, siglen);
+            s.read(src.data, siglen); //try-catch for missed datagram
+            if(cbuf.full() && !cbuf.front().erasable)
+            {
+                //FIXME: Do something to handle this situation
+                std::cerr << "Circular buffer is too small!!!" << std::endl;
+                return -9;
+            }
+            cbuf.push_back(src);
 
-            tp.schedule(boost::bind(&fft::transform, &f, src[i], boost::ref(dst[i]), order, 1, 12));
+            if( dst.empty() || dst.back()->is_src_full() ) {
+                b(siglen, sums);
+                b = fft::alloc(b.cdata(), siglen);
+                fft::zero_mem(b.cdata(), siglen);
+                dst.push_back(&b);
+            }
+            std::cerr << "Before schedule" << std::endl;
+            tp.schedule(boost::bind(&fft::transform, &f, boost::ref(cbuf.back()), boost::ref(*(dst.back())), order, 1, 12));
+            dst.back()->inc_assigned_sources();
         }
 
         std::cerr << "Waiting..." << std::endl;
         tp.wait();
         std::cerr << "...done!" << std::endl;
 
-        for(i=0; i < MAX_ITER; i++)
-        {
-            std::cout.write((char *)src[i], sizeof(Ipp16s) * siglen);
-            std::cout << "break" << std::endl;
-        }
-        std::cout.flush();
     }
     catch( std::exception &e )
     {
         std::cerr << "Ex: " << e.what() << std::endl;
     }
+
+    return 0;
 }
