@@ -1,3 +1,5 @@
+#ifndef __SPECTRA2_SERVER_HPP_
+#define __SPECTRA2_SERVER_HPP_
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/array.hpp>
@@ -114,3 +116,5 @@ template<class T> void udp_sock<T>::_move_to_front(T *arr, int start, int length
         _buf[i] = arr[start];
     }
 }
+
+#endif

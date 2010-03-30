@@ -42,12 +42,12 @@ IppsFFTSpec_R_16s *fft::allocSpec(IppsFFTSpec_R_16s **spec, int order, bool fast
     return *spec;
 }
 
-Ipp16s *fft::transform(const Ipp16s *src, Ipp16s *dst, int order, int scaling, int pscaling) {
+Ipp16s *fft::transform(const Ipp16s *src, FFTBuf<Ipp16s> & dst, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);
 
-    tmpdst = fft::alloc(dst, siglen);
+    tmpdst = fft::alloc(dst.get_data(), siglen);
 
     status = ippsFFTFwd_RToPack_16s_Sfs(src, tmpdst, FFTSpec, scaling, buffer);
     if( status != ippStsNoErr ) {
@@ -75,7 +75,10 @@ Ipp16s *fft::transform(const Ipp16s *src, Ipp16s *dst, int order, int scaling, i
     ippsFree(vc);
     vc = NULL;
 
-    status = ippsAdd_16s_I(tmpdst, dst, siglen);
+    dst.lock();
+    status = ippsAdd_16s_I(tmpdst, dst.get_data(), siglen);
+    dst.inc_processed();
+    dst.unlock();
     if( status != ippStsNoErr ) {
         std::cerr << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
         exit(7);
@@ -83,7 +86,7 @@ Ipp16s *fft::transform(const Ipp16s *src, Ipp16s *dst, int order, int scaling, i
 
     ippFree(tmpdst);
     tmpdst = NULL;
-    return dst;
+    return dst.get_data();
 }
 
 int fft::order_to_length(int order) {
