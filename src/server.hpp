@@ -76,8 +76,8 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
         /*
          * Read datagram
          */
-        std::cerr << "Reading from socket" << std::endl;
         size_t r = _sock.receive_from(boost::asio::buffer(_buf), remote, 0, error);
+        std::cerr << "Read " << r << " bytes" << std::endl;
 
         /*
          * Append received datagram to tmp
