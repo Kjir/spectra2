@@ -41,11 +41,10 @@ int main(int argc, char **argv)
             SrcType<Ipp16s> src;
             src.data = fft::alloc(src.data, siglen);
             s.read(src.data, siglen); //try-catch for missed datagram
-            if(cbuf.full() && !cbuf.front().erasable)
+            while(cbuf.full() && !cbuf.front().erasable)
             {
-                //FIXME: Do something to handle this situation
+                tp.wait(num_threads/2);
                 std::cerr << "Circular buffer is too small!!!" << std::endl;
-                return -9;
             }
             cbuf.push_back(src);
 
@@ -58,10 +57,6 @@ int main(int argc, char **argv)
             tp.schedule(boost::bind(&fft::transform, &f, boost::ref(cbuf.back()), boost::ref(*(dst.back())), order, 1, 12));
             dst.back()->inc_assigned_sources();
         }
-
-        std::cerr << "Waiting..." << std::endl;
-        tp.wait();
-        std::cerr << "...done!" << std::endl;
 
     }
     catch( std::exception &e )
