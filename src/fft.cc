@@ -42,7 +42,7 @@ IppsFFTSpec_R_16s *fft::allocSpec(IppsFFTSpec_R_16s **spec, int order, bool fast
     return *spec;
 }
 
-Ipp16s *fft::transform(SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int order, int scaling, int pscaling) {
+Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);

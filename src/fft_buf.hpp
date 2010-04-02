@@ -112,14 +112,15 @@ template<class T> FFTBuf<T> & FFTBuf<T>::operator=(const T *rhs)
 template<class T> struct SrcType {
     public:
         T *data;
-        bool erasable;
+        mutable bool erasable;
         SrcType() : erasable(false), data(NULL) {}
         SrcType<T> & operator=(const SrcType<T> &rhs);
 };
 
 template<class T> SrcType<T> & SrcType<T>::operator=(const SrcType<T> &rhs)
 {
-    (*this).data = rhs.data;
+    this->data = rhs.data;
+    this->erasable = rhs.erasable;
     return *this;
 }
 
