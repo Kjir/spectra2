@@ -35,19 +35,18 @@ template<class T> class FFTBuf
         int _assigned_sources;
         bool _written;
         boost::recursive_mutex _mut;
-        boost::unique_lock<boost::recursive_mutex> _lock;
 };
 
-template<class T> FFTBuf<T>::FFTBuf() : _dst(NULL), _siglen(0), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false), _lock(_mut, boost::defer_lock_t())
+template<class T> FFTBuf<T>::FFTBuf() : _dst(NULL), _siglen(0), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
     std::cerr << "Init" << std::endl;
 }
 
-template<class T> FFTBuf<T>::FFTBuf(int siglen) : _dst(NULL), _siglen(siglen), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false), _lock(_mut, boost::defer_lock_t())
+template<class T> FFTBuf<T>::FFTBuf(int siglen) : _dst(NULL), _siglen(siglen), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
 }
 
-template<class T> FFTBuf<T>::FFTBuf(int siglen, int sums) : _dst(NULL), _siglen(siglen), _expected_sums(sums), _processed_sums(0), _assigned_sources(0), _written(false), _lock(_mut, boost::defer_lock_t())
+template<class T> FFTBuf<T>::FFTBuf(int siglen, int sums) : _dst(NULL), _siglen(siglen), _expected_sums(sums), _processed_sums(0), _assigned_sources(0), _written(false)
 {
 }
 
@@ -64,14 +63,14 @@ template<class T> void FFTBuf<T>::set_data(const T *buf)
 template<class T> void FFTBuf<T>::lock()
 {
     std::cerr << "Locking" << std::endl;
-    _lock.lock();
+    _mut.lock();
     std::cerr << "Locked" << std::endl;
 }
 
 template<class T> void FFTBuf<T>::unlock()
 {
     std::cerr << "Unlocking" << std::endl;
-    _lock.unlock();
+    _mut.unlock();
 }
 
 template<class T> int FFTBuf<T>::inc_processed()
@@ -92,7 +91,7 @@ template<class T> bool FFTBuf<T>::is_written()
 
 template<class T> bool FFTBuf<T>::set_written()
 {
-    if(!_lock.try_lock())
+    if(!_mut.try_lock())
     {
         return false;
     }
