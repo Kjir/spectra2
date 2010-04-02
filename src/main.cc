@@ -27,10 +27,10 @@ int main(int argc, char **argv)
         ippStaticInit();
         IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order);
 
-        FFTBuf<Ipp16s> b(siglen, sums);
-        b = fft::alloc(b.cdata(), siglen);
-        fft::zero_mem(b.cdata(), siglen);
-        dst.push_back(&b);
+        FFTBuf<Ipp16s> *b = new FFTBuf<Ipp16s>(siglen, sums);
+        *b = fft::alloc(b->cdata(), siglen);
+        fft::zero_mem(b->cdata(), siglen);
+        dst.push_back(b);
 
         fft f(spec);
         udp_sock<Ipp16s> s("localhost", 50000);
@@ -50,12 +50,11 @@ int main(int argc, char **argv)
             cbuf.push_back(src);
 
             if( dst.empty() || dst.back()->is_src_full() ) {
-                b(siglen, sums);
-                b = fft::alloc(b.cdata(), siglen);
-                fft::zero_mem(b.cdata(), siglen);
-                dst.push_back(&b);
+                b = new FFTBuf<Ipp16s>(siglen, sums);
+                *b = fft::alloc(b->cdata(), siglen);
+                fft::zero_mem(b->cdata(), siglen);
+                dst.push_back(b);
             }
-            std::cerr << "Before schedule" << std::endl;
             tp.schedule(boost::bind(&fft::transform, &f, boost::ref(cbuf.back()), boost::ref(*(dst.back())), order, 1, 12));
             dst.back()->inc_assigned_sources();
         }
