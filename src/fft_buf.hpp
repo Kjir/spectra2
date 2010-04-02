@@ -3,7 +3,6 @@
 #include <boost/thread/locks.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
-#include <iostream>
 
 template<class T> class FFTBuf
 {
@@ -52,7 +51,6 @@ template<class T> FFTBuf<T>::FFTBuf(int siglen, int sums) : _dst(NULL), _siglen(
 
 template<class T> void FFTBuf<T>::set_data(const T *buf)
 {
-    std::cerr << "set_data" << std::endl;
     lock();
 
     _dst = (T *)buf;
@@ -62,14 +60,11 @@ template<class T> void FFTBuf<T>::set_data(const T *buf)
 
 template<class T> void FFTBuf<T>::lock()
 {
-    std::cerr << "Locking" << std::endl;
     _mut.lock();
-    std::cerr << "Locked" << std::endl;
 }
 
 template<class T> void FFTBuf<T>::unlock()
 {
-    std::cerr << "Unlocking" << std::endl;
     _mut.unlock();
 }
 
