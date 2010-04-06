@@ -23,7 +23,6 @@ template<class T> class FFTBuf
         bool is_src_full() { return _assigned_sources == _expected_sums; }
         bool is_fully_processed() { return _processed_sums == _expected_sums; }
         FFTBuf<T> & operator=(const T *rhs);
-        ~FFTBuf() { std::cerr << "Deconstructing!!" << std::endl; }
     public:
         boost::condition_variable write_ready;
     private:
@@ -38,7 +37,6 @@ template<class T> class FFTBuf
 
 template<class T> FFTBuf<T>::FFTBuf() : _dst(NULL), _siglen(0), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
-    std::cerr << "Init" << std::endl;
 }
 
 template<class T> FFTBuf<T>::FFTBuf(int siglen) : _dst(NULL), _siglen(siglen), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
