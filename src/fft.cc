@@ -8,16 +8,18 @@ fft::fft(const IppsFFTSpec_R_16s *spec) : FFTSpec(spec), buffer(NULL) {
     IppStatus status;
     int bufsize;
 
+    /*
     status = ippsFFTGetBufSize_R_16s( FFTSpec, &bufsize );
     if( status != ippStsNoErr ) {
         std::cerr << "IPP Error in FFTGetBufSize: " << ippGetStatusString(status) << "\n";
         exit(2);
     }
-    buffer = ippsMalloc_8u(bufsize); //FIXME: Check if buffer is thread safe
+    buffer = ippsMalloc_8u(bufsize); //TODO: Create some buffer handling thingy
     if( buffer == NULL ) {
         std::cerr << "Not enough memory\n";
         exit(3);
     }
+    */
 }
 
 IppsFFTSpec_R_16s *fft::allocSpec(IppsFFTSpec_R_16s **spec, int order, bool fast) {
