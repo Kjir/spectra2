@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <boost/threadpool.hpp>
+#include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
 #include <boost/circular_buffer.hpp>
@@ -9,7 +10,10 @@
 #include "fft.hpp"
 #include "fft_buf.hpp"
 
-#define MAX_ITER 5
+void output(std::list<FFTBuf<Ipp16s>> &l) {
+    while(!l.empty()) {
+    }
+}
 
 int main(int argc, char **argv)
 {
@@ -32,8 +36,9 @@ int main(int argc, char **argv)
         fft::zero_mem(b->cdata(), siglen);
         dst.push_back(b);
 
-        fft f(spec);
-        udp_sock<Ipp16s> s("localhost", 50000);
+        fft f(spec); //The FFT object
+        udp_sock<Ipp16s> s("localhost", 50000); //The UDP server
+        boost::thread out_thread(output, boost::ref(dst));
 
         while(true)
         {
