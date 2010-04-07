@@ -10,8 +10,29 @@
 #include "fft.hpp"
 #include "fft_buf.hpp"
 
-void output(std::list<FFTBuf<Ipp16s>> &l) {
+void output(std::list<FFTBuf<Ipp16s> *> &l, std::ostream &s) {
     while(!l.empty()) {
+        FFTBuf<Ipp16s> *f = l.front();
+
+        if(f->is_written()) {
+            delete f;
+            l.pop_front();
+            continue;
+        }
+
+        f->lock();
+        while( !f->is_fully_processed() )
+        {
+            f->wait();
+        }
+        if(!f->set_written())
+        {
+            continue;
+        }
+        s.write(f->cdata(), sizeof(*(f->cdata())));
+        f->unlock();
+        delete f;
+        l.pop_front();
     }
 }
 
@@ -38,7 +59,7 @@ int main(int argc, char **argv)
 
         fft f(spec); //The FFT object
         udp_sock<Ipp16s> s("localhost", 50000); //The UDP server
-        boost::thread out_thread(output, boost::ref(dst));
+        boost::thread out_thread(output, boost::ref(dst), boost::ref(std::cout));
 
         while(true)
         {
