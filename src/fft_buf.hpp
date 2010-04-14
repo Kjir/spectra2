@@ -1,7 +1,7 @@
 #ifndef __SPECTRA2_FFT_BUF_HPP_
 #define __SPECTRA2_FFT_BUF_HPP_
 #include <boost/thread/locks.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
 
 template<class T> class FFTBuf
@@ -13,9 +13,9 @@ template<class T> class FFTBuf
         T *cdata() { return _dst; }
         void set_data(const T *buf);
         void set_siglen(int s) { _siglen = s; }
+        int get_siglen() { return _siglen; }
         void set_expected_sums(int s) { _expected_sums = s; }
-        void lock();
-        void unlock();
+        boost::mutex &get_mutex();
         void wait();
         void notify_one() { _write_ready.notify_one(); }
         void notify_all() { _write_ready.notify_all(); }
@@ -33,7 +33,7 @@ template<class T> class FFTBuf
         int _expected_sums;
         int _assigned_sources;
         bool _written;
-        boost::recursive_mutex _mut;
+        boost::mutex _mut;
         boost::condition_variable _write_ready;
 };
 
@@ -51,33 +51,26 @@ template<class T> FFTBuf<T>::FFTBuf(int siglen, int sums) : _dst(NULL), _siglen(
 
 template<class T> void FFTBuf<T>::set_data(const T *buf)
 {
-    lock();
-
+    boost::unique_lock<boost::mutex> lock(_mut);
     _dst = (T *)buf;
 
-    unlock();
 }
 
-template<class T> void FFTBuf<T>::lock()
+template<class T> boost::mutex & FFTBuf<T>::get_mutex()
 {
-    _mut.lock();
-}
-
-template<class T> void FFTBuf<T>::unlock()
-{
-    _mut.unlock();
+    return _mut;
 }
 
 template<class T> void FFTBuf<T>::wait()
 {
-    boost::unique_lock<boost::recursive_mutex> l(_mut);
+    boost::unique_lock<boost::mutex> l(_mut);
     _write_ready.wait(l);
 }
 
 template<class T> int FFTBuf<T>::inc_processed()
 {
 
-    boost::unique_lock<boost::recursive_mutex> lock(_mut);
+    boost::unique_lock<boost::mutex> lock(_mut);
 
     _processed_sums++;
 
@@ -89,27 +82,30 @@ template<class T> int FFTBuf<T>::inc_processed()
     return _processed_sums;
 }
 
+template<class T> bool FFTBuf<T>::is_fully_processed()
+{
+    boost::unique_lock<boost::mutex> lock(_mut);
+    return _processed_sums == _expected_sums;
+}
 template<class T> bool FFTBuf<T>::is_written()
 {
-    boost::unique_lock<boost::recursive_mutex> lock(_mut);
+    boost::unique_lock<boost::mutex> lock(_mut);
     return _written;
 }
 
 template<class T> bool FFTBuf<T>::set_written()
 {
-    if(!_mut.try_lock())
+    boost::unique_lock<boost::mutex> lock(_mut, boost::try_to_lock_t());
+    if(!lock.owns_lock())
     {
         return false;
     }
     if(_written)
     {
-        unlock();
         return false;
     }
 
     _written = true;
-
-    unlock();
 
     return true;
 } 

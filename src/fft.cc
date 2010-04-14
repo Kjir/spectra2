@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/thread/mutex.hpp>
 #include <math.h>
 
 fft::fft(const IppsFFTSpec_R_16s *spec) : FFTSpec(spec), buffer(NULL) {
@@ -77,9 +78,10 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int or
     fft::free(vc);
     vc = NULL;
 
-    data.lock();
-    status = ippsAdd_16s_I(tmpdst, data.cdata(), siglen);
-    data.unlock();
+    {
+        boost::mutex::scoped_lock lock(data.get_mutex());
+        status = ippsAdd_16s_I(tmpdst, data.cdata(), siglen);
+    }
     if( status != ippStsNoErr ) {
         std::cerr << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
         exit(7);
@@ -89,13 +91,7 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int or
     tmpdst = NULL;
     fft::free(src.data);
     src.erasable = true;
-    data.lock();
     data.inc_processed();
-    if(data.is_fully_processed())
-    {
-        data.write_ready.notify_one();
-    }
-    data.unlock();
     return data.cdata();
 }
 

@@ -2,6 +2,7 @@
 #include <list>
 #include <boost/threadpool.hpp>
 #include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
 #include <boost/circular_buffer.hpp>
@@ -10,8 +11,53 @@
 #include "fft.hpp"
 #include "fft_buf.hpp"
 
-void output(std::list<FFTBuf<Ipp16s> *> &l, std::ostream &s) {
-    while(!l.empty()) {
+template<class T> class List {
+    private:
+        std::list<T> _dst;
+        boost::mutex _mut;
+        boost::condition_variable _empty;
+    public:
+        void pop_front() { _dst.pop_front(); }
+        void push_back(const T &x);
+        T &front() { return _dst.front(); }
+        T &back();
+        void wait();
+        void notify_one() { _empty.notify_one(); }
+        void notify_all() { _empty.notify_all(); }
+        bool empty();
+};
+
+template<class T> bool List<T>::empty() {
+    boost::mutex::scoped_lock lock(_mut);
+    return _dst.empty();
+}
+
+template<class T> void List<T>::push_back(const T &x) {
+    boost::mutex::scoped_lock lock(_mut);
+    _dst.push_back(x);
+    notify_one();
+}
+
+template<class T> T& List<T>::back() {
+    boost::mutex::scoped_lock lock(_mut);
+    return _dst.back();
+}
+
+template<class T> void List<T>::wait() {
+    boost::mutex::scoped_lock lock(_mut);
+    return _empty.wait(lock);
+}
+
+void output(List<FFTBuf<Ipp16s> *> &l, std::ostream &s)
+{
+    while(true)
+    {
+        while(l.empty())
+        {
+            std::cerr << "Before empty wait" << std::endl;
+            l.wait();
+            std::cerr << "After empty wait" << std::endl;
+        }
         FFTBuf<Ipp16s> *f = l.front();
 
         if(f->is_written()) {
@@ -20,20 +66,24 @@ void output(std::list<FFTBuf<Ipp16s> *> &l, std::ostream &s) {
             continue;
         }
 
-        f->lock();
         while( !f->is_fully_processed() )
         {
+            std::cerr << "Before wait" << std::endl;
             f->wait();
+            std::cerr << "After wait" << std::endl;
         }
         if(!f->set_written())
         {
             continue;
         }
-        s.write(f->cdata(), sizeof(*(f->cdata())));
-        f->unlock();
+        {
+            boost::mutex::scoped_lock lock(f->get_mutex());
+            s.write((char *)f->cdata(), sizeof(*(f->cdata())) * f->get_siglen());
+        }
         delete f;
         l.pop_front();
     }
+    std::cerr << "Quit" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -46,7 +96,7 @@ int main(int argc, char **argv)
         boost::threadpool::pool tp(num_threads);
         int i = 0;
         int siglen = fft::order_to_length(order);
-        std::list<FFTBuf<Ipp16s> *> dst;
+        List<FFTBuf<Ipp16s> *> dst;
         boost::circular_buffer<SrcType<Ipp16s> > cbuf(num_threads * 3);
 
         ippStaticInit();
@@ -63,7 +113,6 @@ int main(int argc, char **argv)
 
         while(true)
         {
-            std::cerr << "Reading: " << std::endl;
             SrcType<Ipp16s> src;
             src.data = fft::alloc(src.data, siglen);
             s.read(src.data, siglen); //try-catch for missed datagram
