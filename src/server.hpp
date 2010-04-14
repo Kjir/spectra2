@@ -77,7 +77,7 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
          * Read datagram
          */
         size_t r = _sock.receive_from(boost::asio::buffer(_buf), remote, 0, error);
-        std::cerr << "Read " << r << " bytes" << std::endl;
+        //std::cerr << "Read " << r << " bytes" << std::endl;
 
         /*
          * Append received datagram to tmp
@@ -111,9 +111,9 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
 
 template<class T> void udp_sock<T>::_move_to_front(T *arr, int start, int length)
 {
-    for( int i = 0; start < start + length && i < UDP_MAX_DGRAM && start < UDP_MAX_DGRAM; i++, start++)
+    for( int i = 0; i < length && start + i < UDP_MAX_DGRAM; i++)
     {
-        _buf[i] = arr[start];
+        _buf[i] = arr[start + i];
     }
 }
 
