@@ -90,7 +90,10 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int or
     fft::free(tmpdst);
     tmpdst = NULL;
     fft::free(src.data);
-    src.erasable = true;
+    {
+        boost::mutex::scoped_lock lock(*src.mutex);
+        src.erasable = true;
+    }
     data.inc_processed();
     return data.cdata();
 }

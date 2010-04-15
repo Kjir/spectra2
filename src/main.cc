@@ -91,6 +91,7 @@ int main(int argc, char **argv)
     int order = 8;
     int num_threads = 5;
     int sums = 1;
+    ippStaticInit();
     try {
 
         boost::threadpool::pool tp(num_threads);
@@ -99,7 +100,6 @@ int main(int argc, char **argv)
         List<FFTBuf<Ipp16s> *> dst;
         boost::circular_buffer<SrcType<Ipp16s> > cbuf(num_threads * 3);
 
-        ippStaticInit();
         IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order);
 
         FFTBuf<Ipp16s> *b = new FFTBuf<Ipp16s>(siglen, sums);
@@ -116,10 +116,16 @@ int main(int argc, char **argv)
             SrcType<Ipp16s> src;
             src.data = fft::alloc(src.data, siglen);
             s.read(src.data, siglen); //try-catch for missed datagram
-            while(cbuf.full() && !cbuf.front().erasable)
+            if(!cbuf.empty())
             {
-                tp.wait(num_threads/2);
-                std::cerr << "Circular buffer is too small!!!" << std::endl;
+                boost::mutex::scoped_lock lock(*cbuf.front().mutex);
+                while(cbuf.full() && !cbuf.front().erasable)
+                {
+                    lock.unlock();
+                    tp.wait(num_threads/2);
+                    lock.lock();
+                    std::cerr << "Circular buffer is too small!!!" << std::endl;
+                }
             }
             cbuf.push_back(src);
 

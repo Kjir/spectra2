@@ -120,10 +120,27 @@ template<class T> struct SrcType {
     public:
         T *data;
         mutable bool erasable;
-        SrcType() : erasable(false), data(NULL) {}
+        mutable boost::mutex *mutex;
+        SrcType();
+        SrcType(const SrcType &other);
         SrcType<T> & operator=(const SrcType<T> &rhs);
+        ~SrcType();
 };
 
+template<class T> SrcType<T>::SrcType() : erasable(false), data(NULL), mutex(NULL)
+{
+    this->mutex = new boost::mutex;
+}
+
+template<class T> SrcType<T>::SrcType(const SrcType &other) : erasable(other.erasable), data(other.data), mutex(NULL)
+{
+    this->mutex = new boost::mutex;
+}
+
+template<class T> SrcType<T>::~SrcType()
+{
+    delete mutex;
+}
 template<class T> SrcType<T> & SrcType<T>::operator=(const SrcType<T> &rhs)
 {
     this->data = rhs.data;
