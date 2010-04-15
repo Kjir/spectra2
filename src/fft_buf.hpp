@@ -81,7 +81,6 @@ template<class T> int FFTBuf<T>::inc_processed()
 
     if( _is_fully_processed() )
     {
-        std::cerr << "Notify!" << std::endl;
         notify_one();
     }
 

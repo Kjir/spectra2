@@ -79,6 +79,12 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
         size_t r = _sock.receive_from(boost::asio::buffer(_buf), remote, 0, error);
         //std::cerr << "Read " << r << " bytes" << std::endl;
 
+        if( r % sizeof(T) ) {
+            //FIXME: Should not happen
+            std::cerr << "Not multiple of sizeof(T)" << std::endl;
+        }
+        r /= sizeof(T);
+
         /*
          * Append received datagram to tmp
          */
@@ -101,6 +107,7 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
         ret[i] = tmp[i];
     }
     _remaining = tmp.size() - size;
+
     /*
      * Move the remaining data in tmp to the front of _buf
      */
