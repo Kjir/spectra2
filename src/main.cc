@@ -102,11 +102,6 @@ int main(int argc, char **argv)
 
         IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order);
 
-        FFTBuf<Ipp16s> *b = new FFTBuf<Ipp16s>(siglen, sums);
-        *b = fft::alloc(b->cdata(), siglen);
-        fft::zero_mem(b->cdata(), siglen);
-        dst.push_back(b);
-
         fft f(spec); //The FFT object
         udp_sock<Ipp16s> s("localhost", 50000); //The UDP server
         boost::thread out_thread(output, boost::ref(dst), boost::ref(std::cout));
@@ -130,7 +125,7 @@ int main(int argc, char **argv)
             cbuf.push_back(src);
 
             if( dst.empty() || dst.back()->is_src_full() ) {
-                b = new FFTBuf<Ipp16s>(siglen, sums);
+                FFTBuf<Ipp16s> *b = new FFTBuf<Ipp16s>(siglen, sums);
                 *b = fft::alloc(b->cdata(), siglen);
                 fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);
