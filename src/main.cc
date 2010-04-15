@@ -66,12 +66,8 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream &s)
             continue;
         }
 
-        while( !f->is_fully_processed() )
-        {
-            std::cerr << "Before wait" << std::endl;
-            f->wait();
-            std::cerr << "After wait" << std::endl;
-        }
+        f->wait_until_processed();
+
         if(!f->set_written())
         {
             continue;

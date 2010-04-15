@@ -16,7 +16,7 @@ template<class T> class FFTBuf
         int get_siglen() { return _siglen; }
         void set_expected_sums(int s) { _expected_sums = s; }
         boost::mutex &get_mutex();
-        void wait();
+        void wait_until_processed();
         void notify_one() { _write_ready.notify_one(); }
         void notify_all() { _write_ready.notify_all(); }
         int inc_processed();
@@ -24,8 +24,9 @@ template<class T> class FFTBuf
         bool is_written();
         bool set_written();
         bool is_src_full() { return _assigned_sources == _expected_sums; }
-        bool is_fully_processed() { return _processed_sums == _expected_sums; }
         FFTBuf<T> & operator=(const T *rhs);
+    private:
+        bool _is_fully_processed() { return _processed_sums == _expected_sums; }
     private:
         T *_dst;
         int _siglen;
@@ -61,10 +62,14 @@ template<class T> boost::mutex & FFTBuf<T>::get_mutex()
     return _mut;
 }
 
-template<class T> void FFTBuf<T>::wait()
+template<class T> void FFTBuf<T>::wait_until_processed()
 {
     boost::unique_lock<boost::mutex> l(_mut);
-    _write_ready.wait(l);
+    if(!_is_fully_processed()) {
+        std::cerr << "Waiting while processing" << std::endl;
+        _write_ready.wait(l);
+        std::cerr << "Processed!" << std::endl;
+    }
 }
 
 template<class T> int FFTBuf<T>::inc_processed()
@@ -74,19 +79,15 @@ template<class T> int FFTBuf<T>::inc_processed()
 
     _processed_sums++;
 
-    if( is_fully_processed() )
+    if( _is_fully_processed() )
     {
+        std::cerr << "Notify!" << std::endl;
         notify_one();
     }
 
     return _processed_sums;
 }
 
-template<class T> bool FFTBuf<T>::is_fully_processed()
-{
-    boost::unique_lock<boost::mutex> lock(_mut);
-    return _processed_sums == _expected_sums;
-}
 template<class T> bool FFTBuf<T>::is_written()
 {
     boost::unique_lock<boost::mutex> lock(_mut);
