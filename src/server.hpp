@@ -3,8 +3,21 @@
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/array.hpp>
+#include <exception>
+#include <sys/types.h>
 #include <iostream>
 #define UDP_MAX_DGRAM 15000
+
+/* FIXME: This is not standard */
+#include <endian.h>
+
+class SequenceException : std::exception
+{
+    virtual const char *what() const throw()
+    {
+        return "Datagram out of sequence";
+    }
+};
 
 template<class T>
 class udp_sock
@@ -18,11 +31,12 @@ class udp_sock
         boost::asio::ip::udp::socket _sock;
         boost::array<T,UDP_MAX_DGRAM> _buf;
         size_t _remaining;
+        uint64_t _counter;
 
         void _move_to_front(T *arr, int start, int end = UDP_MAX_DGRAM);
 };
 
-template<class T> udp_sock<T>::udp_sock(std::string host = "localhost", unsigned short port = 50000) : _sock(_io_service), _remaining(0)
+template<class T> udp_sock<T>::udp_sock(std::string host = "localhost", unsigned short port = 50000) : _sock(_io_service), _remaining(0), _counter(0)
 {
     using boost::asio::ip::udp;
     udp::resolver res(_io_service);
@@ -45,7 +59,21 @@ template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
         throw boost::system::system_error(error);
     }
 
-    memcpy(dgram, buf.data(), data_read);
+    data_read -= sizeof(_counter);
+    const uint64_t *long_ptr  = reinterpret_cast<uint64_t *>(buf.data());
+    if( _counter == 0 )
+    {
+        _counter = be64toh(*long_ptr) - 1;
+    }
+    //FIXME: What happens on overflow?
+    if( _counter != be64toh(*long_ptr) - 1 )
+    {
+        std::cerr << "Out of sequence: counter is " << _counter << " received sequence is "
+            << be64toh(*long_ptr) << std::endl;
+        throw SequenceException();
+    }
+    _counter++; long_ptr++;
+    memcpy(dgram, long_ptr, data_read);
     return data_read;
 }
 
@@ -73,29 +101,37 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
      */
     while(tmp.size() < size)
     {
-        /*
-         * Read datagram
-         */
-        size_t r = _sock.receive_from(boost::asio::buffer(_buf), remote, 0, error);
-        //std::cerr << "Read " << r << " bytes" << std::endl;
-
-        if( r % sizeof(T) ) {
-            //FIXME: Should not happen
-            std::cerr << "Not multiple of sizeof(T)" << std::endl;
-        }
-        r /= sizeof(T);
-
-        /*
-         * Append received datagram to tmp
-         */
-        for( int i = 0; i < r; i++ )
+        try
         {
-            tmp.push_back(_buf[i]);
-        }
+            /*
+             * Read datagram
+             */
+            std::cerr << "Reading..." << std::endl;
+            size_t r = read_dgram( _buf.c_array() );
+            //std::cerr << "Read " << r << " bytes" << std::endl;
 
-        if (error && error != boost::asio::error::message_size)
+            if (error && error != boost::asio::error::message_size)
+            {
+                throw boost::system::system_error(error);
+            }
+
+            if( r % sizeof(T) ) {
+                //FIXME: Should not happen
+                std::cerr << "Not multiple of sizeof(T)" << std::endl;
+            }
+            r /= sizeof(T);
+
+            /*
+             * Append received datagram to tmp
+             */
+            for( int i = 0; i < r; i++ )
+            {
+                tmp.push_back(_buf[i]);
+            }
+        }
+        catch(SequenceException se)
         {
-            throw boost::system::system_error(error);
+            tmp.clear();
         }
     }
 
