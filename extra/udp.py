@@ -17,6 +17,8 @@ if opts.file == "-":
 else:
     file = open(opts.file, "rb")
 
+counter = 0
+
 udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 try:
@@ -24,8 +26,10 @@ try:
         buffer = file.read(opts.dgram_length)
         if buffer == '':
             raise Exception("EOF")
-        sent = udp.sendto(buffer, (opts.host, opts.port))
+        str_count = struct.pack("L", counter)
+        sent = udp.sendto(str_count + buffer, (opts.host, opts.port))
         print >> sys.stderr, "Sent %d bytes" % sent
+        counter += 1
 except Exception:
     pass
 finally:
