@@ -14,6 +14,7 @@ AC_CHECK_LIB([m], [pow])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h sys/time.h])
+AC_CHECK_HEADERS([endian.h sys/endian.h byteswap.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -46,6 +47,6 @@ AC_SUBST(IPP_INCLUDES)
 AC_SUBST(IPP_LDFLAGS)
 AC_SUBST(IPP_LIBS)
 
-AC_CONFIG_FILES([Makefile test/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
 
 AC_OUTPUT

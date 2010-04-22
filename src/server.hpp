@@ -8,8 +8,7 @@
 #include <iostream>
 #define UDP_MAX_DGRAM 15000
 
-/* FIXME: This is not standard */
-#include <endian.h>
+#include "endian_fix.h"
 
 class SequenceException : std::exception
 {
