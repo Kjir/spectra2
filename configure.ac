@@ -14,7 +14,6 @@ AC_CHECK_LIB([m], [pow])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h sys/time.h])
-AC_CHECK_HEADER([boost/threadpool.hpp], ,AC_MSG_ERROR(Boost::threadpool is not installed))
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -30,6 +29,7 @@ AX_BOOST_PROGRAM_OPTIONS
 AX_BOOST_SYSTEM
 AX_BOOST_FILESYSTEM
 AX_BOOST_THREAD
+AX_BOOST_THREADPOOL
 AX_BOOST_ASIO
 
 #Checks for Intel Integrated Performance Primitives
