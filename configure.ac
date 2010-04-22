@@ -46,7 +46,7 @@ fi
 
 BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
 if test "$BOOSTLIBDIR" != "/usr/lib" -a "$BOOSTLIBDIR" != "/usr/local/lib"; then
-    BOOST_LDFLAGS="$BOOST_LDFLAGS -R$BOOSTLIBDIR"
+    BOOST_LDFLAGS="$BOOST_LDFLAGS -Wl,-R$BOOSTLIBDIR"
     AC_SUBST(BOOST_LDFLAGS)
 fi
 AC_SUBST(IPP_INCLUDES)
