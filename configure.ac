@@ -43,6 +43,12 @@ else
     IPP_LDFLAGS="-L$IPP_PREFIX/$ver/$IPP_CPU/sharedlib -L$IPP_PREFIX/$ver/$IPP_CPU/lib -Wl,-R$IPP_PREFIX/$ver/$IPP_CPU/sharedlib"
 	IPP_LIBS="-lippac$IPP_SUFFIX -lipps$IPP_SUFFIX -lippcore$IPP_SUFFIX -liomp5 -lpthread"
 fi
+
+if test "x$BOOST_ROOT" != "x"; then
+    BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
+    BOOST_LDFLAGS="$BOOST_LDFLAGS -R$BOOSTLIBDIR"
+    AC_SUBST(BOOST_LDFLAGS)
+fi
 AC_SUBST(IPP_INCLUDES)
 AC_SUBST(IPP_LDFLAGS)
 AC_SUBST(IPP_LIBS)
