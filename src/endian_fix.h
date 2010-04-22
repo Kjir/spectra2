@@ -12,6 +12,5 @@
 # else
 #  define be64toh(x) (x)
 # endif /* __BYTE_ORDER == __LITTLE_ENDIAN */
-#error "Not defined!"
 #endif /* be64toh */
 #endif /* __SPECTRA2_ENDIAN_H_ */
