@@ -44,8 +44,8 @@ else
 	IPP_LIBS="-lippac$IPP_SUFFIX -lipps$IPP_SUFFIX -lippcore$IPP_SUFFIX -liomp5 -lpthread"
 fi
 
-if test "x$BOOST_ROOT" != "x"; then
-    BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
+BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
+if test "$BOOSTLIBDIR" != "/usr/lib" -a "$BOOSTLIBDIR" != "/usr/local/lib"; then
     BOOST_LDFLAGS="$BOOST_LDFLAGS -R$BOOSTLIBDIR"
     AC_SUBST(BOOST_LDFLAGS)
 fi
