@@ -6,6 +6,7 @@
 #include <exception>
 #include <sys/types.h>
 #include <iostream>
+#include <limits>
 #define UDP_MAX_DGRAM 15000
 
 #include "endian_fix.h"
@@ -43,6 +44,7 @@ template<class T> udp_sock<T>::udp_sock(std::string host = "localhost", unsigned
     udp::endpoint ep = *res.resolve(query);
     _sock.open(udp::v4());
     _sock.bind(ep);
+    _counter = std::numeric_limits<uint64_t>::max();
 }
 
 template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
@@ -60,11 +62,16 @@ template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
 
     data_read -= sizeof(_counter);
     const uint64_t *long_ptr  = reinterpret_cast<uint64_t *>(buf.data());
-    if( _counter == 0 )
+    if( _counter == std::numeric_limits<uint64_t>::max(); )
     {
+        /*
+         * Please note that this means there is no checking on the packet received
+         * right after we reach the maximum length of uint64_t. This is the simplest
+         * solution, although not the safest
+         */
         _counter = be64toh(*long_ptr) - 1;
     }
-    //FIXME: What happens on overflow?
+    //FIXME: What happens if long_ptr == 0?
     if( _counter != be64toh(*long_ptr) - 1 )
     {
         std::cerr << "Out of sequence: counter is " << _counter << " received sequence is "
