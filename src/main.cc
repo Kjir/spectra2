@@ -126,7 +126,11 @@ int main(int argc, char **argv)
                 fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);
             }
-            tp.schedule(boost::bind(&fft::transform, &f, boost::ref(cbuf.back()), boost::ref(*(dst.back())), order, 1, 12));
+            tp.schedule(
+                    boost::bind(
+                        static_cast<Ipp16s *(fft::*) (const SrcType<Ipp16s> &, FFTBuf<Ipp16s> &, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), boost::ref(*(dst.back())), order, 1, 12
+                        )
+                    );
             dst.back()->inc_assigned_sources();
         }
 
