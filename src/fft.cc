@@ -40,6 +40,7 @@ IppsFFTSpec_R_16s *fft::allocSpec(IppsFFTSpec_R_16s **spec, int order, bool fast
      */
     if(fast) {
         hint = ippAlgHintFast;
+        std::cerr << "Using fast algo" << std::endl;
     } else {
         hint = ippAlgHintAccurate;
     }

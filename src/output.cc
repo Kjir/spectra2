@@ -1,13 +1,14 @@
 #include "output.hpp"
 #include <boost/thread/mutex.hpp>
 
-void output(List<FFTBuf<Ipp16s> *> &l, std::ostream &s)
+void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
 {
     while(true)
     {
         while(l.empty())
         {
             std::cerr << "Before empty wait" << std::endl;
+            s->flush();
             l.wait();
             std::cerr << "After empty wait" << std::endl;
         }
@@ -27,7 +28,7 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream &s)
         }
         {
             boost::mutex::scoped_lock lock(f->get_mutex());
-            s.write((char *)f->cdata(), sizeof(*(f->cdata())) * f->get_siglen());
+            s->write((char *)f->cdata(), sizeof(*(f->cdata())) * f->get_siglen());
         }
         delete f;
         l.pop_front();
