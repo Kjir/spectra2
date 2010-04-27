@@ -1,5 +1,6 @@
 #ifndef __SPECTRA2_LIST_HPP_
 #define __SPECTRA2_LIST_HPP_
+#include <list>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
 

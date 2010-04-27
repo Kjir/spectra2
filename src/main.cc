@@ -1,5 +1,4 @@
 #include <iostream>
-#include <list>
 #include <boost/threadpool.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
