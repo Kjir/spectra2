@@ -62,7 +62,7 @@ template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
 
     data_read -= sizeof(_counter);
     const uint64_t *long_ptr  = reinterpret_cast<uint64_t *>(buf.data());
-    if( _counter == std::numeric_limits<uint64_t>::max(); )
+    if( _counter == std::numeric_limits<uint64_t>::max() )
     {
         /*
          * Please note that this means there is no checking on the packet received
