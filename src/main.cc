@@ -10,77 +10,8 @@
 #include "server.hpp"
 #include "fft.hpp"
 #include "fft_buf.hpp"
-
-template<class T> class List {
-    private:
-        std::list<T> _dst;
-        boost::mutex _mut;
-        boost::condition_variable _empty;
-    public:
-        void pop_front() { _dst.pop_front(); }
-        void push_back(const T &x);
-        T &front() { return _dst.front(); }
-        T &back();
-        void wait();
-        void notify_one() { _empty.notify_one(); }
-        void notify_all() { _empty.notify_all(); }
-        bool empty();
-};
-
-template<class T> bool List<T>::empty() {
-    boost::mutex::scoped_lock lock(_mut);
-    return _dst.empty();
-}
-
-template<class T> void List<T>::push_back(const T &x) {
-    boost::mutex::scoped_lock lock(_mut);
-    _dst.push_back(x);
-    notify_one();
-}
-
-template<class T> T& List<T>::back() {
-    boost::mutex::scoped_lock lock(_mut);
-    return _dst.back();
-}
-
-template<class T> void List<T>::wait() {
-    boost::mutex::scoped_lock lock(_mut);
-    return _empty.wait(lock);
-}
-
-void output(List<FFTBuf<Ipp16s> *> &l, std::ostream &s)
-{
-    while(true)
-    {
-        while(l.empty())
-        {
-            std::cerr << "Before empty wait" << std::endl;
-            l.wait();
-            std::cerr << "After empty wait" << std::endl;
-        }
-        FFTBuf<Ipp16s> *f = l.front();
-
-        if(f->is_written()) {
-            delete f;
-            l.pop_front();
-            continue;
-        }
-
-        f->wait_until_processed();
-
-        if(!f->set_written())
-        {
-            continue;
-        }
-        {
-            boost::mutex::scoped_lock lock(f->get_mutex());
-            s.write((char *)f->cdata(), sizeof(*(f->cdata())) * f->get_siglen());
-        }
-        delete f;
-        l.pop_front();
-    }
-    std::cerr << "Quit" << std::endl;
-}
+#include "list.hpp"
+#include "output.hpp"
 
 int main(int argc, char **argv)
 {
