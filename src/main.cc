@@ -108,7 +108,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    if(sums < threshold)
+    if(sums < threshold && num_threads > low_threads)
     {
         //Lower the number of threads if we have few integrations
         num_threads = low_threads;
@@ -156,18 +156,23 @@ int main(int argc, char **argv)
             }
             cbuf.push_back(src);
 
+            if( !dst.empty() )
+                std::cerr << "Back is " << std::hex << dst.back() << std::dec << std::endl;
             if( dst.empty() || dst.back()->is_src_full() ) {
                 FFTBuf<IppType> *b = new FFTBuf<IppType>(siglen, sums);
                 *b = fft::alloc(b->cdata(), siglen);
                 fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);
             }
+            if( !dst.empty() )
+                std::cerr << "Back is " << std::hex << dst.back() << std::dec << std::endl;
+            boost::mutex::scoped_lock lock(dst.back()->get_mutex());
+            dst.back()->inc_assigned_sources();
             tp.schedule(
                     boost::bind(
                         static_cast<IppType *(fft::*) (const SrcType<IppType> &, FFTBuf<IppType> &, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), boost::ref(*(dst.back())), order, scaling, pscaling
                         )
                     );
-            dst.back()->inc_assigned_sources();
         }
 
         out_thread.join();

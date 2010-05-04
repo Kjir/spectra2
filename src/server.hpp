@@ -69,13 +69,17 @@ template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
          * right after we reach the maximum length of uint64_t. This is the simplest
          * solution, although not the safest
          */
-        _counter = be64toh(*long_ptr) - 1;
+        //_counter = be64toh(*long_ptr) - 1;
+        _counter = (*long_ptr) - 1;
     }
     //FIXME: What happens if long_ptr == 0?
-    if( _counter != be64toh(*long_ptr) - 1 )
+    //if( _counter != be64toh(*long_ptr) - 1 )
+    if( _counter != (*long_ptr) - 1 )
     {
         std::cerr << "Out of sequence: counter is " << _counter << " received sequence is "
-            << be64toh(*long_ptr) << std::endl;
+            //<< be64toh(*long_ptr) << std::endl;
+            << (*long_ptr) << std::endl;
+        _counter = std::numeric_limits<uint64_t>::max();
         throw SequenceException();
     }
     _counter++; long_ptr++;

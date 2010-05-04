@@ -11,6 +11,7 @@ template<class T> class FFTBuf
         FFTBuf();
         FFTBuf(int siglen);
         FFTBuf(int siglen, int sums);
+        ~FFTBuf();
         T *cdata() { return _dst; }
         void set_data(const T *buf);
         void set_siglen(int s) { _siglen = s; }
@@ -21,7 +22,7 @@ template<class T> class FFTBuf
         void notify_one() { _write_ready.notify_one(); }
         void notify_all() { _write_ready.notify_all(); }
         int inc_processed();
-        int inc_assigned_sources() { return _assigned_sources++; }
+        int inc_assigned_sources();
         bool is_written();
         bool set_written();
         bool is_src_full() { return _assigned_sources == _expected_sums; }
@@ -41,14 +42,22 @@ template<class T> class FFTBuf
 
 template<class T> FFTBuf<T>::FFTBuf() : _dst(NULL), _siglen(0), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
+    std::cerr << "This is " << std::hex << this << std::dec << std::endl;
 }
 
 template<class T> FFTBuf<T>::FFTBuf(int siglen) : _dst(NULL), _siglen(siglen), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
+    std::cerr << "This is " << std::hex << this << std::dec << std::endl;
 }
 
 template<class T> FFTBuf<T>::FFTBuf(int siglen, int sums) : _dst(NULL), _siglen(siglen), _expected_sums(sums), _processed_sums(0), _assigned_sources(0), _written(false)
 {
+    std::cerr << "This is " << std::hex << this << std::dec << std::endl;
+}
+
+template<class T> FFTBuf<T>::~FFTBuf()
+{
+    std::cerr << "Deconstructing FFT Buffer: " << std::hex << this << std::dec << std::endl;
 }
 
 template<class T> void FFTBuf<T>::set_data(const T *buf)
@@ -72,6 +81,15 @@ template<class T> void FFTBuf<T>::wait_until_processed()
     }
 }
 
+template<class T> int FFTBuf<T>::inc_assigned_sources()
+{ 
+    if(this == NULL)
+        std::cerr << "Class no longer exists" << std::endl;
+    //boost::unique_lock<boost::mutex> lock(_mut);
+    _assigned_sources += 1;
+    return _assigned_sources;
+}
+
 template<class T> int FFTBuf<T>::inc_processed()
 {
 
@@ -79,6 +97,8 @@ template<class T> int FFTBuf<T>::inc_processed()
 
     _processed_sums++;
 
+    std::cerr << "assigned sources: " << _assigned_sources << std::endl;
+    std::cerr << "expected sums: " << _expected_sums << std::endl;
     if( _is_fully_processed() )
     {
         notify_one();
