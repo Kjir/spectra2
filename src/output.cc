@@ -15,8 +15,9 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
         FFTBuf<Ipp16s> *f = l.front();
 
         if(f->is_written()) {
-            delete f;
+            std::cerr << "Already written, delete" << std::endl;
             l.pop_front();
+            delete f;
             continue;
         }
 
@@ -30,8 +31,9 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
             boost::mutex::scoped_lock lock(f->get_mutex());
             s->write((char *)f->cdata(), sizeof(*(f->cdata())) * f->get_siglen());
         }
-        delete f;
+        std::cerr << "Done writing, deleting" << std::endl;
         l.pop_front();
+        delete f;
     }
     std::cerr << "Quit" << std::endl;
 }
