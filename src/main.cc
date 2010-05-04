@@ -10,14 +10,22 @@
 #include <ipp.h>
 #include <stdlib.h>
 #include <string>
+#include <typeinfo>
 #include "server.hpp"
 #include "fft.hpp"
 #include "fft_buf.hpp"
 #include "list.hpp"
 #include "output.hpp"
+#include "type.hpp"
 
 int main(int argc, char **argv)
 {
+    /* CONSTANTS to define data type. Change this & recompile to change data types! */
+
+    const int IPP_DATA_LENGTH = 16;
+    const bool IS_COMPLEX_TYPE = false;
+    typedef typer<IPP_DATA_LENGTH, IS_COMPLEX_TYPE>::type IppType;
+
     namespace po = boost::program_options;
     po::variables_map var_map;
 
@@ -114,14 +122,14 @@ int main(int argc, char **argv)
         std::cerr << "Started threadpool with " << num_threads << " threads" << std::endl;
         int i = 0;
         int siglen = fft::order_to_length(order);
-        List<FFTBuf<Ipp16s> *> dst;
-        boost::circular_buffer<SrcType<Ipp16s> > cbuf(num_threads * 3);
+        List<FFTBuf<IppType> *> dst;
+        boost::circular_buffer<SrcType<IppType> > cbuf(num_threads * 3);
 
         IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order, fast);
 
         fft f(spec); //The FFT object
         std::cerr << "Listening on " << host << " port " << port << std::endl;
-        udp_sock<Ipp16s> s(host, port); //The UDP server
+        udp_sock<IppType> s(host, port); //The UDP server
 
         std::ostream *out = &std::cout;
         if( ofile != "-" )
@@ -132,7 +140,7 @@ int main(int argc, char **argv)
 
         while(true)
         {
-            SrcType<Ipp16s> src;
+            SrcType<IppType> src;
             src.data = fft::alloc(src.data, siglen);
             s.read(src.data, siglen); //try-catch for missed datagram
             if(!cbuf.empty())
@@ -149,14 +157,14 @@ int main(int argc, char **argv)
             cbuf.push_back(src);
 
             if( dst.empty() || dst.back()->is_src_full() ) {
-                FFTBuf<Ipp16s> *b = new FFTBuf<Ipp16s>(siglen, sums);
+                FFTBuf<IppType> *b = new FFTBuf<IppType>(siglen, sums);
                 *b = fft::alloc(b->cdata(), siglen);
                 fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);
             }
             tp.schedule(
                     boost::bind(
-                        static_cast<Ipp16s *(fft::*) (const SrcType<Ipp16s> &, FFTBuf<Ipp16s> &, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), boost::ref(*(dst.back())), order, scaling, pscaling
+                        static_cast<IppType *(fft::*) (const SrcType<IppType> &, FFTBuf<IppType> &, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), boost::ref(*(dst.back())), order, scaling, pscaling
                         )
                     );
             dst.back()->inc_assigned_sources();

@@ -55,7 +55,6 @@ template<class T> void FFTBuf<T>::set_data(const T *buf)
 {
     boost::unique_lock<boost::mutex> lock(_mut);
     _dst = (T *)buf;
-
 }
 
 template<class T> boost::mutex & FFTBuf<T>::get_mutex()
