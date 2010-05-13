@@ -129,7 +129,8 @@ int main(int argc, char **argv)
 
         fft f(spec); //The FFT object
         std::cerr << "Listening on " << host << " port " << port << std::endl;
-        udp_sock<IppType> s(host, port); //The UDP server
+        //udp_sock<IppType> s(host, port); //The UDP server
+        SourceFilter *src_filter = new udp_sock<IppType>(host, port);
 
         std::ostream *out = &std::cout;
         if( ofile != "-" )
@@ -142,7 +143,7 @@ int main(int argc, char **argv)
         {
             SrcType<IppType> src;
             src.data = fft::alloc(src.data, siglen);
-            s.read(src.data, siglen); //try-catch for missed datagram
+            src_filter->read(src.data, siglen); //try-catch for missed datagram
             if(!cbuf.empty())
             {
                 boost::mutex::scoped_lock lock(*cbuf.front().mutex);

@@ -10,6 +10,7 @@
 #define UDP_MAX_DGRAM 15000
 
 #include "endian_fix.h"
+#include "filter/source.hpp"
 
 class SequenceException : std::exception
 {
@@ -20,12 +21,13 @@ class SequenceException : std::exception
 };
 
 template<class T>
-class udp_sock
+class udp_sock : public SourceFilter
 {
     public:
         udp_sock(std::string host, unsigned short port);
         size_t read_dgram(T *dgram);
         T *read(T *ret, size_t length);
+        virtual void *read(void *ret, size_t length);
     private:
         boost::asio::io_service _io_service;
         boost::asio::ip::udp::socket _sock;
@@ -160,6 +162,11 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
     _move_to_front(tmp.data(), size, _remaining);
 
     return ret;
+}
+
+template<class T> void *udp_sock<T>::read(void *ret, size_t size)
+{
+    return read(reinterpret_cast<T *>(ret), size);
 }
 
 template<class T> void udp_sock<T>::_move_to_front(T *arr, int start, int length)
