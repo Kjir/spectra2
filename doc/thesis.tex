@@ -1,22 +1,42 @@
-\documentclass[a4paper,11pt,twoside,openright]{book}
+\documentclass[a4paper,11pt,twoside,openright]{unibo}
+
+\usepackage{newlfont}
+\usepackage{url}
+\usepackage[backref]{hyperref}
+\textwidth=450pt\oddsidemargin=0pt
 
 \begin{document}
+\title{Sviluppo di un software per l'analisi real-time di dati
+radioastronomici su macchine multicore}
+\author{St\'ephane Bisinger}
+\date{May 2010}
+\acyear{2009 --- 2010}
+\supervisor{Antonella Carbonaro}
+\thsubject{Programmazione}
+\thsession{Prima}
+\pagenumbering{roman}
+
+\maketitle
+%\include{frontpage}
+
 \tableofcontents
-\section*{Introduction}
+
+\chapter*{Introduction}
 \label{intro}
+\addcontentsline{toc}{chapter}{Introduction}
 \chapter{Mathematical background}
+\pagenumbering{arabic}
 \label{math_bkg}
-Taken from \cite{campade}
-\section{Project outline}
+Taken from \cite{bertoni}
+\chapter{Project outline}
 \label{outline}
-\section{Software development}
+\chapter{Software development}
 \label{sw_devel}
 See \ref{tests}.
-\section{Test results and observations}
+\chapter{Test results and observations}
 \label{tests}
-\section{Conclusions}
+\chapter{Conclusions}
 \label{conclusions}
-\begin{thebibliography}{99}
-\bibitem{campade} Campadelli, A., \emph{Introduzione all'elaborazione dei segnali}, Nessuno Publishing, Milano, ITALY, 2008.
-\end{thebibliography}
+\bibliographystyle{alpha}
+\bibliography{thesis}
 \end{document}
