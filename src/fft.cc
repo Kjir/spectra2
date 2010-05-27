@@ -53,7 +53,7 @@ IppsFFTSpec_R_16s *fft::allocSpec(IppsFFTSpec_R_16s **spec, int order, bool fast
         hint = ippAlgHintAccurate;
     }
 
-    status = ippsFFTInitAlloc_R_16s(spec, order, IPP_FFT_NODIV_BY_ANY, hint);
+    status = ippsFFTInitAlloc_R_16s(spec, order, IPP_FFT_DIV_BY_SQRTN, hint);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in InitAlloc: " << ippGetStatusString(status) << "\n";
