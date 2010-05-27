@@ -5,6 +5,8 @@ AM_INIT_AUTOMAKE([-Wall])
 
 AC_CANONICAL_HOST
 
+AC_ARG_ENABLE(debug, [  --enable-debug	Enable debugging output], [AC_DEFINE(DEBUG)])
+
 AC_SEARCH_LIBS([strerror],[cposix])
 AC_PROG_CXX
 AC_LANG([C++])
@@ -20,6 +22,7 @@ AC_CHECK_HEADERS([endian.h sys/endian.h byteswap.h])
 AC_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_TYPE_UINT64_T
+
 
 # Checks for library functions.
 AC_CHECK_FUNCS([gettimeofday pow])

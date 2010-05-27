@@ -7,10 +7,12 @@
 #include <sys/types.h>
 #include <iostream>
 #include <limits>
+#include <sstream>
 #define UDP_MAX_DGRAM 15000
 
 #include "endian_fix.h"
 #include "filter/source.hpp"
+#include "debug.hpp"
 
 class SequenceException : std::exception
 {
@@ -78,9 +80,11 @@ template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
     //if( _counter != be64toh(*long_ptr) - 1 )
     if( _counter != (*long_ptr) - 1 )
     {
-        std::cerr << "Out of sequence: counter is " << _counter << " received sequence is "
+        std::stringstream ss;
+        ss << "Out of sequence: counter is " << _counter << " received sequence is "
             //<< be64toh(*long_ptr) << std::endl;
             << (*long_ptr) << std::endl;
+        debug(ss.str());
         _counter = std::numeric_limits<uint64_t>::max();
         throw SequenceException();
     }
@@ -118,9 +122,13 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
             /*
              * Read datagram
              */
-            std::cerr << "Reading..." << std::endl;
+            std::stringstream ss;
+            ss << "Reading..." << std::endl;
+            debug(ss.str());
             size_t r = read_dgram( _buf.c_array() );
-            //std::cerr << "Read " << r << " bytes" << std::endl;
+            //ss.clear(); ss.str("");
+            //ss << "Read " << r << " bytes" << std::endl;
+            //debug(ss.str());
 
             if (error && error != boost::asio::error::message_size)
             {
@@ -129,7 +137,10 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
 
             if( r % sizeof(T) ) {
                 //FIXME: Should not happen
-                std::cerr << "Not multiple of sizeof(T)" << std::endl;
+                ss.clear();
+                ss.str("");
+                ss << "Not multiple of sizeof(T)" << std::endl;
+                debug(ss.str());
             }
             r /= sizeof(T);
 

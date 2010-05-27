@@ -7,15 +7,21 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
     {
         while(l.empty())
         {
-            std::cerr << "Before empty wait" << std::endl;
+            std::stringstream ss;
+            ss << "Before empty wait" << std::endl;
+            debug(ss.str());
             s->flush();
             l.wait();
-            std::cerr << "After empty wait" << std::endl;
+            ss.clear(); ss.str("");
+            ss << "After empty wait" << std::endl;
+            debug(ss.str());
         }
         FFTBuf<Ipp16s> *f = l.front();
 
         if(f->is_written()) {
-            std::cerr << "Already written, delete" << std::endl;
+            std::stringstream ss;
+            ss << "Already written, delete" << std::endl;
+            debug(ss.str());
             l.pop_front();
             delete f;
             continue;
@@ -31,9 +37,13 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
             boost::mutex::scoped_lock lock(f->get_mutex());
             s->write((char *)f->cdata(), sizeof(*(f->cdata())) * f->get_siglen());
         }
-        std::cerr << "Done writing, deleting" << std::endl;
+        std::stringstream ss;
+        ss << "Done writing, deleting" << std::endl;
+        debug(ss.str());
         l.pop_front();
         delete f;
     }
-    std::cerr << "Quit" << std::endl;
+    std::stringstream ss;
+    ss << "Quit" << std::endl;
+    debug(ss.str());
 }

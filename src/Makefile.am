@@ -1,6 +1,6 @@
 bin_PROGRAMS = server
 
-server_SOURCES = fft.cc main.cc output.cc
+server_SOURCES = fft.cc main.cc output.cc debug.cc
 server_CPPFLAGS=$(IPP_INCLUDES) $(BOOST_CPPFLAGS)
 server_LDFLAGS=$(IPP_LDFLAGS) $(BOOST_LDFLAGS)
 server_LDADD = $(IPP_LIBS) $(BOOST_PROGRAM_OPTIONS_LIB) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB) $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB) -lm

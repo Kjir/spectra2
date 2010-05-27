@@ -4,6 +4,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <iostream>
+#include <sstream>
+#include "debug.hpp"
 
 template<class T> class FFTBuf
 {
@@ -42,22 +44,30 @@ template<class T> class FFTBuf
 
 template<class T> FFTBuf<T>::FFTBuf() : _dst(NULL), _siglen(0), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
-    std::cerr << "This is " << std::hex << this << std::dec << std::endl;
+    std::stringstream ss;
+    ss << "This is " << std::hex << this << std::dec << std::endl;
+    debug(ss.str());
 }
 
 template<class T> FFTBuf<T>::FFTBuf(int siglen) : _dst(NULL), _siglen(siglen), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
-    std::cerr << "This is " << std::hex << this << std::dec << std::endl;
+    std::stringstream ss;
+    ss << "This is " << std::hex << this << std::dec << std::endl;
+    debug(ss.str());
 }
 
 template<class T> FFTBuf<T>::FFTBuf(int siglen, int sums) : _dst(NULL), _siglen(siglen), _expected_sums(sums), _processed_sums(0), _assigned_sources(0), _written(false)
 {
-    std::cerr << "This is " << std::hex << this << std::dec << std::endl;
+    std::stringstream ss;
+    ss << "This is " << std::hex << this << std::dec << std::endl;
+    debug(ss.str());
 }
 
 template<class T> FFTBuf<T>::~FFTBuf()
 {
-    std::cerr << "Deconstructing FFT Buffer: " << std::hex << this << std::dec << std::endl;
+    std::stringstream ss;
+    ss << "Deconstructing FFT Buffer: " << std::hex << this << std::dec << std::endl;
+    debug(ss.str());
 }
 
 template<class T> void FFTBuf<T>::set_data(const T *buf)
@@ -75,16 +85,23 @@ template<class T> void FFTBuf<T>::wait_until_processed()
 {
     boost::unique_lock<boost::mutex> l(_mut);
     if(!_is_fully_processed()) {
-        std::cerr << "Waiting while processing" << std::endl;
+        std::stringstream ss;
+        ss << "Waiting while processing" << std::endl;
+        debug(ss.str());
         _write_ready.wait(l);
-        std::cerr << "Processed!" << std::endl;
+        ss.clear(); ss.str("");
+        ss << "Processed!" << std::endl;
+        debug(ss.str());
     }
 }
 
 template<class T> int FFTBuf<T>::inc_assigned_sources()
 { 
-    if(this == NULL)
-        std::cerr << "Class no longer exists" << std::endl;
+    if(this == NULL) {
+        std::stringstream ss;
+        ss << "Class no longer exists" << std::endl;
+        debug(ss.str());
+    }
     //boost::unique_lock<boost::mutex> lock(_mut);
     _assigned_sources += 1;
     return _assigned_sources;
@@ -97,8 +114,10 @@ template<class T> int FFTBuf<T>::inc_processed()
 
     _processed_sums++;
 
-    std::cerr << "assigned sources: " << _assigned_sources << std::endl;
-    std::cerr << "expected sums: " << _expected_sums << std::endl;
+    std::stringstream ss;
+    ss << "assigned sources: " << _assigned_sources << std::endl;
+    ss << "expected sums: " << _expected_sums << std::endl;
+    debug(ss.str());
     if( _is_fully_processed() )
     {
         notify_one();
