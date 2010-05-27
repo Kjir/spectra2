@@ -1,5 +1,6 @@
 #include "debug.hpp"
 #include <boost/thread/mutex.hpp>
+#include <iostream>
 
 boost::mutex _debug_mut;
 
