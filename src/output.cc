@@ -1,7 +1,7 @@
 #include "output.hpp"
 #include <boost/thread/mutex.hpp>
 
-void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
+void output(List<FFTBuf<Ipp32f> *> &l, std::ostream *s)
 {
     while(true)
     {
@@ -16,7 +16,7 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
             ss << "After empty wait" << std::endl;
             debug(ss.str());
         }
-        FFTBuf<Ipp16s> *f = l.front();
+        FFTBuf<Ipp32f> *f = l.front();
 
         if(f->is_written()) {
             std::stringstream ss;
@@ -35,7 +35,7 @@ void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s)
         }
         {
             boost::mutex::scoped_lock lock(f->get_mutex());
-            s->write((char *)f->cdata(), sizeof(*(f->cdata())) * f->get_siglen());
+            s->write((char *)f->cdata(), sizeof(*(f->cdata())) * (f->get_siglen() / 2));
         }
         std::stringstream ss;
         ss << "Done writing, deleting" << std::endl;

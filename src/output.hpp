@@ -6,5 +6,5 @@
 #include "fft_buf.hpp"
 #include <ipp.h>
 
-void output(List<FFTBuf<Ipp16s> *> &l, std::ostream *s);
+void output(List<FFTBuf<Ipp32f> *> &l, std::ostream *s);
 #endif

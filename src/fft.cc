@@ -201,6 +201,72 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int or
     return data.cdata();
 }
 
+Ipp32f *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp32f> & data, int order, int scaling, int pscaling) {
+    IppStatus status;
+    Ipp16s *tmpdst;
+    int siglen = fft::order_to_length(order);
+    
+    tmpdst = fft::alloc(tmpdst, siglen);
+
+    status = ippsFFTFwd_RToPack_16s_Sfs(src.data, tmpdst, R_16s, scaling, buffer);
+    if( status != ippStsNoErr ) {
+        std::stringstream ss;
+        ss << "IPP Error in FFTFwd: " << ippGetStatusString(status) << "\n";
+        debug(ss.str());
+        exit(4);
+    }
+    Ipp16sc *vc;
+    vc = fft::alloc(vc, siglen);
+    if( vc == NULL ) {
+        std::stringstream ss;
+        ss << "Not enough memory\n";
+        debug(ss.str());
+        exit(3);
+    }
+    //Set the vector to zero
+    fft::zero_mem(vc, siglen);
+    status = ippsConjPack_16sc(tmpdst, vc, siglen);
+    if( status != ippStsNoErr ) {
+        std::stringstream ss;
+        ss << "IPP Error in ConjPack: " << ippGetStatusString(status) << "\n";
+        debug(ss.str());
+        exit(5);
+    }
+    Ipp32f *dst32 = fft::alloc(dst32, siglen);
+    status = ippsPowerSpectr_16sc32f(vc, dst32, siglen);
+    if( status != ippStsNoErr ) {
+        std::stringstream ss;
+        ss << "IPP Error in PowerSpectr: " << ippGetStatusString(status) << "\n";
+        debug(ss.str());
+        exit(6);
+    }
+    fft::free(vc);
+    vc = NULL;
+
+    {
+        boost::mutex::scoped_lock lock(data.get_mutex());
+        status = ippsAdd_32f_I(dst32, data.cdata(), siglen);
+    }
+    if( status != ippStsNoErr ) {
+        std::stringstream ss;
+        ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
+        debug(ss.str());
+        exit(7);
+    }
+
+    fft::free(tmpdst);
+    tmpdst = NULL;
+    fft::free(dst32);
+    dst32 = NULL;
+    fft::free(src.data);
+    {
+        boost::mutex::scoped_lock lock(*src.mutex);
+        src.erasable = true;
+    }
+    data.inc_processed();
+    return data.cdata();
+}
+
 Ipp32f *fft::transform(const SrcType<Ipp32f> &src, FFTBuf<Ipp32f> & data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp32f *tmpdst;

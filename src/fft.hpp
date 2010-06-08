@@ -20,6 +20,7 @@ class fft {
         Ipp16s *transform(const SrcType<Ipp16s> & src, FFTBuf<Ipp16s> & dst, int order, int scaling = 1, int pscaling = 12);
         //FIXME: Missing functions?
         //Ipp32s *transform(const SrcType<Ipp32s> & src, FFTBuf<Ipp32s> & dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp32f *transform(const SrcType<Ipp16s> & src, FFTBuf<Ipp32f> & dst, int order, int scaling = 1, int pscaling = 12);
         Ipp32f *transform(const SrcType<Ipp32f> & src, FFTBuf<Ipp32f> & dst, int order, int scaling = 1, int pscaling = 12);
         Ipp64f *transform(const SrcType<Ipp64f> & src, FFTBuf<Ipp64f> & dst, int order, int scaling = 1, int pscaling = 12);
 
