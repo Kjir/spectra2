@@ -9,18 +9,17 @@
 
 /* Constructors */
 
-fft::fft(const IppsFFTSpec_R_16s *spec) : R_16s(spec), buffer(NULL) {
-    /*
+fft::fft(const IppsFFTSpec_R_16s *spec) : R_16s(spec) {
     IppStatus status;
-    int bufsize;
 
-    status = ippsFFTGetBufSize_R_16s( FFTSpec, &bufsize );
-    if( status != fftStsNoErr ) {
+    status = ippsFFTGetBufSize_R_16s( spec, &_bufsize );
+    if( status != ippStsNoErr ) {
     std::stringstream ss;
-        ss << "IPP Error in FFTGetBufSize: " << ippGetStatusString(status) << "\n";
+        ss << "IPP Error in FFTGetBufSize: " << ippGetStatusString(status) << std::endl;
         debug(ss.str());
         exit(2);
     }
+    /*
     buffer = ippsMalloc_8u(bufsize); //TODO: Create some buffer handling thingy
     if( buffer == NULL ) {
     std::stringstream ss;
@@ -31,9 +30,9 @@ fft::fft(const IppsFFTSpec_R_16s *spec) : R_16s(spec), buffer(NULL) {
     */
 }
 
-fft::fft(const IppsFFTSpec_R_32s *spec) : R_32s(spec), buffer(NULL) {}
-fft::fft(const IppsFFTSpec_R_32f *spec) : R_32f(spec), buffer(NULL) {}
-fft::fft(const IppsFFTSpec_R_64f *spec) : R_64f(spec), buffer(NULL) {}
+fft::fft(const IppsFFTSpec_R_32s *spec) : R_32s(spec) {}
+fft::fft(const IppsFFTSpec_R_32f *spec) : R_32f(spec) {}
+fft::fft(const IppsFFTSpec_R_64f *spec) : R_64f(spec) {}
 
 /* AllocSpec */
 
@@ -142,10 +141,13 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int or
     IppStatus status;
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);
+    Ipp8u *buffer = _get_buffer();
     
     tmpdst = fft::alloc(data.cdata(), siglen);
 
     status = ippsFFTFwd_RToPack_16s_Sfs(src.data, tmpdst, R_16s, scaling, buffer);
+    _release_buffer(buffer);
+    buffer = NULL;
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in FFTFwd: " << ippGetStatusString(status) << "\n";
@@ -205,6 +207,7 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp32f> & data, int or
     IppStatus status;
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);
+    Ipp8u *buffer = _get_buffer();
     
     tmpdst = fft::alloc(tmpdst, siglen);
 
@@ -215,6 +218,8 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp32f> & data, int or
         debug(ss.str());
         exit(4);
     }
+    _release_buffer(buffer);
+    buffer = NULL;
     Ipp16sc *vc;
     vc = fft::alloc(vc, siglen);
     if( vc == NULL ) {
@@ -271,6 +276,7 @@ Ipp32f *fft::transform(const SrcType<Ipp32f> &src, FFTBuf<Ipp32f> & data, int or
     IppStatus status;
     Ipp32f *tmpdst;
     int siglen = fft::order_to_length(order);
+    Ipp8u *buffer = _get_buffer();
 
     tmpdst = fft::alloc(data.cdata(), siglen);
 
@@ -281,6 +287,8 @@ Ipp32f *fft::transform(const SrcType<Ipp32f> &src, FFTBuf<Ipp32f> & data, int or
         debug(ss.str());
         exit(4);
     }
+    _release_buffer(buffer);
+    buffer = NULL;
     Ipp32fc *vc;
     vc = fft::alloc(vc, siglen);
     if( vc == NULL ) {
@@ -333,6 +341,7 @@ Ipp32f *fft::transform(const SrcType<Ipp32f> &src, FFTBuf<Ipp32f> & data, int or
 Ipp64f *fft::transform(const SrcType<Ipp64f> &src, FFTBuf<Ipp64f> & data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp64f *tmpdst;
+    Ipp8u *buffer = _get_buffer();
     int siglen = fft::order_to_length(order);
 
     tmpdst = fft::alloc(data.cdata(), siglen);
@@ -344,6 +353,8 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, FFTBuf<Ipp64f> & data, int or
         debug(ss.str());
         exit(4);
     }
+    _release_buffer(buffer);
+    buffer = NULL;
     Ipp64fc *vc;
     vc = fft::alloc(vc, siglen);
     if( vc == NULL ) {
@@ -394,6 +405,17 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, FFTBuf<Ipp64f> & data, int or
 }
 
 /* Alloc */
+
+Ipp8u *fft::alloc(Ipp8u *d, int length) {
+    d = ippsMalloc_8u(length);
+    if( d == NULL ) {
+        std::stringstream ss;
+        ss << "Not enough memory" << std::endl;
+        debug(ss.str());
+        exit(3);
+    }
+    return d;
+}
 
 Ipp16s *fft::alloc(Ipp16s *d, int length) {
     d = ippsMalloc_16s(length);
@@ -521,4 +543,25 @@ void fft::zero_mem(Ipp64fc *d, int length) {
 
 int fft::order_to_length(int order) {
     return boost::numeric_cast<int>( pow(2, order) );
+}
+
+Ipp8u *fft::_get_buffer() {
+    boost::mutex::scoped_lock lock(_bufmut);
+    Ipp8u *buf;
+    if(_buffers.empty()) {
+        buf = fft::alloc(buf, _bufsize);
+
+        std::stringstream ss;
+        ss << "Created new buffer" << std::endl;
+        debug(ss.str());
+    } else {
+        buf = _buffers.top();
+        _buffers.pop();
+    }
+    return buf;
+}
+
+void fft::_release_buffer(Ipp8u *buf) {
+    boost::mutex::scoped_lock lock(_bufmut);
+    _buffers.push(buf);
 }
