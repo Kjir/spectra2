@@ -11,9 +11,9 @@ op = OptionParser()
 op.add_option("-f", dest="filename", default="file.sig")
 op.add_option("-l", dest="length", type="int", default=256)
 opts, args = op.parse_args(sys.argv[1:])
-fmt = "%dh" % opts.length
+fmt = "%df" % opts.length
 fin = open(opts.filename, "rb")
-buffer = fin.read(2 * opts.length)
+buffer = fin.read(4 * opts.length)
 data = struct.unpack(fmt, buffer)
-pylab.plot(numpy.array(data, dtype="short"))
+pylab.plot(numpy.array(data, dtype="float"))
 pylab.show()
