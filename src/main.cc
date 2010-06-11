@@ -30,6 +30,8 @@ int main(int argc, char **argv)
     typedef typer<IPP_DATA_LENGTH, IS_COMPLEX_TYPE>::type IppType;
     typedef typer<IPP_OUTPUT_DATA_LENGTH, IS_COMPLEX_TYPE>::type DstIppType;
 
+    typedef boost::shared_ptr<FFTBuf<DstIppType>> FFTBufPtr;
+
     namespace po = boost::program_options;
     po::variables_map var_map;
 
@@ -133,7 +135,7 @@ int main(int argc, char **argv)
 
         int i = 0;
         int siglen = fft::order_to_length(order);
-        List<FFTBuf<DstIppType> *> dst;
+        List<FFTBufPtr> dst;
         boost::circular_buffer<SrcType<IppType> > cbuf(num_threads * 3);
 
         IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order, fast);
@@ -182,7 +184,7 @@ int main(int argc, char **argv)
                 debug(ss.str());
             }
             if( dst.empty() || dst.back()->is_src_full() ) {
-                FFTBuf<DstIppType> *b = new FFTBuf<DstIppType>(siglen, sums);
+                FFTBufPtr b = new FFTBuf<DstIppType>(siglen, sums);
                 *b = fft::alloc(b->cdata(), siglen);
                 fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);

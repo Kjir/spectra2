@@ -23,7 +23,7 @@ void output(List<FFTBuf<Ipp32f> *> &l, std::ostream *s)
             ss << "Already written, delete" << std::endl;
             debug(ss.str());
             l.pop_front();
-            delete f;
+            //delete f;
             continue;
         }
 
@@ -41,7 +41,7 @@ void output(List<FFTBuf<Ipp32f> *> &l, std::ostream *s)
         ss << "Done writing, deleting" << std::endl;
         debug(ss.str());
         l.pop_front();
-        delete f;
+        //delete f;
     }
     std::stringstream ss;
     ss << "Quit" << std::endl;
