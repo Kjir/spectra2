@@ -1,6 +1,7 @@
 #ifndef __SPECTRA2_FFT_HPP_
 #define __SPECTRA2_FFT_HPP_
 #include <boost/thread/mutex.hpp>
+#include <boost/shared_ptr.hpp>
 #include <ipp.h>
 #include <stack>
 #include "fft_buf.hpp"
@@ -20,12 +21,12 @@ class fft {
         static IppsFFTSpec_R_64f *allocSpec(IppsFFTSpec_R_64f **spec, int order, bool fast = false);
 
         /* Transforms */
-        Ipp16s *transform(const SrcType<Ipp16s> & src, FFTBuf<Ipp16s> & dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp16s *transform(const SrcType<Ipp16s> & src, boost::shared_ptr<FFTBuf<Ipp16s> > dst, int order, int scaling = 1, int pscaling = 12);
         //FIXME: Missing functions?
         //Ipp32s *transform(const SrcType<Ipp32s> & src, FFTBuf<Ipp32s> & dst, int order, int scaling = 1, int pscaling = 12);
-        Ipp32f *transform(const SrcType<Ipp16s> & src, FFTBuf<Ipp32f> & dst, int order, int scaling = 1, int pscaling = 12);
-        Ipp32f *transform(const SrcType<Ipp32f> & src, FFTBuf<Ipp32f> & dst, int order, int scaling = 1, int pscaling = 12);
-        Ipp64f *transform(const SrcType<Ipp64f> & src, FFTBuf<Ipp64f> & dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp32f *transform(const SrcType<Ipp16s> & src, boost::shared_ptr< FFTBuf<Ipp32f> > dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp32f *transform(const SrcType<Ipp32f> & src, boost::shared_ptr<FFTBuf<Ipp32f> > dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp64f *transform(const SrcType<Ipp64f> & src, boost::shared_ptr<FFTBuf<Ipp64f> > dst, int order, int scaling = 1, int pscaling = 12);
 
         /* Alloc */
         static Ipp8u *alloc(Ipp8u *d, int length);

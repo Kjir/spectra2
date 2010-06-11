@@ -137,13 +137,13 @@ IppsFFTSpec_R_64f *fft::allocSpec(IppsFFTSpec_R_64f **spec, int order, bool fast
 
 /* Transform */
 
-Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int order, int scaling, int pscaling) {
+Ipp16s *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr<FFTBuf<Ipp16s> > data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);
     Ipp8u *buffer = _get_buffer();
     
-    tmpdst = fft::alloc(data.cdata(), siglen);
+    tmpdst = fft::alloc(data->cdata(), siglen);
 
     status = ippsFFTFwd_RToPack_16s_Sfs(src.data, tmpdst, R_16s, scaling, buffer);
     _release_buffer(buffer);
@@ -182,8 +182,8 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int or
     vc = NULL;
 
     {
-        boost::mutex::scoped_lock lock(data.get_mutex());
-        status = ippsAdd_16s_I(tmpdst, data.cdata(), siglen);
+        boost::mutex::scoped_lock lock(data->get_mutex());
+        status = ippsAdd_16s_I(tmpdst, data->cdata(), siglen);
     }
     if( status != ippStsNoErr ) {
         std::stringstream ss;
@@ -199,11 +199,11 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp16s> & data, int or
         boost::mutex::scoped_lock lock(*src.mutex);
         src.erasable = true;
     }
-    data.inc_processed();
-    return data.cdata();
+    data->inc_processed();
+    return data->cdata();
 }
 
-Ipp32f *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp32f> & data, int order, int scaling, int pscaling) {
+Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp32f> > data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);
@@ -249,8 +249,8 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp32f> & data, int or
     vc = NULL;
 
     {
-        boost::mutex::scoped_lock lock(data.get_mutex());
-        status = ippsAdd_32f_I(dst32, data.cdata(), siglen);
+        boost::mutex::scoped_lock lock(data->get_mutex());
+        status = ippsAdd_32f_I(dst32, data->cdata(), siglen);
     }
     if( status != ippStsNoErr ) {
         std::stringstream ss;
@@ -268,17 +268,17 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, FFTBuf<Ipp32f> & data, int or
         boost::mutex::scoped_lock lock(*src.mutex);
         src.erasable = true;
     }
-    data.inc_processed();
-    return data.cdata();
+    data->inc_processed();
+    return data->cdata();
 }
 
-Ipp32f *fft::transform(const SrcType<Ipp32f> &src, FFTBuf<Ipp32f> & data, int order, int scaling, int pscaling) {
+Ipp32f *fft::transform(const SrcType<Ipp32f> &src, boost::shared_ptr<FFTBuf<Ipp32f> > data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp32f *tmpdst;
     int siglen = fft::order_to_length(order);
     Ipp8u *buffer = _get_buffer();
 
-    tmpdst = fft::alloc(data.cdata(), siglen);
+    tmpdst = fft::alloc(data->cdata(), siglen);
 
     status = ippsFFTFwd_RToPack_32f(src.data, tmpdst, R_32f, buffer);
     if( status != ippStsNoErr ) {
@@ -317,8 +317,8 @@ Ipp32f *fft::transform(const SrcType<Ipp32f> &src, FFTBuf<Ipp32f> & data, int or
     vc = NULL;
 
     {
-        boost::mutex::scoped_lock lock(data.get_mutex());
-        status = ippsAdd_32f_I(tmpdst, data.cdata(), siglen);
+        boost::mutex::scoped_lock lock(data->get_mutex());
+        status = ippsAdd_32f_I(tmpdst, data->cdata(), siglen);
     }
     if( status != ippStsNoErr ) {
         std::stringstream ss;
@@ -334,17 +334,17 @@ Ipp32f *fft::transform(const SrcType<Ipp32f> &src, FFTBuf<Ipp32f> & data, int or
         boost::mutex::scoped_lock lock(*src.mutex);
         src.erasable = true;
     }
-    data.inc_processed();
-    return data.cdata();
+    data->inc_processed();
+    return data->cdata();
 }
 
-Ipp64f *fft::transform(const SrcType<Ipp64f> &src, FFTBuf<Ipp64f> & data, int order, int scaling, int pscaling) {
+Ipp64f *fft::transform(const SrcType<Ipp64f> &src, boost::shared_ptr<FFTBuf<Ipp64f> > data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp64f *tmpdst;
     Ipp8u *buffer = _get_buffer();
     int siglen = fft::order_to_length(order);
 
-    tmpdst = fft::alloc(data.cdata(), siglen);
+    tmpdst = fft::alloc(data->cdata(), siglen);
 
     status = ippsFFTFwd_RToPack_64f(src.data, tmpdst, R_64f, buffer);
     if( status != ippStsNoErr ) {
@@ -383,8 +383,8 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, FFTBuf<Ipp64f> & data, int or
     vc = NULL;
 
     {
-        boost::mutex::scoped_lock lock(data.get_mutex());
-        status = ippsAdd_64f_I(tmpdst, data.cdata(), siglen);
+        boost::mutex::scoped_lock lock(data->get_mutex());
+        status = ippsAdd_64f_I(tmpdst, data->cdata(), siglen);
     }
     if( status != ippStsNoErr ) {
         std::stringstream ss;
@@ -400,8 +400,8 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, FFTBuf<Ipp64f> & data, int or
         boost::mutex::scoped_lock lock(*src.mutex);
         src.erasable = true;
     }
-    data.inc_processed();
-    return data.cdata();
+    data->inc_processed();
+    return data->cdata();
 }
 
 /* Alloc */

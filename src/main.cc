@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     typedef typer<IPP_DATA_LENGTH, IS_COMPLEX_TYPE>::type IppType;
     typedef typer<IPP_OUTPUT_DATA_LENGTH, IS_COMPLEX_TYPE>::type DstIppType;
 
-    typedef boost::shared_ptr<FFTBuf<DstIppType>> FFTBufPtr;
+    typedef boost::shared_ptr< FFTBuf<DstIppType> > FFTBufPtr;
 
     namespace po = boost::program_options;
     po::variables_map var_map;
@@ -184,7 +184,7 @@ int main(int argc, char **argv)
                 debug(ss.str());
             }
             if( dst.empty() || dst.back()->is_src_full() ) {
-                FFTBufPtr b = new FFTBuf<DstIppType>(siglen, sums);
+                FFTBufPtr b( new FFTBuf<DstIppType>(siglen, sums) );
                 *b = fft::alloc(b->cdata(), siglen);
                 fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);
@@ -194,11 +194,12 @@ int main(int argc, char **argv)
                 ss << "Back is " << std::hex << dst.back() << std::dec << std::endl;
                 debug(ss.str());
             }
-            boost::mutex::scoped_lock lock(dst.back()->get_mutex());
-            dst.back()->inc_assigned_sources();
+            FFTBufPtr fbuf = dst.back();
+            boost::mutex::scoped_lock lock(fbuf->get_mutex());
+            fbuf->inc_assigned_sources();
             tp.schedule(
                     boost::bind(
-                        static_cast<DstIppType *(fft::*) (const SrcType<IppType> &, FFTBuf<DstIppType> &, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), boost::ref(*(dst.back())), order, scaling, pscaling
+                        static_cast<DstIppType *(fft::*) (const SrcType<IppType> &, FFTBufPtr, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), fbuf, order, scaling, pscaling
                         )
                     );
         }

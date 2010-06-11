@@ -1,7 +1,7 @@
 #include "output.hpp"
 #include <boost/thread/mutex.hpp>
 
-void output(List<FFTBuf<Ipp32f> *> &l, std::ostream *s)
+void output(List< boost::shared_ptr< FFTBuf<Ipp32f> > > &l, std::ostream *s)
 {
     while(true)
     {
@@ -16,7 +16,7 @@ void output(List<FFTBuf<Ipp32f> *> &l, std::ostream *s)
             ss << "After empty wait" << std::endl;
             debug(ss.str());
         }
-        FFTBuf<Ipp32f> *f = l.front();
+        FFTBuf<Ipp32f> *f = l.front().get();
 
         if(f->is_written()) {
             std::stringstream ss;
