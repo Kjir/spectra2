@@ -1,5 +1,6 @@
 \documentclass[a4paper,11pt,twoside,openright]{unibo}
 
+\usepackage[italian]{babel}
 \usepackage{newlfont}
 \usepackage{url}
 \usepackage[backref]{hyperref}
@@ -21,35 +22,38 @@ radioastronomici su macchine multicore}
 
 \tableofcontents
 
-\chapter*{Introduction}
+\chapter*{Introduzione}
 \label{intro}
-\addcontentsline{toc}{chapter}{Introduction}
-\chapter{Mathematical background}
+\addcontentsline{toc}{chapter}{Introduzione}
+\chapter{Basi di elaborazione del segnale}
 \pagenumbering{arabic}
 \label{math_bkg}
-In this chapter we will introduce some basic informations about Digital Signal
-Processing necessary to understand the purpose of a spectrometer and its field
-of application. A basic understanding of what a signal is, how we can extract
-and elaborate information from it, the mathematical background and its
-complexity is required for the comprehension of the inner workings of the
-spectrometer and of the problems we faced during its development.\\
-This is introductory material sufficient to have an overview of
-the theory involved, for further details please refer to the
-bibliography.
-\section{Signals}
+In quest capitolo introdurremo alcuni concetti basilari sull'elaborazione dei
+segnali numerici necessari alla comprensione del funzionamento di uno
+spettrometro e del suo campo di applicazione. Sapere cosa sia un segnale, come
+si estraggono ed elaborano le informazioni in esso contenuto, quali siano i
+concetti matematici utilizzati è fondamentale per capire il lavoro svolto.\\
+Questo materiale introduttivo è sufficiente per avere una panoramica sui
+concetti teorici utilizzati, per approfondimenti fare riferimento alla
+bibliografia.
+\section{Segnali}
+Il nostro corpo è in grado di percepire molte delle variazioni che avvengono nel mondo che ci circonda: 
 \section{ADC: Analog--to--Digital Conversion}
-\section{The Fourier Transform}
-\section{The Discrete Fourier Transform}
+\section{La Trasformata di Fourier}
+\section{La Trasformata Discreta di Fourier}
 \section{FFT: Fast Fourier Transform}
 Taken from \cite{bertoni}
-\chapter{Project outline}
+\chapter{Progettazione e architettura}
 \label{outline}
-\chapter{Software development}
+\section{Obiettivi}
+\section{Gerarchia di classi}
+\chapter{Sviluppo del progetto}
 \label{sw_devel}
+\section{Librerie}
 See \ref{tests}.
-\chapter{Test results and observations}
+\chapter{Risultati e considerazioni}
 \label{tests}
-\chapter{Conclusions}
+\chapter{Conclusioni e sviluppi futuri}
 \label{conclusions}
 \bibliographystyle{alpha}
 \bibliography{thesis}
