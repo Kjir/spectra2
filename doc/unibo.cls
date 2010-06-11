@@ -41,7 +41,7 @@ Corso di Laurea in Scienze dell'Informazione}}
 \noindent
 \begin{minipage}[t]{0.47\textwidth}
 {\large{\bf Relatore:\\
-Chiar.mo Prof.\\
+Chiar.ma Prof.ssa\\
 \MakeUppercase{\@supervisor}}}
 \end{minipage}
 \hfill
