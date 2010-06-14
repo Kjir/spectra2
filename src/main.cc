@@ -178,20 +178,14 @@ int main(int argc, char **argv)
             }
             cbuf.push_back(src);
 
-            if( !dst.empty() ) {
-                std::stringstream ss;
-                ss << "Back is " << std::hex << dst.back() << std::dec << std::endl;
-                debug(ss.str());
-            }
-            if( dst.empty() || dst.back()->is_src_full() ) {
+            if( dst.item_needed() ) {
                 FFTBufPtr b( new FFTBuf<DstIppType>(siglen, sums) );
                 *b = fft::alloc(b->cdata(), siglen);
                 fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);
-            }
-            if( !dst.empty() ) {
+
                 std::stringstream ss;
-                ss << "Back is " << std::hex << dst.back() << std::dec << std::endl;
+                ss << "Just created " << std::hex << dst.back() << std::dec << std::endl;
                 debug(ss.str());
             }
             FFTBufPtr fbuf = dst.back();

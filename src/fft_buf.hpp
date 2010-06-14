@@ -69,6 +69,7 @@ template<class T> FFTBuf<T>::~FFTBuf()
     std::stringstream ss;
     ss << "Deconstructing FFT Buffer: " << std::hex << this << std::dec << std::endl;
     debug(ss.str());
+    notify_all();
 }
 
 template<class T> void FFTBuf<T>::set_data(const T *buf)
@@ -87,11 +88,12 @@ template<class T> void FFTBuf<T>::wait_until_processed()
     boost::unique_lock<boost::mutex> l(_mut);
     if(!_is_fully_processed()) {
         std::stringstream ss;
-        ss << "Waiting while processing" << std::endl;
+        ss << "Waiting while processing: " << std::hex << &_mut << std::dec << std::endl;
         debug(ss.str());
         _write_ready.wait(l);
         ss.clear(); ss.str("");
-        ss << "Processed!" << std::endl;
+        ss << "Processed " << std::hex << this << std::dec;
+        ss << "! Mutex " << std::hex << &_mut << std::dec << " is free" << std::endl;
         debug(ss.str());
     }
 }

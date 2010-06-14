@@ -208,7 +208,7 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
     Ipp16s *tmpdst;
     int siglen = fft::order_to_length(order);
     Ipp8u *buffer = _get_buffer();
-    
+
     tmpdst = fft::alloc(tmpdst, siglen);
 
     status = ippsFFTFwd_RToPack_16s_Sfs(src.data, tmpdst, R_16s, scaling, buffer);
@@ -222,12 +222,6 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
     buffer = NULL;
     Ipp16sc *vc;
     vc = fft::alloc(vc, siglen);
-    if( vc == NULL ) {
-        std::stringstream ss;
-        ss << "Not enough memory\n";
-        debug(ss.str());
-        exit(3);
-    }
     //Set the vector to zero
     fft::zero_mem(vc, siglen);
     status = ippsConjPack_16sc(tmpdst, vc, siglen);
@@ -268,8 +262,9 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
         boost::mutex::scoped_lock lock(*src.mutex);
         src.erasable = true;
     }
+    dst32 = data->cdata();
     data->inc_processed();
-    return data->cdata();
+    return dst32;
 }
 
 Ipp32f *fft::transform(const SrcType<Ipp32f> &src, boost::shared_ptr<FFTBuf<Ipp32f> > data, int order, int scaling, int pscaling) {
