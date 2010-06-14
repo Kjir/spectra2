@@ -85,6 +85,9 @@ template<class T> size_t udp_sock<T>::read_dgram(T *dgram)
             //<< be64toh(*long_ptr) << std::endl;
             << (*long_ptr) << std::endl;
         debug(ss.str());
+        ss.clear(); ss.str("");
+        ss << "Lost " << ((*long_ptr) - _counter) << " packets" << std::endl;
+        notice(ss);
         _counter = std::numeric_limits<uint64_t>::max();
         throw SequenceException();
     }
@@ -155,9 +158,6 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
         catch(SequenceException se)
         {
             tmp.clear();
-            std::stringstream ss;
-            ss << "Losing packets" << std::endl;
-            warning(ss);
         }
     }
 
