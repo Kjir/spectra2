@@ -140,7 +140,7 @@ IppsFFTSpec_R_64f *fft::allocSpec(IppsFFTSpec_R_64f **spec, int order, bool fast
 Ipp16s *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr<FFTBuf<Ipp16s> > data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
-    int siglen = fft::order_to_length(order);
+    long int siglen = fft::order_to_length(order);
     Ipp8u *buffer = _get_buffer();
     
     tmpdst = fft::alloc(data->cdata(), siglen);
@@ -206,7 +206,7 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr<FFTBuf<Ipp1
 Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp32f> > data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
-    int siglen = fft::order_to_length(order);
+    long int siglen = fft::order_to_length(order);
     Ipp8u *buffer = _get_buffer();
 
     tmpdst = fft::alloc(tmpdst, siglen);
@@ -270,7 +270,7 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
 Ipp32f *fft::transform(const SrcType<Ipp32f> &src, boost::shared_ptr<FFTBuf<Ipp32f> > data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp32f *tmpdst;
-    int siglen = fft::order_to_length(order);
+    long int siglen = fft::order_to_length(order);
     Ipp8u *buffer = _get_buffer();
 
     tmpdst = fft::alloc(data->cdata(), siglen);
@@ -337,7 +337,7 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, boost::shared_ptr<FFTBuf<Ipp6
     IppStatus status;
     Ipp64f *tmpdst;
     Ipp8u *buffer = _get_buffer();
-    int siglen = fft::order_to_length(order);
+    long int siglen = fft::order_to_length(order);
 
     tmpdst = fft::alloc(data->cdata(), siglen);
 
@@ -401,7 +401,7 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, boost::shared_ptr<FFTBuf<Ipp6
 
 /* Alloc */
 
-Ipp8u *fft::alloc(Ipp8u *d, int length) {
+Ipp8u *fft::alloc(Ipp8u *d, long int length) {
     d = ippsMalloc_8u(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -412,7 +412,7 @@ Ipp8u *fft::alloc(Ipp8u *d, int length) {
     return d;
 }
 
-Ipp16s *fft::alloc(Ipp16s *d, int length) {
+Ipp16s *fft::alloc(Ipp16s *d, long int length) {
     d = ippsMalloc_16s(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -423,7 +423,7 @@ Ipp16s *fft::alloc(Ipp16s *d, int length) {
     return d;
 }
 
-Ipp32s *fft::alloc(Ipp32s *d, int length) {
+Ipp32s *fft::alloc(Ipp32s *d, long int length) {
     d = ippsMalloc_32s(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -434,7 +434,7 @@ Ipp32s *fft::alloc(Ipp32s *d, int length) {
     return d;
 }
 
-Ipp32f *fft::alloc(Ipp32f *d, int length) {
+Ipp32f *fft::alloc(Ipp32f *d, long int length) {
     d = ippsMalloc_32f(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -445,7 +445,7 @@ Ipp32f *fft::alloc(Ipp32f *d, int length) {
     return d;
 }
 
-Ipp64f *fft::alloc(Ipp64f *d, int length) {
+Ipp64f *fft::alloc(Ipp64f *d, long int length) {
     d = ippsMalloc_64f(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -456,7 +456,7 @@ Ipp64f *fft::alloc(Ipp64f *d, int length) {
     return d;
 }
 
-Ipp16sc *fft::alloc(Ipp16sc *d, int length) {
+Ipp16sc *fft::alloc(Ipp16sc *d, long int length) {
     d = ippsMalloc_16sc(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -467,7 +467,7 @@ Ipp16sc *fft::alloc(Ipp16sc *d, int length) {
     return d;
 }
 
-Ipp32sc *fft::alloc(Ipp32sc *d, int length) {
+Ipp32sc *fft::alloc(Ipp32sc *d, long int length) {
     d = ippsMalloc_32sc(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -478,7 +478,7 @@ Ipp32sc *fft::alloc(Ipp32sc *d, int length) {
     return d;
 }
 
-Ipp32fc *fft::alloc(Ipp32fc *d, int length) {
+Ipp32fc *fft::alloc(Ipp32fc *d, long int length) {
     d = ippsMalloc_32fc(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -489,7 +489,7 @@ Ipp32fc *fft::alloc(Ipp32fc *d, int length) {
     return d;
 }
 
-Ipp64fc *fft::alloc(Ipp64fc *d, int length) {
+Ipp64fc *fft::alloc(Ipp64fc *d, long int length) {
     d = ippsMalloc_64fc(length);
     if( d == NULL ) {
         std::stringstream ss;
@@ -502,42 +502,42 @@ Ipp64fc *fft::alloc(Ipp64fc *d, int length) {
 
 /* Zero mem */
 
-void fft::zero_mem(Ipp16s *d, int length) {
+void fft::zero_mem(Ipp16s *d, long int length) {
     ippsZero_16s(d, length);
 }
 
-void fft::zero_mem(Ipp32s *d, int length) {
+void fft::zero_mem(Ipp32s *d, long int length) {
     ippsZero_32s(d, length);
 }
 
-void fft::zero_mem(Ipp32f *d, int length) {
+void fft::zero_mem(Ipp32f *d, long int length) {
     ippsZero_32f(d, length);
 }
 
-void fft::zero_mem(Ipp64f *d, int length) {
+void fft::zero_mem(Ipp64f *d, long int length) {
     ippsZero_64f(d, length);
 }
 
-void fft::zero_mem(Ipp16sc *d, int length) {
+void fft::zero_mem(Ipp16sc *d, long int length) {
     ippsZero_16sc(d, length);
 }
 
-void fft::zero_mem(Ipp32sc *d, int length) {
+void fft::zero_mem(Ipp32sc *d, long int length) {
     ippsZero_32sc(d, length);
 }
 
-void fft::zero_mem(Ipp32fc *d, int length) {
+void fft::zero_mem(Ipp32fc *d, long int length) {
     ippsZero_32fc(d, length);
 }
 
-void fft::zero_mem(Ipp64fc *d, int length) {
+void fft::zero_mem(Ipp64fc *d, long int length) {
     ippsZero_64fc(d, length);
 }
 
 /* Other funcs */
 
-int fft::order_to_length(int order) {
-    return boost::numeric_cast<int>( pow(2, order) );
+long int fft::order_to_length(int order) {
+    return boost::numeric_cast<long int>( pow(2, order) );
 }
 
 Ipp8u *fft::_get_buffer() {

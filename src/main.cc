@@ -134,7 +134,7 @@ int main(int argc, char **argv)
         }
 
         int i = 0;
-        int siglen = fft::order_to_length(order);
+        long int siglen = fft::order_to_length(order);
         List<FFTBufPtr> dst;
         boost::circular_buffer<SrcType<IppType> > cbuf(num_threads * 3);
 

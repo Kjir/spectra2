@@ -12,8 +12,8 @@ template<class T> class FFTBuf
 {
     public:
         FFTBuf();
-        FFTBuf(int siglen);
-        FFTBuf(int siglen, int sums);
+        FFTBuf(long int siglen);
+        FFTBuf(long int siglen, int sums);
         ~FFTBuf();
         T *cdata() { return _dst; }
         void set_data(const T *buf);
@@ -34,7 +34,7 @@ template<class T> class FFTBuf
         bool _is_fully_processed() { return _processed_sums == _expected_sums; }
     private:
         T *_dst;
-        int _siglen;
+        long int _siglen;
         int _processed_sums;
         int _expected_sums;
         int _assigned_sources;
@@ -50,14 +50,14 @@ template<class T> FFTBuf<T>::FFTBuf() : _dst(NULL), _siglen(0), _expected_sums(1
     debug(ss.str());
 }
 
-template<class T> FFTBuf<T>::FFTBuf(int siglen) : _dst(NULL), _siglen(siglen), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
+template<class T> FFTBuf<T>::FFTBuf(long int siglen) : _dst(NULL), _siglen(siglen), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
 {
     std::stringstream ss;
     ss << "This is " << std::hex << this << std::dec << std::endl;
     debug(ss.str());
 }
 
-template<class T> FFTBuf<T>::FFTBuf(int siglen, int sums) : _dst(NULL), _siglen(siglen), _expected_sums(sums), _processed_sums(0), _assigned_sources(0), _written(false)
+template<class T> FFTBuf<T>::FFTBuf(long int siglen, int sums) : _dst(NULL), _siglen(siglen), _expected_sums(sums), _processed_sums(0), _assigned_sources(0), _written(false)
 {
     std::stringstream ss;
     ss << "This is " << std::hex << this << std::dec << std::endl;
