@@ -155,6 +155,9 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
         catch(SequenceException se)
         {
             tmp.clear();
+            std::stringstream ss;
+            ss << "Losing packets" << std::endl;
+            warning(ss);
         }
     }
 

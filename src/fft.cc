@@ -16,7 +16,7 @@ fft::fft(const IppsFFTSpec_R_16s *spec) : R_16s(spec) {
     if( status != ippStsNoErr ) {
     std::stringstream ss;
         ss << "IPP Error in FFTGetBufSize: " << ippGetStatusString(status) << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(2);
     }
     /*
@@ -56,7 +56,7 @@ IppsFFTSpec_R_16s *fft::allocSpec(IppsFFTSpec_R_16s **spec, int order, bool fast
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in InitAlloc: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(1);
     }
 
@@ -80,7 +80,7 @@ IppsFFTSpec_R_32s *fft::allocSpec(IppsFFTSpec_R_32s **spec, int order, bool fast
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in InitAlloc: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(1);
     }
 
@@ -104,7 +104,7 @@ IppsFFTSpec_R_32f *fft::allocSpec(IppsFFTSpec_R_32f **spec, int order, bool fast
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in InitAlloc: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(1);
     }
 
@@ -128,7 +128,7 @@ IppsFFTSpec_R_64f *fft::allocSpec(IppsFFTSpec_R_64f **spec, int order, bool fast
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in InitAlloc: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(1);
     }
 
@@ -151,31 +151,25 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr<FFTBuf<Ipp1
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in FFTFwd: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(4);
     }
     Ipp16sc *vc;
     vc = fft::alloc(vc, siglen);
-    if( vc == NULL ) {
-        std::stringstream ss;
-        ss << "Not enough memory\n";
-        debug(ss.str());
-        exit(3);
-    }
     //Set the vector to zero
     fft::zero_mem(vc, siglen);
     status = ippsConjPack_16sc(tmpdst, vc, siglen);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in ConjPack: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(5);
     }
     status = ippsPowerSpectr_16sc_Sfs(vc, tmpdst, siglen, pscaling);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in PowerSpectr: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(6);
     }
     fft::free(vc);
@@ -188,7 +182,7 @@ Ipp16s *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr<FFTBuf<Ipp1
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(7);
     }
 
@@ -215,7 +209,7 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in FFTFwd: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(4);
     }
     _release_buffer(buffer);
@@ -228,7 +222,7 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in ConjPack: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(5);
     }
     Ipp32f *dst32 = fft::alloc(dst32, siglen);
@@ -236,7 +230,7 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in PowerSpectr: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(6);
     }
     fft::free(vc);
@@ -249,7 +243,7 @@ Ipp32f *fft::transform(const SrcType<Ipp16s> &src, boost::shared_ptr< FFTBuf<Ipp
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(7);
     }
 
@@ -279,33 +273,27 @@ Ipp32f *fft::transform(const SrcType<Ipp32f> &src, boost::shared_ptr<FFTBuf<Ipp3
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in FFTFwd: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(4);
     }
     _release_buffer(buffer);
     buffer = NULL;
     Ipp32fc *vc;
     vc = fft::alloc(vc, siglen);
-    if( vc == NULL ) {
-        std::stringstream ss;
-        ss << "Not enough memory\n";
-        debug(ss.str());
-        exit(3);
-    }
     //Set the vector to zero
     fft::zero_mem(vc, siglen);
     status = ippsConjPack_32fc(tmpdst, vc, siglen);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in ConjPack: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(5);
     }
     status = ippsPowerSpectr_32fc(vc, tmpdst, siglen);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in PowerSpectr: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(6);
     }
     fft::free(vc);
@@ -318,7 +306,7 @@ Ipp32f *fft::transform(const SrcType<Ipp32f> &src, boost::shared_ptr<FFTBuf<Ipp3
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(7);
     }
 
@@ -345,33 +333,27 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, boost::shared_ptr<FFTBuf<Ipp6
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in FFTFwd: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(4);
     }
     _release_buffer(buffer);
     buffer = NULL;
     Ipp64fc *vc;
     vc = fft::alloc(vc, siglen);
-    if( vc == NULL ) {
-        std::stringstream ss;
-        ss << "Not enough memory\n";
-        debug(ss.str());
-        exit(3);
-    }
     //Set the vector to zero
     fft::zero_mem(vc, siglen);
     status = ippsConjPack_64fc(tmpdst, vc, siglen);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in ConjPack: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(5);
     }
     status = ippsPowerSpectr_64fc(vc, tmpdst, siglen);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in PowerSpectr: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(6);
     }
     fft::free(vc);
@@ -384,7 +366,7 @@ Ipp64f *fft::transform(const SrcType<Ipp64f> &src, boost::shared_ptr<FFTBuf<Ipp6
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
-        debug(ss.str());
+        error(ss);
         exit(7);
     }
 
@@ -406,7 +388,7 @@ Ipp8u *fft::alloc(Ipp8u *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -417,7 +399,7 @@ Ipp16s *fft::alloc(Ipp16s *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -428,7 +410,7 @@ Ipp32s *fft::alloc(Ipp32s *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -439,7 +421,7 @@ Ipp32f *fft::alloc(Ipp32f *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -450,7 +432,7 @@ Ipp64f *fft::alloc(Ipp64f *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -461,7 +443,7 @@ Ipp16sc *fft::alloc(Ipp16sc *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -472,7 +454,7 @@ Ipp32sc *fft::alloc(Ipp32sc *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -483,7 +465,7 @@ Ipp32fc *fft::alloc(Ipp32fc *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -494,7 +476,7 @@ Ipp64fc *fft::alloc(Ipp64fc *d, long int length) {
     if( d == NULL ) {
         std::stringstream ss;
         ss << "Not enough memory" << std::endl;
-        debug(ss.str());
+        error(ss);
         exit(3);
     }
     return d;
@@ -548,7 +530,7 @@ Ipp8u *fft::_get_buffer() {
 
         std::stringstream ss;
         ss << "Created new buffer" << std::endl;
-        debug(ss.str());
+        debug(ss);
     } else {
         buf = _buffers.top();
         _buffers.pop();

@@ -120,7 +120,7 @@ int main(int argc, char **argv)
         num_threads = low_threads;
         std::stringstream ss;
         ss << "Number of threads set to " << num_threads << std::endl;
-        debug(ss.str());
+        notice(ss);
     }
 
     ippStaticInit();
@@ -208,7 +208,7 @@ int main(int argc, char **argv)
     {
         std::stringstream ss;
         ss << "Ex: " << e.what() << std::endl;
-        debug(ss.str());
+        error(ss);
     }
 
     return 0;
