@@ -4,14 +4,13 @@
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
-#include <iostream>
 #include <sstream>
 #include "debug.hpp"
+#include "ipp.hpp"
 
 template<class T> class FFTBuf
 {
     public:
-        FFTBuf();
         FFTBuf(long int siglen);
         FFTBuf(long int siglen, int sums);
         ~FFTBuf();
@@ -41,6 +40,7 @@ template<class T> class FFTBuf
         bool _written;
         boost::mutex _mut;
         boost::condition_variable _write_ready;
+        FFTBuf();
 };
 
 template<class T> FFTBuf<T>::FFTBuf() : _dst(NULL), _siglen(0), _expected_sums(1), _processed_sums(0), _assigned_sources(0), _written(false)
@@ -55,6 +55,8 @@ template<class T> FFTBuf<T>::FFTBuf(long int siglen) : _dst(NULL), _siglen(sigle
     std::stringstream ss;
     ss << "This is " << std::hex << this << std::dec << std::endl;
     debug(ss.str());
+    _dst = IPP::alloc(_dst, siglen);
+    IPP::zero_mem(_dst, siglen);
 }
 
 template<class T> FFTBuf<T>::FFTBuf(long int siglen, int sums) : _dst(NULL), _siglen(siglen), _expected_sums(sums), _processed_sums(0), _assigned_sources(0), _written(false)
@@ -62,6 +64,8 @@ template<class T> FFTBuf<T>::FFTBuf(long int siglen, int sums) : _dst(NULL), _si
     std::stringstream ss;
     ss << "This is " << std::hex << this << std::dec << std::endl;
     debug(ss.str());
+    _dst = IPP::alloc(_dst, siglen);
+    IPP::zero_mem(_dst, siglen);
 }
 
 template<class T> FFTBuf<T>::~FFTBuf()
@@ -70,6 +74,8 @@ template<class T> FFTBuf<T>::~FFTBuf()
     ss << "Deconstructing FFT Buffer: " << std::hex << this << std::dec << std::endl;
     debug(ss.str());
     notify_all();
+    IPP::free(_dst);
+    _dst = NULL;
 }
 
 template<class T> void FFTBuf<T>::set_data(const T *buf)

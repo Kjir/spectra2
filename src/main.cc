@@ -134,11 +134,11 @@ int main(int argc, char **argv)
         }
 
         int i = 0;
-        long int siglen = fft::order_to_length(order);
+        long int siglen = IPP::order_to_length(order);
         List<FFTBufPtr> dst;
         boost::circular_buffer<SrcType<IppType> > cbuf(num_threads * 3);
 
-        IppsFFTSpec_R_16s *spec = fft::allocSpec(&spec, order, fast);
+        IppsFFTSpec_R_16s *spec = IPP::allocSpec(&spec, order, fast);
 
         fft f(spec); //The FFT object
 
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
         while(true)
         {
             SrcType<IppType> src;
-            src.data = fft::alloc(src.data, siglen);
+            src.data = IPP::alloc(src.data, siglen);
             src_filter->read(src.data, siglen); //try-catch for missed datagram
             if(!cbuf.empty())
             {
@@ -180,8 +180,6 @@ int main(int argc, char **argv)
 
             if( dst.item_needed() ) {
                 FFTBufPtr b( new FFTBuf<DstIppType>(siglen, sums) );
-                *b = fft::alloc(b->cdata(), siglen);
-                fft::zero_mem(b->cdata(), siglen);
                 dst.push_back(b);
 
                 std::stringstream ss;

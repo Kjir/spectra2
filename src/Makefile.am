@@ -1,11 +1,11 @@
 bin_PROGRAMS = fftserver fftnoout
 
-fftserver_SOURCES = fft.cc main.cc output.cc debug.cc
+fftserver_SOURCES = fft.cc main.cc output.cc debug.cc ipp.cc
 fftserver_CPPFLAGS=$(IPP_INCLUDES) $(BOOST_CPPFLAGS)
 fftserver_LDFLAGS=$(IPP_LDFLAGS) $(BOOST_LDFLAGS)
 fftserver_LDADD = $(IPP_LIBS) $(BOOST_PROGRAM_OPTIONS_LIB) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB) $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB) -lm
 
-fftnoout_SOURCES = fft.cc main.cc noout.cc debug.cc
+fftnoout_SOURCES = fft.cc main.cc noout.cc debug.cc ipp.cc
 fftnoout_CPPFLAGS=$(IPP_INCLUDES) $(BOOST_CPPFLAGS)
 fftnoout_LDFLAGS=$(IPP_LDFLAGS) $(BOOST_LDFLAGS)
 fftnoout_LDADD = $(IPP_LIBS) $(BOOST_PROGRAM_OPTIONS_LIB) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB) $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB) -lm
