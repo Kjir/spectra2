@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=latex 2010.5.11)  11 JUN 2010 14:10
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=latex 2010.5.11)  16 JUN 2010 14:46
 entering extended mode
  %&-line parsing enabled.
 **thesis
@@ -133,32 +133,40 @@ Package: amsthm 2004/08/06 v2.20
 \thm@headsep=\skip45
 \dth@everypar=\toks25
 )
+(/usr/share/texmf-texlive/tex/latex/acronym/acronym.sty
+Package: acronym 2006/06/26 v1.26 Support for acronyms (Tobias Oetiker)
+
+(/usr/share/texmf-texlive/tex/latex/bigfoot/suffix.sty
+Package: suffix 2006/07/15 1.5 Variant command support
+)
+\clearlist=\toks26
+)
 \c@definitions=\count96
  (./thesis.aux)
 \openout1 = `thesis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for LGR/cmr/m/n on input line 12.
-LaTeX Font Info:    Try loading font information for LGR+cmr on input line 12.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for LGR/cmr/m/n on input line 15.
+LaTeX Font Info:    Try loading font information for LGR+cmr on input line 15.
 
 (/usr/share/texmf-texlive/tex/generic/babel/lgrcmr.fd
 File: lgrcmr.fd 2001/01/30 v2.2e Greek Computer Modern
 )
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-Package hyperref Info: Link coloring OFF on input line 12.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+Package hyperref Info: Link coloring OFF on input line 15.
 
 (/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
 Package: nameref 2006/12/27 v2.28 Cross-referencing by name of section
@@ -168,18 +176,18 @@ Package: refcount 2006/02/20 v3.0 Data extraction from references (HO)
 )
 \c@section@level=\count97
 )
-LaTeX Info: Redefining \ref on input line 12.
-LaTeX Info: Redefining \pageref on input line 12.
+LaTeX Info: Redefining \ref on input line 15.
+LaTeX Info: Redefining \pageref on input line 15.
  (./thesis.out)
 (./thesis.out)
 \@outlinefile=\write3
 \openout3 = `thesis.out'.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <14.4> on input line 25.
+(Font)              <14.4> on input line 28.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 25.
-LaTeX Font Info:    Try loading font information for U+lasy on input line 25.
+(Font)              <7> on input line 28.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 28.
  (/usr/share/texmf-texlive/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 ) [1
@@ -204,14 +212,24 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 ]
 Capitolo 1.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 60.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 63.
 (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 60.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 63.
  [1] [2]
 Capitolo 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <9> on input line 144.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 144.
+
+Underfull \hbox (badness 2197) in paragraph at lines 144--144
+\OT1/cmr/m/n/9 ple-men-tazione del-l'ac-qui-sizione di dati SETI[][] ^^Re sta-t
+a las-ci-a-ta come pos-si-bile svilup-po fu-turo. cfr.
+ []
+
 [3
 
 ] [4
@@ -249,12 +267,12 @@ Overfull \hbox (36.17534pt too wide) in paragraph at lines 9--9
 
 ) [11] (./thesis.aux) ) 
 Here is how much of TeX's memory you used:
- 2885 strings out of 95087
- 40661 string characters out of 1183278
- 100204 words of memory out of 1500000
- 6037 multiletter control sequences out of 10000+50000
- 12089 words of font info for 46 fonts, out of 1200000 for 2000
+ 3046 strings out of 95087
+ 42676 string characters out of 1183278
+ 102475 words of memory out of 1500000
+ 6185 multiletter control sequences out of 10000+50000
+ 13213 words of font info for 51 fonts, out of 1200000 for 2000
  28 hyphenation exceptions out of 8191
- 27i,5n,36p,168b,391s stack positions out of 5000i,500n,6000p,200000b,5000s
+ 27i,8n,41p,168b,430s stack positions out of 5000i,500n,6000p,200000b,5000s
 
-Output written on thesis.dvi (17 pages, 29440 bytes).
+Output written on thesis.dvi (17 pages, 33336 bytes).

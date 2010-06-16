@@ -5,9 +5,12 @@
 \usepackage{url}
 \usepackage[backref]{hyperref}
 \usepackage{amsthm}
+\usepackage{acronym}
 \textwidth=450pt\oddsidemargin=0pt
 
 \newtheorem{definitions}{Definizione}[chapter]
+
+\acrodef{seti}[SETI]{Search for Extraterrestrial Intelligence}
 
 \begin{document}
 \title{Sviluppo di un software per l'analisi real-time di dati
@@ -117,7 +120,39 @@ osservazione.
 Taken from \cite{bertoni}
 \chapter{Progettazione e architettura}
 \label{outline}
+Nel momento della progettazione, sono stati prefissati alcuni punti importanti:
+il programma avrebbe dovuto essere veloce, modulare e parametrizzabile sulle
+caratteristiche pi\`u rilevanti dei segnali. L'utilizzo del C++ come linguaggio di
+sviluppo ha portato alla scelta di scrivere preferibilmente codice orientato
+agli oggetti e di sfruttare al massimo gli strumenti offerti dalla libreria
+boost, praticamente uno standard per qualunque programma C++ di una certa
+complessit\`a.
 \section{Obiettivi}
+Il funzionamento desiderato per l'applicazione \`e piuttosto semplice: il
+programma legge dei dati da una sorgente, li trasforma con una FFT ed
+eventualmente applica qualche filtro, infine scrive l'output su una qualche
+destinazione. Un importante obiettivo \`e che la manipolazione dei segnali
+avvenga in real---time, cio\`e che le operazioni vengano calcolate abbastanza
+velocemente da riuscire ad elaborare i dati man mano che arrivano dalla
+sorgente.
+
+Uno degli utilizzi principali ipotizzati per lo spettrometro \`e l'elaborazione
+di dati per il progetto \ac{seti}. In questo caso, i dati vengono recuperati da
+una speciale scheda di acquisizione dedicata\footnote{L'hardware necessario a
+sviluppare questo aspetto dell'applicazione non era disponibile, perci\`o
+    l'implementazione dell'acquisizione di dati \ac{seti} \`e stata lasciata
+    come possibile sviluppo futuro. cfr. \ref{seti}}.
+Le caratteristiche fondamentali della FFT sono una lunghezza del segnale
+piuttosto importante (circa $2^{23}$), un basso numero di integrazioni e la
+possibilit\`a di ricevere i dati sporadicamente, cio\`e il data rate pu\`o
+essere mantenuto basso.
+
+Un'altro utilizzo \`e l'analisi di space debris(?) dove la sorgente di dati sono
+dei pacchetti UDP e la FFT \`e caratterizzata da segnali di lunghezza contenuta
+(circa $2^{15}$) con molte integrazioni (circa $100000$). In questo caso \`e
+importante riuscire a mantenere il data rate alto, quindi l'elaborazione deve
+essere il pi\`u veloce possibile.
+
 \section{Gerarchia di classi}
 \chapter{Sviluppo del progetto}
 \label{sw_devel}
@@ -127,6 +162,9 @@ See \ref{tests}.
 \label{tests}
 \chapter{Conclusioni e sviluppi futuri}
 \label{conclusions}
+\section{\ac{seti}}
+\label{seti}
+Implementazione acquisizione.
 \bibliographystyle{alpha}
 \bibliography{thesis}
 \end{document}
