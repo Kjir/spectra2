@@ -5,7 +5,7 @@ AM_INIT_AUTOMAKE([-Wall])
 
 AC_CANONICAL_HOST
 
-AC_ARG_ENABLE(debug, [  --enable-debug	Enable debugging output], [AC_DEFINE(DEBUG)])
+#AC_ARG_ENABLE(debug, [  --enable-debug	Enable debugging output], [AC_DEFINE(DEBUG)])
 
 AC_SEARCH_LIBS([strerror],[cposix])
 AC_PROG_CXX

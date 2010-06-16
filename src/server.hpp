@@ -126,8 +126,10 @@ template<class T> T *udp_sock<T>::read(T *ret, size_t size)
              * Read datagram
              */
             std::stringstream ss;
+            /*
             ss << "Reading..." << std::endl;
             debug(ss.str());
+            */
             size_t r = read_dgram( _buf.c_array() );
             //ss.clear(); ss.str("");
             //ss << "Read " << r << " bytes" << std::endl;
