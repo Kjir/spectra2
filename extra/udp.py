@@ -26,7 +26,7 @@ udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 try:
     while True:
-        buffer = file.read(opts.dgram_length)
+        buffer = file.read(opts.dgram_length - 8)
         if buffer == '':
             raise Exception("EOF")
         # This is BigEndian
@@ -37,6 +37,9 @@ try:
         sent = udp.sendto(buffer, (opts.host, opts.port))
         print >> sys.stderr, "Sent %d bytes" % sent
         counter += 1
+except KeyboardInterrupt:
+    pcks = counter - opts.start_seq
+    print >> sys.stderr, "Total sent packets: %d Bytes: %d" % (pcks, pcks * opts.dgram_length)
 except Exception:
     pass
 finally:
