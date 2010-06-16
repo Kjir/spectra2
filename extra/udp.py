@@ -29,7 +29,10 @@ try:
         buffer = file.read(opts.dgram_length)
         if buffer == '':
             raise Exception("EOF")
-        str_count = struct.pack(">Q", counter)
+        # This is BigEndian
+        #str_count = struct.pack(">Q", counter)
+        # This is LittleEndian
+        str_count = struct.pack("<Q", counter)
         buffer = str_count + buffer
         sent = udp.sendto(buffer, (opts.host, opts.port))
         print >> sys.stderr, "Sent %d bytes" % sent
