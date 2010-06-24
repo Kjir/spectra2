@@ -1,7 +1,7 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=latex 2010.5.11)  16 JUN 2010 14:46
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=latex 2010.5.11)  16 JUN 2010 17:13
 entering extended mode
  %&-line parsing enabled.
-**thesis
+**thesis.tex
 (./thesis.tex
 LaTeX2e <2005/12/01>
 Babel <v3.8h> and hyphenation patterns for english, usenglishmax, dumylang, noh
@@ -267,12 +267,12 @@ Overfull \hbox (36.17534pt too wide) in paragraph at lines 9--9
 
 ) [11] (./thesis.aux) ) 
 Here is how much of TeX's memory you used:
- 3046 strings out of 95087
- 42676 string characters out of 1183278
- 102475 words of memory out of 1500000
- 6185 multiletter control sequences out of 10000+50000
+ 3047 strings out of 95087
+ 42694 string characters out of 1183278
+ 102583 words of memory out of 1500000
+ 6186 multiletter control sequences out of 10000+50000
  13213 words of font info for 51 fonts, out of 1200000 for 2000
  28 hyphenation exceptions out of 8191
- 27i,8n,41p,168b,430s stack positions out of 5000i,500n,6000p,200000b,5000s
+ 27i,8n,41p,172b,430s stack positions out of 5000i,500n,6000p,200000b,5000s
 
-Output written on thesis.dvi (17 pages, 33336 bytes).
+Output written on thesis.dvi (17 pages, 34164 bytes).
