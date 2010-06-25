@@ -11,6 +11,8 @@
 \newtheorem{definitions}{Definizione}[chapter]
 
 \acrodef{seti}[SETI]{Search for Extraterrestrial Intelligence}
+\acrodef{ipp}[IPP]{Integrated Performance Primitives}
+\acrodef{FFT}[FFT]{Fast Fourier Transform}
 
 \begin{document}
 \title{Sviluppo di un software per l'analisi real-time di dati
@@ -70,6 +72,7 @@ Un segnale viene quindi rappresentato da una funzione $g = f(c)$, ove:
 
 Per semplicit\`a di esposizione, d'ora in avanti si far\`a riferimento
 unicamente a segnali in relazione al tempo.
+\subsection{I segnali Radio}
 \section{ADC: Analog--to--Digital Conversion}
 Per interpretare i segnali del mondo che ci circonda, possiamo sfruttare la
 velocit\`a di calcolo di un elboratore; tuttavia per poterlo usare, bisogna
@@ -114,6 +117,7 @@ valutare questo margine di errore e ridurlo a seconda delle necessit\`a sia
 aumentando il numero di bit usati per rappresentare i valori nel tempo, sia
 aumentando il numero di rilevazioni effettuate nello spazio temporale di
 osservazione.
+\subsection{Teorema del Campionamento}
 \section{La Trasformata di Fourier}
 \section{La Trasformata Discreta di Fourier}
 \section{FFT: Fast Fourier Transform}
@@ -125,11 +129,11 @@ il programma avrebbe dovuto essere veloce, modulare e parametrizzabile sulle
 caratteristiche pi\`u rilevanti dei segnali. L'utilizzo del C++ come linguaggio di
 sviluppo ha portato alla scelta di scrivere preferibilmente codice orientato
 agli oggetti e di sfruttare al massimo gli strumenti offerti dalla libreria
-boost, praticamente uno standard per qualunque programma C++ di una certa
+boost\footnote{\url{http://www.boost.org/}}, praticamente uno standard per qualunque programma C++ di una certa
 complessit\`a.
 \section{Obiettivi}
 Il funzionamento desiderato per l'applicazione \`e piuttosto semplice: il
-programma legge dei dati da una sorgente, li trasforma con una FFT ed
+programma legge dei dati da una sorgente, li trasforma con una \ac{FFT} ed
 eventualmente applica qualche filtro, infine scrive l'output su una qualche
 destinazione. Un importante obiettivo \`e che la manipolazione dei segnali
 avvenga in real---time, cio\`e che le operazioni vengano calcolate abbastanza
@@ -142,13 +146,13 @@ una speciale scheda di acquisizione dedicata\footnote{L'hardware necessario a
 sviluppare questo aspetto dell'applicazione non era disponibile, perci\`o
     l'implementazione dell'acquisizione di dati \ac{seti} \`e stata lasciata
     come possibile sviluppo futuro. cfr. \ref{seti}}.
-Le caratteristiche fondamentali della FFT sono una lunghezza del segnale
+Le caratteristiche fondamentali della \ac{FFT} sono una lunghezza del segnale
 piuttosto importante (circa $2^{23}$), un basso numero di integrazioni e la
 possibilit\`a di ricevere i dati sporadicamente, cio\`e il data rate pu\`o
 essere mantenuto basso.
 
 Un'altro utilizzo \`e l'analisi di space debris(?) dove la sorgente di dati sono
-dei pacchetti UDP e la FFT \`e caratterizzata da segnali di lunghezza contenuta
+dei pacchetti UDP e la \ac{FFT} \`e caratterizzata da segnali di lunghezza contenuta
 (circa $2^{15}$) con molte integrazioni (circa $100000$). In questo caso \`e
 importante riuscire a mantenere il data rate alto, quindi l'elaborazione deve
 essere il pi\`u veloce possibile.
@@ -183,7 +187,16 @@ passare l'elaborazione attraverso una coda di filtri precedentemente
 selezionati.
 \subsection{SinkFilter}
 Le destinazioni hanno bisogno di un unico metodo di interfaccia: \texttt{write}.
-In modo simile al \texttt{SourceFilter}
+In modo simile al \texttt{SourceFilter}, una qualunque implementazione della
+classe astratta \texttt{SinkFilter} pu\`o essere intercambiata con un'altra
+senza dover apportare modifiche al codice, permettendo di scegliere il
+dispositivo di memorizzazione pi\`u adeguato agli scopi perseguiti.
+\subsection{Classi di supporto}
+Ci sono altre classi nel progetto che servono pi\`u come supporto che non come
+architettura dell'applicazione. Ad esempio nella classe \texttt{IPP} sono
+raccolti alcuni dei metodi di allocazione/deallocazione di memoria della
+libreria \ac{ipp}. Altre classi sono state create per gestire i buffer di
+input/output e sincronizzare la scrittura dei vari thread su questi vettori.
 \chapter{Sviluppo del progetto}
 \label{sw_devel}
 \section{Librerie}
