@@ -1,5 +1,13 @@
 #ifndef __SPECTRA2_FFT_BUF_HPP_
 #define __SPECTRA2_FFT_BUF_HPP_
+/**
+ * @file
+ * @author Stéphane Bisinger <stephane.bisinger@gmail.com>
+ *
+ * @section DESCRIPTION
+ *
+ * Classes used ad input and output buffers
+ */
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
@@ -8,18 +16,70 @@
 #include "debug.hpp"
 #include "ipp.hpp"
 
+/**
+ * @brief Output buffer for an FFT
+ *
+ * This class represents a buffer which contains the output vector for an FFT.
+ * This buffer is assigned to different FFTs for integration purposes, meaning
+ * that the result of the computation is added to the output vector.
+ */
 template<class T> class FFTBuf
 {
     public:
+        /**
+         * Constructor
+         *
+         * @param siglen The length of the signal
+         */
         FFTBuf(long int siglen);
+        /**
+         * Constructor
+         *
+         * @param siglen The length of the signal
+         * @param sums The number of integrations expected before processing is
+         * finished
+         */
         FFTBuf(long int siglen, int sums);
+        ///Destructor
         ~FFTBuf();
+        /**
+         * Return the direct pointer to the data
+         * @return Pointer to the data member
+         */
         T *cdata() { return _dst; }
+        /**
+         * Update the internal pointer
+         *
+         * @param buf The new pointer to the data
+         */
         void set_data(const T *buf);
+        /**
+         * Update the length of the signal
+         *
+         * @param s The new length of the signal
+         */
         void set_siglen(int s) { _siglen = s; }
+        /**
+         * Retrieve the signal length
+         *
+         * @return The length of the signal
+         */
         int get_siglen() { return _siglen; }
+        /**
+         * Set the number of expected integrations
+         *
+         * @param s The number of expected integrations
+         */
         void set_expected_sums(int s) { _expected_sums = s; }
+        /**
+         * Get a reference to the mutex
+         *
+         * @return A reference to the mutex
+         */
         boost::mutex &get_mutex();
+        /**
+         * Halt execution until this buffer is ready to be written to output
+         */
         void wait_until_processed();
         void notify_one() { _write_ready.notify_one(); }
         void notify_all() { _write_ready.notify_all(); }
