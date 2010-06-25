@@ -154,6 +154,36 @@ importante riuscire a mantenere il data rate alto, quindi l'elaborazione deve
 essere il pi\`u veloce possibile.
 
 \section{Gerarchia di classi}
+Per raggiungere gli obiettivi prefissati, sono necessarie alcune classi per
+astrarre alcuni concetti. In particolare ci sono tre componenti fondamentali:
+\begin{itemize}
+\item Una sorgente da cui prendere dati
+\item Filtri o trasformazioni da applicare al segnale
+\item Una destinazione su cui scrivere l'output
+\end{itemize}
+Per questo motivo ci sono tre classi astratte che rappresentano questi tre
+concetti: \texttt{SourceFilter}, \texttt{ProcessFilter} e \texttt{SinkFilter}.
+\subsection{SourceFilter}
+Una sorgente ha un unico metodo assolutamente necessario che serve a leggere i
+dati. Una sottoclasse di \texttt{SourceFilter}, ad esempio, \`e il server UDP
+(\texttt{udp\_sock}), che pu\`o essere usata da qualunque codice generico che
+faccia riferimento unicamente all'interfaccia astratta. Se si creasse un'altra
+sottoclasse di \texttt{SourceFilter} e la si sostituisse a \texttt{udp\_sock} si
+otterrebbero i dati da un'altra fonte senza dover cambiare una riga di codice al
+di fuori della inizializzazione.
+\subsection{ProcessFilter}
+Un \texttt{ProcessFilter} rappresenta una qualunque elaborazione intermedia del
+segnale, sia essa una trasformata di Fourier o un filtro passa---basso o una
+qualunque altra manipolazione. Siccome in questa fase si prende un segnale e lo
+si manipola in qualche maniera, l'interfaccia richiede un metodo
+\texttt{transform} che abbia in input i dati da elaborare e scriva su un vettore
+di output specificato. I filtri sono per natura concatenabili, quindi per
+gestire questa coda serve una classe \texttt{FilterChain} che si occupi di
+passare l'elaborazione attraverso una coda di filtri precedentemente
+selezionati.
+\subsection{SinkFilter}
+Le destinazioni hanno bisogno di un unico metodo di interfaccia: \texttt{write}.
+In modo simile al \texttt{SourceFilter}
 \chapter{Sviluppo del progetto}
 \label{sw_devel}
 \section{Librerie}
