@@ -1,0 +1,89 @@
+\chapter{Basi di elaborazione del segnale}
+\pagenumbering{arabic}
+\label{math_bkg}
+In questo capitolo introdurremo alcuni concetti basilari sull'elaborazione dei
+segnali necessari alla comprensione del funzionamento di uno
+spettrometro e del suo campo di applicazione. Sapere cosa sia un segnale, come
+si estraggono ed elaborano le informazioni in esso contenuto, quali siano i
+concetti matematici utilizzati \`e fondamentale per capire il lavoro svolto.\\
+Questo materiale introduttivo \`e sufficiente per avere una panoramica sui
+concetti teorici utilizzati.
+
+\section{Segnali}
+Il nostro corpo \`e in grado di percepire, attraverso i sensi, alcune delle
+variazioni nelle propriet\`a fisiche del mondo che ci circonda. Queste variazioni che percepiamo vengono
+elaborate dal nostro cervello che riesce a ricavarne informazioni utili: In questo modo
+siamo in grado di percepire se fa caldo o freddo, se c'\`e luce, se un oggetto
+\`e di un colore piuttosto che un altro, ecc. Va notato che in questi segnali
+c'\`e una componente fisica (la temperatura) e l'informazione veicolata
+(freddo/caldo). \cite{bertoni}
+\begin{definitions} \label{def:signal}
+Si dice segnale una qualunque quantit\`a che varia nel tempo o nello spazio.
+\end{definitions}
+Secondo la precedente definizione, quindi, \`e possibile che un segnale non
+contenga informazioni utili: in questo caso ci si riferisce al segnale come
+\emph{rumore}. Il rumore \`e anche una componente di interferenza o errore su di
+un segnale che si cerca di interpretare.
+
+Un segnale viene quindi rappresentato da una funzione $g = f(c)$, ove:
+\begin{itemize}
+    \item $g$ \`e una variabile dipendente su di una grandezza fisica in
+    relazione al tempo o spazio.
+    \item $c$ \`e una varaibile indipendente che rappresenta lo spazio o il
+    tempo.
+    \item $f$ \`e una funzione che associa ad un valore temporale o spaziale $c$
+    la corrispondente quantit\`a $g$.
+\end{itemize}
+
+Per semplicit\`a di esposizione, d'ora in avanti si far\`a riferimento
+unicamente a segnali in relazione al tempo.
+\subsection{I segnali Radio}
+\section{ADC: Analog--to--Digital Conversion}
+Per interpretare i segnali del mondo che ci circonda, possiamo sfruttare la
+velocit\`a di calcolo di un elboratore; tuttavia per poterlo usare, bisogna
+essere in grado di rappresentare le informazioni che riceviamo in modo che
+l'elaboratore sia in grado di capirle. Per questo motivo dobbiamo trovare un
+modo di trasformare un segnale \emph{analogico} in un segnale \emph{digitale}.
+\subsection{Segnali analogici, segnali digitali}
+Come abbiamo visto nella definzione \ref{def:signal}, i segnali hanno due
+componenti: il tempo e il valore assunto dalla grandezza fisica che osserviamo.
+Queste due componenti possono assumere un qualunque valore reale, cio\`e il
+segnale ha \emph{tempo continuo} e \emph{valori continui}. Tuttavia, in questo
+modo il segnale non pu\`o essere rappresentato da un elaboratore, in quanto un
+elaboratore pu\`o contenere solamente quantit\`a finite, mentre le componenti
+del segnale sono quantit\`a infinite. Per questo motivo bisogna cercare di far
+rientrare il segnale in un range di valori finiti e renderlo cos\`i
+rappresentabile da un calcolatore.
+
+Per rendere finita la misurazione del tempo, si possono salvare i valori
+rilevati ad un intervallo prefissato, ad esempio una volta ogni secondo.
+Misurando un segnale per 10 secondi si otterranno cos\`i 10 valori associati ad
+ogni secondo. Un segnale di questo tipo ha \emph{tempo discreto}, ma valori
+ancora \emph{continui}. Un dispositivo che raccoglie valori con una determinata
+frequenza si chiama \emph{campionatore}.
+
+Per rendere i valori finiti, si pu\`o scegliere di utilizzare un certo insieme
+di grandezze, ad esempio $1$ e $-1$, e per ogni valore rilevato, associare la
+grandezza pi\`u vicina. Quindi se rileviamo i valori $4$, $10$, $-5$ e $-13$,
+salviamo il segnale con i valori $1$, $1$, $-1$, $-1$. Cos\`i facendo, il
+segnale assume \emph{valori finiti} che sono rappresentabili in un elaboratore,
+nell'esempio fatto con l'uso di 1 bit. Un dispositivo che associa ai valori
+rilevati il pi\`u vicino valore rappresentabile dall'elaboratore si chiama
+\emph{quantizzatore}.
+
+Un segnale che ha tempo \emph{continuo} e valori \emph{continui} si chiama
+\emph{segnale analogico}, mentre un segnale con tempo \emph{discreto} e valori
+\emph{finiti} si chiama \emph{segnale digitale}.
+
+Come \`e facile intuire, la conversione da analogico a digitale pu\`o introdurre
+degli \emph{errori}, cio\`e del \emph{rumore}, in quanto la versione digitale di
+un segnale analogico \`e una approssimazione. Fortunatamente \`e possibile
+valutare questo margine di errore e ridurlo a seconda delle necessit\`a sia
+aumentando il numero di bit usati per rappresentare i valori nel tempo, sia
+aumentando il numero di rilevazioni effettuate nello spazio temporale di
+osservazione.
+\subsection{Teorema del Campionamento}
+\section{La Trasformata di Fourier}
+\section{La Trasformata Discreta di Fourier}
+\section{FFT: Fast Fourier Transform}
+Taken from \cite{bertoni}
