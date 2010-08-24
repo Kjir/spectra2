@@ -67,9 +67,13 @@ In modo simile al \texttt{SourceFilter}, una qualunque implementazione della
 classe astratta \texttt{SinkFilter} pu\`o essere intercambiata con un'altra
 senza dover apportare modifiche al codice, permettendo di scegliere il
 dispositivo di memorizzazione pi\`u adeguato agli scopi perseguiti.
-\subsection{Classi di supporto}
-Ci sono altre classi nel progetto che servono pi\`u come supporto che non come
-architettura dell'applicazione. Ad esempio nella classe \texttt{IPP} sono
-raccolti alcuni dei metodi di allocazione/deallocazione di memoria della
-libreria \ac{ipp}. Altre classi sono state create per gestire i buffer di
-input/output e sincronizzare la scrittura dei vari thread su questi vettori.
+\subsection{Contenitori di dati}
+Sono state progettate alcune classi al fine di astrarre i dati e assicurarne la corretta sincronizzazione.
+\subsubsection{SrcType}
+\texttt{SrcType} \`e una struttura con un costruttore, un destruttore ed un operatore di assegnamento. Tra i membri di questa struttura c'\`e una mutex per eseguire operazioni in mutua esclusione, ove necessario. Questa struttura \`e un wrapper di un puntatore, ideale per essere usata all'interno di un circular buffer.
+\subsubsection{FFTBuf}
+La classe \texttt{FFTBuf} \`e un vettore su cui vanno scritti i risultati di una o pi\`u trasformazioni di Fourier. Al momento della costruzione, si indica la lunghezza del segnale da salvare e il numero di integrazioni che si prevede di fare; a questa maniera \`e possibile assegnare questo buffer a tanti thread quante dovranno essere le integrazioni da fare. La classe offre strumenti anche per tener traccia di quante integrazioni sono già state effettuate e sapere cos\`i se il buffer \`e pronto per essere scritto su output.
+\subsubsection{List}
+La classe \texttt{List} \`e un semplice wrapper attorno ad una lista della libreria standard. Questa classe assicura un comportamento corretto in ambienti multithreading e aggiunge alcuni metodi per semplificare la coordinazione con gli altri thread.
+\subsection{Wrapper di librerie}
+La classe \texttt{IPP} esiste solo per fornire un wrapper C++ alle librerie \ac{ipp}, scritte in C. Tramite overloading \`e stato possibile utilizzare lo stesso nome per funzioni che operano su tipi di dati differenti, lasciando al compilatore il compito di invocare la funzione specifica pi\`u adeguata.
