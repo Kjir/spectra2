@@ -5,15 +5,21 @@
 \usepackage{url}
 \usepackage[backref]{hyperref}
 \usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{acronym}
+\usepackage{graphicx}
+
 \textwidth=450pt
 \oddsidemargin=0pt
 
 \newtheorem{definitions}{Definizione}[chapter]
+\newtheorem{theorem}{Teorema}[chapter]
 
 \acrodef{seti}[SETI]{Search for Extraterrestrial Intelligence}
 \acrodef{ipp}[IPP]{Integrated Performance Primitives}
 \acrodef{FFT}[FFT]{Fast Fourier Transform}
+
+\graphicspath{{./images/}}
 
 \begin{document}
 \title{Sviluppo di un software per l'analisi real-time di dati
@@ -30,6 +36,7 @@ radioastronomici su macchine multicore}
 %\include{frontpage}
 
 \tableofcontents
+\listoffigures
 
 \input{chapters/00_introduzione.tex}
 \input{chapters/01_dsp.tex}
