@@ -84,12 +84,16 @@ standard.
 I segnali elettromagnetici sono fondamentali per lo studio dei corpi celesti.
 Tuttavia va considerata la permeabilit\`a dell'atmosfera terrestre rispetto ai
 segnali che ci arrivano dallo spazio, come illustrato in Figura
-\ref{fig:atm_em_op}: come si pu\`o notare, lo studio dei corpi celesti da terra
-\`e possibile solo nello spettro visibile (telescopi, con qualche distorsione)
-oppure nello spettro delle frequenze radio (radiotelescopi). Per altre lunghezze
-d'onda, \`e necessario studiare questi segnali direttamente dallo spazio con
-l'ausilio di satelliti. Il nostro interesse nei capitoli seguenti sar\`a
-unicamente incentrato sui segnali radio.
+\ref{fig:atm_em_op}\footnote{Fonte:
+\url{http://coolcosmos.ipac.caltech.edu/cosmic_classroom/cosmic_reference/irwindows.html}}:
+come si pu\`o notare, lo studio dei corpi celesti da terra \`e possibile solo
+nello spettro visibile (telescopi, con qualche distorsione) oppure nello spettro
+delle frequenze radio (radiotelescopi). Per altre lunghezze d'onda, \`e
+necessario studiare questi segnali direttamente dallo spazio con l'ausilio di
+satelliti. I moderni radiotelescopi lavorano tra i 70 Mhz ed i 43 Ghz, a seconda
+del radiotelescopio, quindi anche le microonde rivestono una qualche importanza
+nello studio dei corpi celesti. Questi tipi di segnale sono oggetto di
+elaborazione del software sviluppato.
 
 \section{ADC: Analog--to--Digital Conversion}
 Per interpretare i segnali del mondo che ci circonda, possiamo sfruttare la
@@ -167,15 +171,16 @@ Jean Baptiste Joseph Fourier, vissuto a cavallo tra il XVIII e IX secolo, era
 un matematico francese che, presentando i suoi  studi sulla propagazione del
 calore, affermava che qualunque segnale periodico continuo potesse essere
 rappresentato come somme pesate di sinusoidi. Questa teoria fu molto osteggiata
-da Joseph Louis Lagrange, il quale sosteneva che per segnali che contenessero
-angoli, come ad esempio le onde quadre, e per questo il lavoro di Fourier non fu
-pubblicato per 15 anni, fino alla morte dello stesso Lagrange. In realt\`a
-l'approccio di Fourier non era sbagliato, ma anche l'obiezione di Lagrange \`e
-valida: se da un lato \`e vero che un segnale con angoli non potesse essere
-rappresentato come somme di sinusoidi, si riesce ad ottenere una approsimazione
-cos\`i accurata del segnale da avere una differenza energetica pari a zero.
-Questo fenomeno \`e conosciuto come \emph{Fenomeno di Gibbs}\footnote{cfr.
-\cite{TSEGDSP97}, capitolo 11}
+da Joseph Louis Lagrange, il quale sosteneva che per segnali contenenti angoli,
+come ad esempio le onde quadre, ci\`o non fosse possibile e per questo il
+lavoro di Fourier non fu pubblicato per 15 anni, fino alla morte dello stesso
+Lagrange.\footnote{cfr. \cite{TSEGDSP97}, capitolo 8} In realt\`a l'approccio di
+Fourier non era sbagliato, ma anche l'obiezione di Lagrange \`e valida: se da un
+lato \`e vero che un segnale con angoli non potesse essere rappresentato come
+somme di sinusoidi, si riesce ad ottenere una approsimazione cos\`i accurata del
+segnale da avere una differenza energetica pari a zero.  Questo fenomeno \`e
+conosciuto come \emph{Fenomeno di Gibbs}\footnote{cfr.  \cite{TSEGDSP97},
+capitolo 11}
 
 \subsection{Tipi di Trasformate di Fourier}
 Esistono quattro tipi di segnali possibili, ognuno con la sua trasformata di
@@ -212,7 +217,11 @@ complessa, dove un insieme di numeri complessi vengono trasformati in un'altro
 insieme di numeri complessi, oppure nella forma reale, dove un insieme di numeri
 reali vengono trasformati in due insiemi di numeri reali. La forma complessa
 di una trasformata \`e molto pi\`u difficile da comprendere, perci\`o verr\`a
-esposta unicamente la forma reale della trasformata.
+esposta unicamente la forma reale della trasformata. Analizzeremo unicamente la
+versione discreta della trasformata di Fourier in quanto \`e di pi\`u
+semplice comprensione, pur essendo concettualmente identica agli altri tipi di
+trasformata, oltre ad essere la trasformata utilizzata direttamente nel
+progetto.
 
 \subsection{Analisi e Sintesi}
 Quando applichiamo la trasformata di Fourier, non facciamo altro che passare tra
@@ -230,17 +239,17 @@ Quando rappresentiamo un segnale in un elaboratore, avremo un vettore,
 \texttt{x[]}, contente le ampiezze del segnale nei vari intervalli di tempo. Se
 al momento del campionamento abbiamo scelto di misurare $N$ campioni, avremo ora
 un vettore di $N$ elementi che vanno da 0 a $N$. Di solito per facilitare la
-computazione tramite elaboratore $N$ viene scelto tra le potenze di 2, come
-vedremo nel paragrafo \ref{fft}. La controparte di questo segnale \`e suddivisa
-in due parti, \texttt{ReX[]} contenente i valori per le ampiezze dei coseni
+computazione tramite elaboratore $N$ viene scelto tra le potenze di
+2\footnote{La FFT richiede segnali che abbiano lunghezza pari ad una potenza di
+due, per poter funzionare.}. La controparte di questo segnale \`e suddivisa in
+due parti, \texttt{ReX[]} contenente i valori per le ampiezze dei coseni
 presenti nel segnale, e \texttt{ImX[]} contenente i valori per le ampiezze dei
-seni presenti nel segnale.\footnote{Le notazioni \texttt{ReX[]} e
-\texttt{ImX[]} significano, rispettivamente, ``parte reale di X'' e ``parte
-immaginaria di X''. Questi nomi provengono dalla versione complessa della
-trasformata, ma in questo caso i due vettori vanno considerati semplicemente
-come ampiezze dei coseni e dei seni presenti nel segnale.} I due vettori
-\texttt{ReX[]} e \texttt{ImX[]} contengono $N/2 + 1$ valori ciascuno, partendo
-da 0 e arrivando a $N/2$.
+seni presenti nel segnale.\footnote{Le notazioni \texttt{ReX[]} e \texttt{ImX[]}
+significano, rispettivamente, ``parte reale di X'' e ``parte immaginaria di X''.
+Questi nomi provengono dalla versione complessa della trasformata, ma in questo
+caso i due vettori vanno considerati semplicemente come ampiezze dei coseni e
+dei seni presenti nel segnale.} I due vettori \texttt{ReX[]} e \texttt{ImX[]}
+contengono $N/2 + 1$ valori ciascuno, partendo da 0 e arrivando a $N/2$.
 
 \subsection{Funzioni base della DFT}
 Quando effettuiamo la DFT di un segnale, otteniamo due vettori che rappresentano
@@ -308,6 +317,58 @@ quindi ogni banda \`e larga $\frac{1}{N/2} = \frac{2}{N}$, tranne la prima e
 l'ultima: la banda 0 ($0\dots 0.5$) e la banda $N/2$ ($N/2-0,5\dots N/2$) sono
 larghe esattamente la met\`a, $\frac{1}{N}$.
 
+\subsection{Calcolo della DFT}
+Il primo metodo per calcolare la DFT ha solo lo scopo di far comprendere il
+procedimento, ma non ha nessuna applicazione pratica in quanto troppo complesso
+a livello computazionale. Dato un segnale \texttt{x[]} per calcolare la sua
+trasformata possiamo creare $N$ equazioni semplicemente prendendo il primo punto
+delle sinusoidi di base e sommarli tra loro. Sappiamo che la loro somma,
+moltiplicata per i rispettivi pesi, devono essere uguali al primo punto del
+segnale originario. Andando a creare delle equazioni simili per gli altri punti,
+otterremo le $N$ equazioni di cui abbiamo bisogno e potremo risolverle usando un
+qualunque metodo algebrico, ad esempio il metodo di eliminazione di Gauss.
+Supponiamo che il nostro segnale abbia 4 punti:
+\begin{align*}
+Re\bar{X}[0] + Re\bar{X}[1] + Re\bar{X}[2] & = x[0]\\
+Re\bar{X}[0] + Re\bar{X}[1]\cos\left( \frac{\pi}{2} \right) +
+Re\bar{X}[2]\cos\left( \pi \right) + Im\bar{X}[1]\sin\left( \frac{\pi}{2}
+\right) & = x[1]\\
+Re\bar{X}[0] + Re\bar{X}[1]\cos\left( \pi \right) + Re\bar{X}[2]\cos\left( 2\pi
+\right) + Im\bar{X}[1]\sin\left( \pi \right) & = x[2]\\
+Re\bar{X}[0] + Re\bar{X}[1]\cos\left( \frac{3\pi}{2} \right) +
+Re\bar{X}[2]\cos\left( 3\pi \right) + Im\bar{X}[1]\sin\left( \frac{3\pi}{2}
+\right) & = x[3]\\
+\end{align*}
+Ci ritroviamo con 4 variabili e 4 equazioni linearmente indipendenti, quindi
+siamo in grado di risolvere queste equazioni e trovare i valori delle
+variabili. Purtroppo questo metodo di risoluzione non \`e efficiente e non
+viene usato per calcolare la trasformata con l'ausilio di un elaboratore.
 \subsection{FFT: Fast Fourier Transform}
 \label{fft}
-Taken from \cite{bertoni}
+Quando si utilizza un elaboratore per fare dei calcoli, \`e importante valutare
+l'efficienza dell'algoritmo utilizzo, cio\`e valutare quanto tempo impiega il
+nostro algoritmo per eseguire il calcolo e di quanto cresce il tempo di
+esecuzione all'aumentare dei dati inseriti in ingresso. Il calcolo della DFT
+tramite correlazione\footnote{cfr. \cite{TSEGDSP97}, capitoli 6---8} richiede un
+tempo di esecuzione all'incirca di $k_{DFT}N^2$. $k_{DFT}$  \`e una costante di
+proporzionalit\`a rispetto all'algoritmo che con un processore a 100Mhz
+equivale a 7 microsecondi, con tutte le ottimizzazioni possibili. Considerando un segnale
+di $N = 1024$ punti il tempo di esecuzione \`e di circa 7 secondi. Questo tempo
+\`e enorme, soprattutto considerando la piccola dimensione del segnale; per
+questo motivo \`e fondamentale trovare un algoritmo pi\`u efficiente nel calcolo
+della trasformata di Fourier. La \emph{Fast Fourier Transform} \`e un algoritmo
+che, utilizzando un approccio completamente diverso al calcolo della
+trasformata, riesce ad ottenere un tempo di esecuzione pari a
+$k_{FFT}N\log_{2}N$. In questo caso, $k_{FFT}$ equivale a 10 microsecondi su
+processore a 100Mhz, quindi un segnale di $N=1024$ punti viene trasformato in 70
+millisecondi.\footnote{Per i dati dei test, cfr. \cite{TSEGDSP97}, capitolo 12}
+Comparando i due tempi si capisce che la FFT permette di effettuare calcoli
+anche su segnali di dimensioni abbastanza grandi, poich\'e la crescita
+logaritmica assicura che il tempo di calcolo non aumenti troppo bruscamente
+all'aumentare dei punti.
+
+Un altro vantaggio non indifferente della FFT \`e la sua scarsa sensibilit\`a
+agli errori di arrotondamento: poich\'e l'algoritmo diminuisce drasticamente il
+numero di operazioni da effettuare sui numeri, anche gli errori di
+arrotondamento rimangono molto contenuti. Questo assicura una buona stabilit\`a
+numerica dell'algoritmo anche con grandi moli di dati.

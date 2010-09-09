@@ -1,4 +1,75 @@
 \chapter{Sviluppo del progetto}
 \label{sw_devel}
+
+Per lo sviluppo del progetto sono state utilizzati una serie di strumenti e
+librerie open source, in modo di semplificare e velocizzare lo sviluppo del
+software. Tutte le fasi di sviluppo sono state eseguite su sistema operativo
+Linux.
+\section{Strumenti di supporto}
+Per semplificare lo sviluppo esistono diversi software che sono piuttosto
+standard in un qualunque progetto: l'editor di testo, il compilatore, un sistema
+di versioning.
+
+\subsection{Editor}
+La selezione dell'editor dipende principalmente dalle preferenze del
+programmatore ed in minima parte dalle feature che questi offre. Ambienti che
+integrano l'editor all'interno di un'interfaccia che permette di gestire anche
+altri aspetti, come la compilazione, vengono chiamati \ac{IDE}. Nell'ambito di
+questo progetto l'unico editor utilizzato \`e stato
+VIM\footnote{\url{http://www.vim.org/}}.
+
+\subsection{Compilatore}
+La scelta del compilatore dipende in prima istanza dal linguaggio di
+programmazione prescelto. Nel caso di questo progetto il linguaggio di
+programmazione utilizzato \`e il \CC, scelto per le sue ottime prestazioni,
+oltre alla possibilit\`a di utilizzare il paraadigma di programmazione
+orientata agli oggetti. Come compilatore \`e stato usato lo standard su sistemi
+unix, cio\`e g++. Questo compilatore fa parte della suite di compilatori del
+progetto GNU.
+
+\subsection{Versioning Control System}
+\subsubsection{Subversion}
+
+\subsubsection{Git}
+
+\subsection{Autotools}
+Gli autotools sono lo strumento di gestione progetti più diffuso nel software
+open source. Anche se a volte un po' complicati da usare, la semplificazione
+della gestione del progetto rendono il loro utilizzo indispensabile: con un
+solo comando, infatti, \`e possibile compilare, testare e creare un archivio del
+progetto pronto per essere redistribuito. \`E importante ricordarsi che questi
+tool tendono a cambiare comportamento tra le singole versioni, quindi va sempre
+controllato se siano necessari aggiornamenti ai files di configurazione.
+
 \section{Librerie}
-See \ref{tests}.
+
+\subsection{Boost}
+Le librerie boost sono molto usate nella programmazione in \CC perch\'e
+implementano moltissime funzioni spesso usate fornendo una interfaccia molto
+semplice. L'ottima qualit\`a di queste librerie \`e confermato dal fatto che spesso
+alcune sue componenti vengono integrate nello standard \CC. In questo progetto
+vengono utilizzate principalmente per semplificare la lettura di argomenti da
+linea di comando, la lettura/scrittura di files e il multithreading.
+
+\subsection{\ac{ipp}}
+Le Integrated Performance Primitives sono delle librerie che implementano un
+insieme molto completo di funzioni e algoritmi relativi al processamento di
+segnali e crittografia. In particolare implementano funzioni utili al
+processamento di segnali audio (filtri, codifiche audio, compressione dei dati,
+ecc.), funzioni per il processamento di immagini (trasformazioni, codifica
+video, ecc.), funzioni per calcoli su matrice e funzioni crittografiche
+(crittografia simmetrica, asimmetrica, funzioni hash, ecc.).  Il vantaggio
+delle IPP \`e che offrono un ampio spettro di funzioni che coprono praticamente
+tutte le necessit\`a nel processamento dei segnali, oltre ad essere ottimizzate
+per processori Intel. Inoltre sono state scritte in modo da essere naturalmente
+utilizzabili in ambienti multithreaded, sfruttando tutte le potenzialit\`a di
+processori multicore o processori multipli. Tutti questi fattori hanno concorso
+nell'adozione di questa libreria al posto di altre librerie concorrenti. Questa
+libreria \`e l'unico componente non Open Source utilizzato nell'intero progetto,
+anche se il suo utilizzo \`e gratuito per usi accademici. Le librerie
+alternative potrebbero essere comparate per verificare l'effettiva qualit\`a a
+livello di prestazioni.
+
+\section{Codice pre-esistente}
+
+
