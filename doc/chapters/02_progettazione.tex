@@ -2,11 +2,11 @@
 \label{outline}
 Nel momento della progettazione, sono stati prefissati alcuni punti importanti:
 il programma avrebbe dovuto essere veloce, modulare e parametrizzabile sulle
-caratteristiche pi\`u rilevanti dei segnali. L'utilizzo del C++ come linguaggio di
+caratteristiche pi\`u rilevanti dei segnali. L'utilizzo del \CC come linguaggio di
 sviluppo ha portato alla scelta di scrivere preferibilmente codice orientato
 agli oggetti e di sfruttare al massimo gli strumenti offerti dalla libreria
-boost\footnote{\url{http://www.boost.org/}}, praticamente uno standard per qualunque programma C++ di una certa
-complessit\`a.
+boost\footnote{\url{http://www.boost.org/}}, praticamente uno standard per
+qualunque programma \CC di una certa complessit\`a.
 \section{Obiettivi}
 Il funzionamento desiderato per l'applicazione \`e piuttosto semplice: il
 programma legge dei dati da una sorgente, li trasforma con una \ac{FFT} ed
@@ -41,8 +41,17 @@ astrarre alcuni concetti. In particolare ci sono tre componenti fondamentali:
 \item Una destinazione su cui scrivere l'output
 \end{itemize}
 Per questo motivo ci sono tre classi astratte che rappresentano questi tre
-concetti: \\
-\texttt{SourceFilter}, \texttt{ProcessFilter} e \texttt{SinkFilter}.
+concetti, oltre a delle classi utili come contenitori di dati. Insieme
+formano le basi su cui viene implementato l'algoritmo rappresentato in
+figura \ref{fig:algorithm}.
+\begin{figure}[htb]
+	\begin{center}
+		\includegraphics[width=1\linewidth]{algorithm}
+	\end{center}
+	\caption{Flusso dei dati all'interno del programma}
+	\label{fig:algorithm}
+\end{figure}
+
 \subsection{SourceFilter}
 Una sorgente ha un unico metodo assolutamente necessario che serve a leggere i
 dati. Una sottoclasse di \texttt{SourceFilter}, ad esempio, \`e il server UDP
@@ -68,12 +77,74 @@ classe astratta \texttt{SinkFilter} pu\`o essere intercambiata con un'altra
 senza dover apportare modifiche al codice, permettendo di scegliere il
 dispositivo di memorizzazione pi\`u adeguato agli scopi perseguiti.
 \subsection{Contenitori di dati}
-Sono state progettate alcune classi al fine di astrarre i dati e assicurarne la corretta sincronizzazione.
+Sono state progettate alcune classi al fine di astrarre i dati e assicurarne la
+corretta sincronizzazione.
 \subsubsection{SrcType}
-\texttt{SrcType} \`e una struttura con un costruttore, un destruttore ed un operatore di assegnamento. Tra i membri di questa struttura c'\`e una mutex per eseguire operazioni in mutua esclusione, ove necessario. Questa struttura \`e un wrapper di un puntatore, ideale per essere usata all'interno di un circular buffer.
-\subsubsection{FFTBuf}
-La classe \texttt{FFTBuf} \`e un vettore su cui vanno scritti i risultati di una o pi\`u trasformazioni di Fourier. Al momento della costruzione, si indica la lunghezza del segnale da salvare e il numero di integrazioni che si prevede di fare; a questa maniera \`e possibile assegnare questo buffer a tanti thread quante dovranno essere le integrazioni da fare. La classe offre strumenti anche per tener traccia di quante integrazioni sono già state effettuate e sapere cos\`i se il buffer \`e pronto per essere scritto su output.
+\texttt{SrcType} \`e una struttura con un costruttore, un destruttore ed un
+operatore di assegnamento. Tra i membri di questa struttura c'\`e una mutex per
+eseguire operazioni in mutua esclusione, ove necessario. Questa struttura \`e un
+wrapper di un puntatore, ideale per essere usata all'interno di un circular
+buffer.
+\subsubsection{FFTBuf} La classe \texttt{FFTBuf} \`e un vettore su cui
+vanno scritti i risultati di una o pi\`u trasformazioni di Fourier. Al momento
+della costruzione, si indica la lunghezza del segnale da salvare e il numero di
+integrazioni che si prevede di fare; a questa maniera \`e possibile assegnare
+questo buffer a tanti thread quante dovranno essere le integrazioni da fare. La
+classe offre strumenti anche per tener traccia di quante integrazioni sono già
+state effettuate e sapere cos\`i se il buffer \`e pronto per essere scritto su
+output.
 \subsubsection{List}
-La classe \texttt{List} \`e un semplice wrapper attorno ad una lista della libreria standard. Questa classe assicura un comportamento corretto in ambienti multithreading e aggiunge alcuni metodi per semplificare la coordinazione con gli altri thread.
+La classe \texttt{List} \`e un semplice wrapper attorno ad una lista della
+libreria standard. Questa classe assicura un comportamento corretto in ambienti
+multithreading e aggiunge alcuni metodi per semplificare la coordinazione con
+gli altri thread.
+
 \subsection{Wrapper di librerie}
-La classe \texttt{IPP} esiste solo per fornire un wrapper C++ alle librerie \ac{ipp}, scritte in C. Tramite overloading \`e stato possibile utilizzare lo stesso nome per funzioni che operano su tipi di dati differenti, lasciando al compilatore il compito di invocare la funzione specifica pi\`u adeguata.
+La classe \texttt{IPP} esiste solo per fornire un wrapper \CC alle librerie
+\ac{ipp}, scritte in C. Tramite overloading \`e stato possibile utilizzare lo
+stesso nome per funzioni che operano su tipi di dati differenti, lasciando al
+compilatore il compito di invocare la funzione specifica pi\`u adeguata.
+
+\section{Threading}
+\begin{figure}[htb]
+	\begin{center}
+		\includegraphics[width=1\linewidth]{threading}
+	\end{center}
+	\caption{Interazione dei diversi thread tra loro.}
+	\label{fig:threading}
+\end{figure}
+Per incrementare le prestazioni soprattutto su elaboratori forniti di processore
+multi-core o di pi\`u processori, il programma \`e stato progettato per
+funzionare con differenti thread di esecuzione per le diverse parti. Questo
+permette di sfruttare al massimo il processore senza dover attendere sui tempi
+di lettura dei dati in ingresso (ad esempio, una rete locale) o sui tempi di
+scrittura dei dati in uscita (ad esempio, un file locale). Inoltre \`e possibile
+eseguire pi\`u di una trasformazione in parallelo, utile ad esempio nel caso in
+cui si voglia sommare tra loro diversi segnali trasformati allo scopo di
+attutire il rumore di fondo.
+
+\subsection{Inizializzazione}
+All'avvio dell'applicazione vengono lette le opzioni passate da linea di
+comando, inizializzando le variabili con valori appropriato ed allocando alcuni
+buffer. Inizializza poi un buffer circolare utilizzato per i dati di input, una
+lista per i dati di output 
+
+\subsection{Thread di output}
+Poi avvia il thread di output, il quale controlla i dati presenti
+in una lista, fornita all'avvio, dove verranno accodati i dati da scrivere in
+uscita. Quando la lista \`e vuota, il thread si mette semplicemente in attesa,
+altrimenti procede alla scrittura e ricomincia il proprio ciclo da capo.
+\begin{figure}[htb]
+	\begin{center}
+		\includegraphics[width=1\linewidth]{output}
+	\end{center}
+	\caption{Algoritmo del thread di output}
+	\label{fig:output}
+\end{figure}
+
+\subsection{Thread principale}
+Avviato il thread di output, il thread principale entra nel suo ciclo
+principale, dove effettua tre operazioni che esploriamo nel dettaglio:
+\emph{lettura dei dati}, \emph{selezione del buffer di output} e
+\emph{assegnamento al thread pool}.
+\subsection{Lettura dei dati}
