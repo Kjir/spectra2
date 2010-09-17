@@ -1,14 +1,57 @@
 \chapter{Sviluppo del progetto}
 \label{sw_devel}
 
-Per lo sviluppo del progetto sono state utilizzati una serie di strumenti e
-librerie open source, in modo di semplificare e velocizzare lo sviluppo del
-software. Tutte le fasi di sviluppo sono state eseguite su sistema operativo
-Linux.
+Durante lo sviluppo del progetto si ha fatto uso di librerie e strumenti
+software per semplificare il pi\`u possibile il lavoro da svolgere ed ottenere
+il massimo delle prestazioni possibili. 
+
+\section{Librerie}
+L'utilizzo delle giuste librerie permette di sviluppare pi\`u velocemente i
+propri progetti, ottenere prestazioni spesso migliori rispetto ad una soluzione
+sviluppata in proprio e sicuramente avere pi\`u certezze riguardo al corretto
+funzionamento delle parti attenenti alla libreria.
+
+\subsection{Boost}
+Le librerie Boost\footnote{\url{http://www.boost.org/}} sono molto usate nella
+programmazione in \CC perch\'e implementano moltissime funzioni spesso usate
+fornendo una interfaccia molto semplice. L'ottima qualit\`a di queste librerie
+\`e confermato dal fatto che spesso alcune sue componenti vengono integrate
+nello standard \CC. In questo progetto vengono utilizzate principalmente per
+semplificare la lettura di argomenti da linea di comando, la lettura/scrittura
+di files e il multithreading.
+
+\subsection{\ac{ipp}}
+Le Integrated Performance
+Primitives\footnote{\url{http://software.intel.com/en-us/intel-ipp/}} sono delle
+librerie che implementano un insieme molto completo di funzioni e algoritmi
+relativi al processamento di segnali e crittografia. In particolare implementano
+funzioni utili al processamento di segnali audio (filtri, codifiche audio,
+compressione dei dati, ecc.), funzioni per il processamento di immagini
+(trasformazioni, codifica video, ecc.), funzioni per calcoli su matrice e
+funzioni crittografiche (crittografia simmetrica, asimmetrica, funzioni hash,
+ecc.).  Il vantaggio delle IPP \`e che offrono un ampio spettro di funzioni che
+coprono praticamente tutte le necessit\`a nel processamento dei segnali, oltre
+ad essere ottimizzate per processori Intel. Inoltre sono state scritte in modo
+da essere naturalmente utilizzabili in ambienti multithreaded, sfruttando tutte
+le potenzialit\`a di processori multicore o processori multipli. Tutti questi
+fattori hanno concorso nell'adozione di questa libreria al posto di altre
+librerie concorrenti. Questa libreria \`e l'unico componente non Open Source
+utilizzato nell'intero progetto, anche se il suo utilizzo \`e gratuito per usi
+accademici. Le librerie alternative potrebbero essere comparate per verificare
+l'effettiva qualit\`a a livello di prestazioni.
+
+\section{Codice pre-esistente}
+Parte del codice del progetto \`e stato prelevato dal software sviluppato in
+fase di tirocinio, sempre presso l'Istituto di Radioastronomia di Medicina.
+Questo codice ha permesso di ridurre notevolmente il tempo dedicato allo
+sviluppo del calcolo della \ac{FFT} lasciando maggior tempo per una corretta
+implementazione delle altre parti. Questo codice \`e stato adattato per
+funzionare in un contesto multithreaded e per accettare input da diverse fonti.
+
 \section{Strumenti di supporto}
 Per semplificare lo sviluppo esistono diversi software che sono piuttosto
 standard in un qualunque progetto: l'editor di testo, il compilatore, un sistema
-di versioning.
+di versioning e un debugger.
 
 \subsection{Editor}
 La selezione dell'editor dipende principalmente dalle preferenze del
@@ -22,15 +65,39 @@ VIM\footnote{\url{http://www.vim.org/}}.
 La scelta del compilatore dipende in prima istanza dal linguaggio di
 programmazione prescelto. Nel caso di questo progetto il linguaggio di
 programmazione utilizzato \`e il \CC, scelto per le sue ottime prestazioni,
-oltre alla possibilit\`a di utilizzare il paraadigma di programmazione
+oltre alla possibilit\`a di utilizzare il paradigma di programmazione
 orientata agli oggetti. Come compilatore \`e stato usato lo standard su sistemi
 unix, cio\`e g++. Questo compilatore fa parte della suite di compilatori del
-progetto GNU.
+progetto GNU\footnote{\url{http://www.gnu.org/}}.
 
 \subsection{Versioning Control System}
+
+Un software per il controllo delle revisioni serve a facilitare lo sviluppo di
+uno stesso progetto da parte di diverse persone, oltre a fornire un modo pratico
+di salvare le vecchie versioni del codice. Anche nel caso di sviluppatore
+singolo, un sistema di versioning permette lo sviluppo su macchine diverse con
+la certezza che non si lavori su del codice non aggiornato.
+
 \subsubsection{Subversion}
+Subversion\footnote{\url{http://subversion.tigris.org/}} \`e uno dei VCS pi\`u
+diffusi, \`e basato su architettura client/server dove il server si occupa di
+salvare i dati e le informazioni sulla storia del progetto, mentre i client
+vengono usati dagli sviluppatori per recuperare queste informazioni. Il progetto
+\`e salvato su un repository SVN localizzato su un server dell'Istituto di
+Radioastronomia.
 
 \subsubsection{Git}
+Git\footnote{\url{http://git-scm.com/}} \`e un altro sistema di versioning che,
+a differenza di subversion, si basa su un modello distribuito: quando uno
+sviluppatore recupera le informazioni del progetto, queste vengono salvate tutte
+in locale. Questo significa che \`e possibile sviluppare e modificare il
+repository anche se non connessi alla rete, e quindi al server centrale, cosa
+non possibile con subversion. Git offre anche prestazioni migliori e una serie
+di altri vantaggi rispetto a subversion. Un grande vantaggio di git \`e la sua
+possibilit\`a di lavorare su un repository di subversion, comportandosi quindi
+come un client di subversion nei confronti del server, ma offrendo tutti i
+vantaggi di git allo sviluppatore. Questo sistema di versioning \`e stato
+utilizzato dal lato sviluppatore, sincronizzandosi con il server SVN.
 
 \subsection{Autotools}
 Gli autotools sono lo strumento di gestione progetti più diffuso nel software
@@ -41,35 +108,21 @@ progetto pronto per essere redistribuito. \`E importante ricordarsi che questi
 tool tendono a cambiare comportamento tra le singole versioni, quindi va sempre
 controllato se siano necessari aggiornamenti ai files di configurazione.
 
-\section{Librerie}
+\subsection{Strumenti di debugging}
+Per individuare eventuali errori nel codice esistono degli strumenti in grado di
+aiutare il programmatore a scoprirli e rimuoverli.
 
-\subsection{Boost}
-Le librerie boost sono molto usate nella programmazione in \CC perch\'e
-implementano moltissime funzioni spesso usate fornendo una interfaccia molto
-semplice. L'ottima qualit\`a di queste librerie \`e confermato dal fatto che spesso
-alcune sue componenti vengono integrate nello standard \CC. In questo progetto
-vengono utilizzate principalmente per semplificare la lettura di argomenti da
-linea di comando, la lettura/scrittura di files e il multithreading.
+\subsubsection{Debugger}
+Il debugger \`e uno strumento utilissimo per cercare la provenienza di errori
+fatali, in particolare le segmentation faults, e permette di tracciare
+l'esecuzione del programma rispetto al codice sorgente. Il debugger standard per
+sistemi Unix \`e gdb, sempre parte del progetto GNU. Il debugger \`e stato
+utilizzato principalmente per capire lo stato dei vari thread ed indagare i
+motivi per cui potevano accadere alcuni particolari eventi, come un deadlock o
+una segmentation fault.
 
-\subsection{\ac{ipp}}
-Le Integrated Performance Primitives sono delle librerie che implementano un
-insieme molto completo di funzioni e algoritmi relativi al processamento di
-segnali e crittografia. In particolare implementano funzioni utili al
-processamento di segnali audio (filtri, codifiche audio, compressione dei dati,
-ecc.), funzioni per il processamento di immagini (trasformazioni, codifica
-video, ecc.), funzioni per calcoli su matrice e funzioni crittografiche
-(crittografia simmetrica, asimmetrica, funzioni hash, ecc.).  Il vantaggio
-delle IPP \`e che offrono un ampio spettro di funzioni che coprono praticamente
-tutte le necessit\`a nel processamento dei segnali, oltre ad essere ottimizzate
-per processori Intel. Inoltre sono state scritte in modo da essere naturalmente
-utilizzabili in ambienti multithreaded, sfruttando tutte le potenzialit\`a di
-processori multicore o processori multipli. Tutti questi fattori hanno concorso
-nell'adozione di questa libreria al posto di altre librerie concorrenti. Questa
-libreria \`e l'unico componente non Open Source utilizzato nell'intero progetto,
-anche se il suo utilizzo \`e gratuito per usi accademici. Le librerie
-alternative potrebbero essere comparate per verificare l'effettiva qualit\`a a
-livello di prestazioni.
-
-\section{Codice pre-esistente}
-
-
+\subsubsection{Valgrind}
+La suite di tools chiamata Valgrind \`e incentrata sull'individuazione di
+memory leak; il suo utilizzo \`e stato cruciale per individuare e rimuovere gli
+sprechi di memoria e capire sotto quali condizioni non venisse rilasciata la
+memoria utilizzata.
