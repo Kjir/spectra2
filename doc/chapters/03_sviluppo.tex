@@ -13,12 +13,14 @@ funzionamento delle parti attenenti alla libreria.
 
 \subsection{Boost}
 Le librerie Boost\footnote{\url{http://www.boost.org/}} sono molto usate nella
-programmazione in \CC perch\'e implementano moltissime funzioni spesso usate
-fornendo una interfaccia molto semplice. L'ottima qualit\`a di queste librerie
-\`e confermato dal fatto che spesso alcune sue componenti vengono integrate
-nello standard \CC. In questo progetto vengono utilizzate principalmente per
+programmazione in \CC perch\'e implementano moltissime funzioni di comune
+utilizzo fornendo una interfaccia molto semplice. L'ottima qualit\`a di queste
+librerie \`e confermato dal fatto che spesso alcune sue componenti vengono
+integrate nello standard \CC. Queste librerie sono basate sulla versione ANSI
+del \CC, rendendole compatibili con qualunque compilatore che implementi gli
+standard ANSI.In questo progetto vengono utilizzate principalmente per
 semplificare la lettura di argomenti da linea di comando, la lettura/scrittura
-di files e il multithreading.
+di files, le comunicazioni di rete e il multithreading.
 
 \subsection{\ac{ipp}}
 Le Integrated Performance
@@ -38,7 +40,26 @@ fattori hanno concorso nell'adozione di questa libreria al posto di altre
 librerie concorrenti. Questa libreria \`e l'unico componente non Open Source
 utilizzato nell'intero progetto, anche se il suo utilizzo \`e gratuito per usi
 accademici. Le librerie alternative potrebbero essere comparate per verificare
-l'effettiva qualit\`a a livello di prestazioni.
+l'effettiva qualit\`a a livello di prestazioni\footnote{cfr. paragrafo
+\ref{altlib}}.
+
+\subsubsection{Multithreading e prestazioni nelle \ac{ipp}}
+Le \ac{ipp} sono state sviluppate con l'intenzione di sfruttare a pieno le
+istruzioni \ac{SIMD} e \ac{SSE} presenti nei moderni processori. Queste
+istruzioni permettono di effettuare operazioni su vettori in parallelo,
+guadagnando grandi vantaggi prestazionali in alcuni tipi di operazioni, tra cui
+anche i calcoli necessari per l'elaborazione di segnali. Siccome diversi
+processori supportano diversi tipi di istruzioni, possono esistere diverse
+implementazioni di alcune funzione in base al tipo di istruzioni supportate. Per
+selezionare automaticamente la funzione corretta, le \ac{ipp} dispongono di un
+dispatcher che, durante l'inizializzazione a run-time, individuano le capacit\`a
+del processore e quindi la categoria di libreria da utilizzare. Questo permette
+di usare trasparentemente le funzioni di libreria sfruttando sempre
+l'implementazione pi\`u efficiente per il processore utilizzato.
+
+La libreria \`e strutturata su funzioni di basso livello, le quali costituiscono
+la base della libreria, che 
+
 
 \section{Codice pre-esistente}
 Parte del codice del progetto \`e stato prelevato dal software sviluppato in
@@ -53,14 +74,6 @@ Per semplificare lo sviluppo esistono diversi software che sono piuttosto
 standard in un qualunque progetto: l'editor di testo, il compilatore, un sistema
 di versioning e un debugger.
 
-\subsection{Editor}
-La selezione dell'editor dipende principalmente dalle preferenze del
-programmatore ed in minima parte dalle feature che questi offre. Ambienti che
-integrano l'editor all'interno di un'interfaccia che permette di gestire anche
-altri aspetti, come la compilazione, vengono chiamati \ac{IDE}. Nell'ambito di
-questo progetto l'unico editor utilizzato \`e stato
-VIM\footnote{\url{http://www.vim.org/}}.
-
 \subsection{Compilatore}
 La scelta del compilatore dipende in prima istanza dal linguaggio di
 programmazione prescelto. Nel caso di questo progetto il linguaggio di
@@ -69,44 +82,6 @@ oltre alla possibilit\`a di utilizzare il paradigma di programmazione
 orientata agli oggetti. Come compilatore \`e stato usato lo standard su sistemi
 unix, cio\`e g++. Questo compilatore fa parte della suite di compilatori del
 progetto GNU\footnote{\url{http://www.gnu.org/}}.
-
-\subsection{Versioning Control System}
-
-Un software per il controllo delle revisioni serve a facilitare lo sviluppo di
-uno stesso progetto da parte di diverse persone, oltre a fornire un modo pratico
-di salvare le vecchie versioni del codice. Anche nel caso di sviluppatore
-singolo, un sistema di versioning permette lo sviluppo su macchine diverse con
-la certezza che non si lavori su del codice non aggiornato.
-
-\subsubsection{Subversion}
-Subversion\footnote{\url{http://subversion.tigris.org/}} \`e uno dei VCS pi\`u
-diffusi, \`e basato su architettura client/server dove il server si occupa di
-salvare i dati e le informazioni sulla storia del progetto, mentre i client
-vengono usati dagli sviluppatori per recuperare queste informazioni. Il progetto
-\`e salvato su un repository SVN localizzato su un server dell'Istituto di
-Radioastronomia.
-
-\subsubsection{Git}
-Git\footnote{\url{http://git-scm.com/}} \`e un altro sistema di versioning che,
-a differenza di subversion, si basa su un modello distribuito: quando uno
-sviluppatore recupera le informazioni del progetto, queste vengono salvate tutte
-in locale. Questo significa che \`e possibile sviluppare e modificare il
-repository anche se non connessi alla rete, e quindi al server centrale, cosa
-non possibile con subversion. Git offre anche prestazioni migliori e una serie
-di altri vantaggi rispetto a subversion. Un grande vantaggio di git \`e la sua
-possibilit\`a di lavorare su un repository di subversion, comportandosi quindi
-come un client di subversion nei confronti del server, ma offrendo tutti i
-vantaggi di git allo sviluppatore. Questo sistema di versioning \`e stato
-utilizzato dal lato sviluppatore, sincronizzandosi con il server SVN.
-
-\subsection{Autotools}
-Gli autotools sono lo strumento di gestione progetti più diffuso nel software
-open source. Anche se a volte un po' complicati da usare, la semplificazione
-della gestione del progetto rendono il loro utilizzo indispensabile: con un
-solo comando, infatti, \`e possibile compilare, testare e creare un archivio del
-progetto pronto per essere redistribuito. \`E importante ricordarsi che questi
-tool tendono a cambiare comportamento tra le singole versioni, quindi va sempre
-controllato se siano necessari aggiornamenti ai files di configurazione.
 
 \subsection{Strumenti di debugging}
 Per individuare eventuali errori nel codice esistono degli strumenti in grado di
