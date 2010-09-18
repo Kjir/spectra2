@@ -125,15 +125,13 @@ attutire il rumore di fondo.
 
 \subsection{Inizializzazione}
 All'avvio dell'applicazione vengono lette le opzioni passate da linea di
-comando, inizializzando le variabili con valori appropriato ed allocando alcuni
-buffer. Inizializza poi un buffer circolare utilizzato per i dati di input, una
-lista per i dati di output 
+comando, inizializzando le variabili con valori appropriati ed allocando alcuni
+buffer. In seguito viene inizializzato un buffer circolare utilizzato per i
+dati di input, una lista per i dati di output, un thread pool il cui compito
+sar\`a calcolare le trasformazioni descritte dalla FilterChain ed un thread che
+si occupa di scrivere l'output.
 
 \subsection{Thread di output}
-Poi avvia il thread di output, il quale controlla i dati presenti
-in una lista, fornita all'avvio, dove verranno accodati i dati da scrivere in
-uscita. Quando la lista \`e vuota, il thread si mette semplicemente in attesa,
-altrimenti procede alla scrittura e ricomincia il proprio ciclo da capo.
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[width=1\linewidth]{output}
@@ -141,10 +139,40 @@ altrimenti procede alla scrittura e ricomincia il proprio ciclo da capo.
 	\caption{Algoritmo del thread di output}
 	\label{fig:output}
 \end{figure}
+Il thread di output controlla i dati presenti in una lista, fornita durante
+l'inizializzazione, dove verranno accodati i dati da scrivere in uscita. Quando
+la lista \`e vuota, il thread si mette semplicemente in attesa, altrimenti
+procede alla scrittura, rimuove dalla lista i dati scritti e ricomincia il
+proprio ciclo da capo.
 
 \subsection{Thread principale}
 Avviato il thread di output, il thread principale entra nel suo ciclo
 principale, dove effettua tre operazioni che esploriamo nel dettaglio:
 \emph{lettura dei dati}, \emph{selezione del buffer di output} e
 \emph{assegnamento al thread pool}.
-\subsection{Lettura dei dati}
+\subsubsection{Lettura dei dati}
+La prima operazione effettuata all'interno del ciclo principale \`e verificare
+che ci sia dello spazio disponibile nel buffer circolare. Se il buffer \`e
+pieno --- cio\`e se tutti i dati nel buffer devono ancora essere elaborati ---
+il thread si mette in attesa che il carico di lavoro venga smaltito. Quando
+c'\`e dello spazio disponibile nel buffer circolare, si leggono i dati
+dall'SrcFilter e si accodano. Si procede poi alla selezione del buffer di
+output.
+\subsubsection{Selezione del buffer di output}
+Una volta ottenuti i dati da elaborare, si verifica se esistono buffer accodati
+nella lista di output. Se non ce ne sono, si crea un nuovo buffer, lo si accoda
+alla lista e lo si seleziona come buffer di output; se, invece, la lista
+contiene dei buffer si seleziona il buffer di testa e si verifica se \`e
+utilizzabile o meno: siccome allo scopo di attutire il rumore di fondo in un
+segnale spesso di fanno le somme di diversi segnali trasformati, esiste un
+parametro che determina quante di queste somme si vogliono effettuare. Per ogni
+buffer si tiene traccia del numero di thread a cui \`e stato assegnato e se
+questo numero \`e minore rispetto al numero di somme desiderate, il buffer \`e
+selezionabile, altrimenti se ne crea uno nuovo e lo si accoda in lista.
+\subsubsection{Assegnamento al thread pool}
+Dopo aver letto i dati del segnale da trasformare ed aver individuato il buffer
+di output su cui scrivere i dati elaborati, si può assegnare il lavoro al thread
+pool. Per farlo, \`e sufficiente indicare i puntatori ai due buffer ed un
+puntatore alla funzione che deve occuparsi di elaborare i dati. Il thread pool
+si occuper\`a automaticamente di assegnare il lavoro al primo thread libero
+presente nel suo pool.
