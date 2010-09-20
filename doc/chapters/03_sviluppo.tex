@@ -57,8 +57,23 @@ del processore e quindi la categoria di libreria da utilizzare. Questo permette
 di usare trasparentemente le funzioni di libreria sfruttando sempre
 l'implementazione pi\`u efficiente per il processore utilizzato.
 
-La libreria \`e strutturata su funzioni di basso livello, le quali costituiscono
-la base della libreria, che 
+Alcune funzioni di base della libreria sfruttano il threading per migliorare le
+proprie prestazioni, in particolare sfruttando le librerie OpenMP sviluppate da
+Intel. Quando si utilizza la versione multi-threaded della libreria, i thread
+vengono automaticamente inizializzati al numero di processori e core presenti: a
+questo modo la libreria avvier\`a al massimo tanti thread quante sono le unit\`a
+di calcolo presenti nel sistema, evitando di sovracaricare il sistema e
+ottenendo cos\`i la migliore prestazione possibile dal sistema in uso. Sono
+presenti anche due funzioni, \texttt{ippSetNumThreads()} e
+\texttt{ippGetNumThreads()}, che permettono di manipolare il numero di threads
+utilizzati dalla libreria. Il numero di thread non sar\`a mai maggiore rispetto
+al numero di unit\`a di calcolo del sistema, anche se impostati manualmente ad
+un valore maggiore.
+
+Tutte le funzioni IPP sono thread safe, cio\`e possono essere usate da diversi
+thread di esecuzione contemporaneamente senza che questo implichi un qualunque
+malfunzionamento.\footnote{Per approfondimenti, cfr.
+\url{http://software.intel.com/en-us/articles/threading-and-intel-integrated-performance-primitives/}}
 
 
 \section{Codice pre-esistente}
@@ -69,35 +84,12 @@ sviluppo del calcolo della \ac{FFT} lasciando maggior tempo per una corretta
 implementazione delle altre parti. Questo codice \`e stato adattato per
 funzionare in un contesto multithreaded e per accettare input da diverse fonti.
 
-\section{Strumenti di supporto}
-Per semplificare lo sviluppo esistono diversi software che sono piuttosto
-standard in un qualunque progetto: l'editor di testo, il compilatore, un sistema
-di versioning e un debugger.
-
-\subsection{Compilatore}
-La scelta del compilatore dipende in prima istanza dal linguaggio di
-programmazione prescelto. Nel caso di questo progetto il linguaggio di
-programmazione utilizzato \`e il \CC, scelto per le sue ottime prestazioni,
-oltre alla possibilit\`a di utilizzare il paradigma di programmazione
-orientata agli oggetti. Come compilatore \`e stato usato lo standard su sistemi
-unix, cio\`e g++. Questo compilatore fa parte della suite di compilatori del
-progetto GNU\footnote{\url{http://www.gnu.org/}}.
-
-\subsection{Strumenti di debugging}
-Per individuare eventuali errori nel codice esistono degli strumenti in grado di
-aiutare il programmatore a scoprirli e rimuoverli.
-
-\subsubsection{Debugger}
-Il debugger \`e uno strumento utilissimo per cercare la provenienza di errori
-fatali, in particolare le segmentation faults, e permette di tracciare
-l'esecuzione del programma rispetto al codice sorgente. Il debugger standard per
-sistemi Unix \`e gdb, sempre parte del progetto GNU. Il debugger \`e stato
-utilizzato principalmente per capire lo stato dei vari thread ed indagare i
-motivi per cui potevano accadere alcuni particolari eventi, come un deadlock o
-una segmentation fault.
-
-\subsubsection{Valgrind}
-La suite di tools chiamata Valgrind \`e incentrata sull'individuazione di
-memory leak; il suo utilizzo \`e stato cruciale per individuare e rimuovere gli
-sprechi di memoria e capire sotto quali condizioni non venisse rilasciata la
-memoria utilizzata.
+\section{Gestione del threading}
+Quando si introduce il threading in una applicazione, ci sono delle situazioni
+che vanno prese in considerazione: avere diversi thread pu\`o portare problemi
+normalmente assenti e non facilmente identificabili. Inoltre alcuni problemi
+legati al threading possono essere difficili da riprodurre perch\'e  dipendono
+dalla schedulazione dei thread da parte del sistema operativo, quindi 
+\subsection{Mutua esclusione}
+\subsection{Wait/notify}
+\subsection{Debugging}
