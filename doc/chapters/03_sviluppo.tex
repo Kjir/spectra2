@@ -70,7 +70,7 @@ utilizzati dalla libreria. Il numero di thread non sar\`a mai maggiore rispetto
 al numero di unit\`a di calcolo del sistema, anche se impostati manualmente ad
 un valore maggiore.
 
-Tutte le funzioni IPP sono thread safe, cio\`e possono essere usate da diversi
+Tutte le funzioni IPP sono thread-safe, cio\`e possono essere usate da diversi
 thread di esecuzione contemporaneamente senza che questo implichi un qualunque
 malfunzionamento.\footnote{Per approfondimenti, cfr.
 \url{http://software.intel.com/en-us/articles/threading-and-intel-integrated-performance-primitives/}}
@@ -89,7 +89,78 @@ Quando si introduce il threading in una applicazione, ci sono delle situazioni
 che vanno prese in considerazione: avere diversi thread pu\`o portare problemi
 normalmente assenti e non facilmente identificabili. Inoltre alcuni problemi
 legati al threading possono essere difficili da riprodurre perch\'e  dipendono
-dalla schedulazione dei thread da parte del sistema operativo, quindi 
+dalla schedulazione dei thread da parte del sistema operativo, quindi sono al di
+fuori dal controllo del programmatore. Per questo motivo esistono alcune
+tecniche di programmazione che permettono di evitare problemi quando thread
+diversi devono condividere alcuni dati.
 \subsection{Mutua esclusione}
+\lstinputlisting[firstline=3,lastline=12,float,caption=Variabili della
+lista,label=lst:vars]{../src/list.hpp}
+Con la mutua esclusione si assicura che quando un thread accede ad una parte di
+dati protetta, nessun altro thread pu\`o accedervi contemporaneamente. La mutua
+esclusione \`e stata implementata, ad esempio, come wrapper attorno alla
+struttura standard \texttt{std::list} per renderla utilizzabile da pi\`u thread
+contemporaneamente.
+
+Per rendere la lista thread-safe, servono tre variabili: una contiene la lista
+standard, una per la mutex ed una per la condition variable, come mostrato nel
+listato \ref{lst:vars}
+
+Una mutex, abbreviazione di \textbf{mut}utal \textbf{ex}clusion, serve appunto
+per poter bloccare l'accesso all'oggetto da parte di altri thread e per
+rilasciare il blocco quando si ha finito. Le funzioni presenti in
+\texttt{std::list} vengono reimplementate sfruttando la mutex per assicurare un
+comportamento corretto in caso di multithreading: troviamo un buon esempio nel
+metodo \texttt{empty()} presentato nel listato \ref{lst:empty}.
+\lstinputlisting[firstline=24,lastline=28,float,caption=Implementazione di
+\texttt{empty()},label=lst:empty]{../src/list.hpp}
+
+La creazione dell'oggetto di tipo \texttt{boost::mutex::scoped\_lock} sospende
+l'esecuzione del thread se ci sono gi\`a altri thread che possiedono l'esclusiva
+sull'oggetto \texttt{\_mut}, altrimenti acquisisce il diritto di esclusiva
+sulla mutex e procede con l'operazione. Nel distruttore dell'oggetto
+\texttt{lock} avviene il rilascio della mutex, quindi non appena l'oggetto
+finisce fuori contesto --- cio\`e dopo il \texttt{return} --- il distruttore
+viene chiamato e la mutex viene liberata, lasciando libero accesso ad altri
+threads.
+
 \subsection{Wait/notify}
+Abbiamo visto nel paragrafo \ref{threadout} come il thread di output si metta in
+attesa sulla lista quando questa \`e vuota. Il codice presente nel thread di
+output \`e simile a questo:
+\begin{lstlisting}
+while(list.empty()) {
+    list.wait();
+}
+//Do something
+\end{lstlisting}
+
+Questo codice mette in uno stato ``dormiente'' il thread, lasciando il posto
+agli altri thread e ottimizzando cos\`i il tempo di scheduling assegnato al
+programma: l'alternativa sarebbe fare un ciclo continuo --- detto \emph{busy waiting} --- per verificare la stessa
+condizione ripetutamente, ma in questo modo si sprecherebbero tantissime risorse
+su un controllo che non cambier\`a risultato prima che avvengano altre cose. Per
+monitorare lo stato di questa condizione, si pu\`o utilizzare una
+\texttt{boost::condition\_variable}, come mostrato nel listato \ref{lst:cond_wait}.
+\lstinputlisting[firstline=50,lastline=53,float,caption=Uso della
+\texttt{boost::condition\_variable},label=lst:cond_wait]{../src/list.hpp}
+Il codice inizialmente acquisisce un lock esclusivo sulla mutex, poi si mette in
+attesa sulla \texttt{condition\_variable} \texttt{\_empty}. A questo punto
+il lock viene rilasciato ed il thread si mette in attesa, senza occupare risorse
+sul sistema. Per risvegliare questo thread bisogna notificarlo del fatto che la
+condizione su cui stava aspettando `e stata modificata, quindi quando si
+inserisce un nuovo elemento nella lista bisogna anche notificare il thread di
+output che la lista non \`e pi\`u vuota, come illustrato nel listato
+\ref{lst:notify}. Il metodo \texttt{notify\_one()} \`e definito come:
+\begin{lstlisting}[frame=none]
+    void notify_one() { _empty.notify_one(); }
+\end{lstlisting}
+Utilizza, quindi, la \texttt{condition\_variable} per notificare uno dei thread
+in attesa sulla variabile stessa. A questo punto il thread di output si
+risveglia, aspetta di poter riacquisire il lock sull'oggetto e continua con
+l'esecuzione. A questo punto la condizione \texttt{list.empty()} dovrebbe
+essere falsa e il thread pu\`o procedere con il suo lavoro.
+\lstinputlisting[firstline=34,lastline=38,float,caption=Notifica di inserimento
+di un nuovo elemento in lista,label=lst:notify]{../src/list.hpp}
+
 \subsection{Debugging}

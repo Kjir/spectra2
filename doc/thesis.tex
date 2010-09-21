@@ -8,6 +8,8 @@
 \usepackage{amsmath}
 \usepackage{acronym}
 \usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
 
 %\textwidth=450pt
 %\oddsidemargin=0pt
@@ -26,6 +28,14 @@
 
 % Remove borders from URLs
 \hypersetup{pdfborder = {0 0 0 0}}
+
+\lstloadlanguages{C++,Python}
+% Set style for code listings
+\lstset{
+    language=C++,
+    frame=lines,
+    float=htbp
+}
 
 \newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
 
