@@ -147,6 +147,7 @@ procede alla scrittura, rimuove dalla lista i dati scritti e ricomincia il
 proprio ciclo da capo.
 
 \subsection{Thread principale}
+\label{main_thread}
 Avviato il thread di output, il thread principale entra nel suo ciclo
 principale, dove effettua tre operazioni che esploriamo nel dettaglio:
 \emph{lettura dei dati}, \emph{selezione del buffer di output} e
@@ -170,7 +171,7 @@ parametro che determina quante di queste somme si vogliono effettuare. Per ogni
 buffer si tiene traccia del numero di thread a cui \`e stato assegnato e se
 questo numero \`e minore rispetto al numero di somme desiderate, il buffer \`e
 selezionabile, altrimenti se ne crea uno nuovo e lo si accoda in lista.
-\subsubsection{Assegnamento al thread pool}
+\subsubsection{Assegnazione al thread pool}
 Dopo aver letto i dati del segnale da trasformare ed aver individuato il buffer
 di output su cui scrivere i dati elaborati, si può assegnare il lavoro al thread
 pool. Per farlo, \`e sufficiente indicare i puntatori ai due buffer ed un

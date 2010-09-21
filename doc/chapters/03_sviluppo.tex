@@ -164,3 +164,27 @@ essere falsa e il thread pu\`o procedere con il suo lavoro.
 di un nuovo elemento in lista,label=lst:notify]{../src/list.hpp}
 
 \subsection{Debugging}
+Per capire meglio i problemi che possono sorgere osserviamo il seguente codice
+nel listato \ref{lst:threrr}:
+\begin{lstlisting}[numbers=left,frame=l,float,caption=Codice problematico nel caso
+	di pi\`u threads attivi,label=lst:threrr]
+if( list.empty() || list.back()->is_src_full() ) {
+	FFTBuf<DstIppType> buffer( new FFTBuf<DstIppType>(siglen, sums) );
+	*buffer = fft::alloc(buffer->cdata(), siglen);
+	fft::zero_mem(buffer->cdata(), siglen);
+	list.push_back(buffer);
+}
+\end{lstlisting}
+questo codice faceva parte del thread principale ed \`e il controllo effettuato
+per verificare se \`e necessario creare un nuovo buffer di output o se si pu\`o
+assegnare l'ultimo buffer in lista come punto di scrittura della trasformazione
+da effettuare, meccanismo descritto nel paragrafo \ref{main_thread}. Nella riga
+1, si controlla innanzitutto se la lista di output \`e vuota o se l'ultimo
+elemento nella lista \`e stato assegnato tante volte quanto sono il numero di
+somme che si vogliono effettuare. Se almeno una delle due condizioni \`e vera,
+significa che dobbiamo accodare un nuovo elemento nella lista. La riga 2 crea il
+puntatore \texttt{buffer} ed inizializza l'oggetto di tipo
+\texttt{FFTBuf<DstIppType>} assegnando come parametri la lunghezza del segnale
+elaborato (\texttt{siglen}) ed il numero di somme che si intendono fare su quel
+buffer (\texttt{sums}). \texttt{FFTBuf} \`e un oggetto che contiene il segnale
+elaborato dai filtri.
