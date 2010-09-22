@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.47pre4 r22446"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="threading.svg">
   <defs
      id="defs4">
     <marker
@@ -107,7 +107,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.76508705"
-     inkscape:cx="593.62077"
+     inkscape:cx="432.20123"
      inkscape:cy="402.40478"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -125,7 +125,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -154,18 +154,17 @@
            height="232.79636"
            x="124.71233"
            y="-126.40029" /></flowRegion><flowPara
-         id="flowPara3604"></flowPara></flowRoot>    <g
+         id="flowPara3604" /></flowRoot>    <g
        id="g4080"
        transform="translate(-28.637647,16.628311)">
       <g
          id="g4088" />
     </g>
     <g
-       id="g4065"
-       transform="translate(52.535204,-254.95184)">
+       id="g3368">
       <path
-         transform="translate(-26.790057,-19.399696)"
-         d="m 307.62376,134.57181 c 0,40.05054 -48.18407,72.51791 -107.62213,72.51791 -59.43805,0 -107.622121,-32.46737 -107.622121,-72.51791 0,-40.05054 48.184071,-72.517916 107.622121,-72.517916 59.43806,0 107.62213,32.467376 107.62213,72.517916 z"
+         transform="translate(25.745147,-274.35154)"
+         d="m 307.62376,134.57181 a 107.62212,72.517914 0 1 1 -215.244251,0 107.62212,72.517914 0 1 1 215.244251,0 z"
          sodipodi:ry="72.517914"
          sodipodi:rx="107.62212"
          sodipodi:cy="134.57181"
@@ -175,14 +174,14 @@
          sodipodi:type="arc" />
       <text
          id="text3606"
-         y="122.62817"
-         x="132.01529"
+         y="-132.32368"
+         x="165.93721"
          style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
          xml:space="preserve"><tspan
            id="tspan3610"
-           y="122.62817"
-           x="132.01529"
-           sodipodi:role="line">SrcFilter</tspan></text>
+           y="-132.32368"
+           x="165.93721"
+           sodipodi:role="line">SourceFilter</tspan></text>
     </g>
     <g
        transform="translate(23.897557,-238.32353)"
@@ -331,7 +330,6 @@
        id="path5673"
        transform="translate(65.089452,-239.50465)"
        inkscape:connector-type="polyline"
-       inkscape:connection-start="#g4065"
        inkscape:connection-end="#g4932"
        sodipodi:nodetypes="cc" />
     <g
@@ -414,7 +412,6 @@
        id="path6321"
        transform="translate(65.089452,-239.50465)"
        inkscape:connector-type="polyline"
-       inkscape:connection-start="#g4065"
        inkscape:connection-end="#g4932"
        sodipodi:nodetypes="cc" />
     <g

@@ -108,12 +108,66 @@ parametri del template, si definisce un tipo denominato \texttt{type}
 corrispondente alle caratteristiche richieste.
 
 \lstinputlisting[firstline=25,lastline=34,float,caption=Definizione di costanti
-per la selezione del tipo di dato,label=lst:consts_def,basicstyle=\tiny]{../src/main.cc}
+per la selezione del tipo di
+dato,label=lst:consts_def,basicstyle=\tiny]{../src/main.cc}
 
 \lstinputlisting[firstline=4,lastline=21,float,caption=La magia dietro
 \texttt{typer},label=lst:typer,basicstyle=\small]{../src/type.hpp}
 
-\subsection{Server UDP come SrcFilter}
+\subsubsection{Gestione della memoria}
+La libreria \ac{ipp} fornisce alcune funzioni per allocare memoria
+allineata\footnote{TBA} ed effetuare altre operazioni di basso livello. Siccome
+la libreria \`e scritta in C, ogni tipo di dato ha una funzione diversa, quindi
+per poter scrivere codice generico che funzioni con qualunque tipo di dato \`e
+stato necessario creare un'interfaccia \CC che richiami automaticamente le
+funzioni corrette. Il metodo adottato (listato \ref{lst:malloc}) prevede che la
+funzione generica di interfaccia prenda due argomenti invece di uno solo: il
+primo argomento \`e un puntatore al vettore per cui si sta allocando la memoria
+ed il secondo argomento \`e la lunghezza di questo vettore. Il primo argomento
+in realt\`a non viene utilizzato, ma con la tecnica dell'\texttt{overloading}
+permette di selezionare la funzione corretta.
+
+\lstinputlisting[firstline=108,lastline=130,float,caption=Alcune implementazioni
+della funzione
+\texttt{IPP::malloc},label=lst:malloc,basicstyle=\small]{../src/ipp.cc}
+
+\subsubsection{Buffer di dati}
+Per le classi e strutture contenente i dati \`e stata scelta una strategia
+diversa: siccome non \`e necessario chiamare funzioni di libreria, ma i metodi
+sono generici ed indipendenti dal tipo di dato su cui si opera, sono stati
+adottati i template come soluzione generica. Come si pu\`o vedere nella
+definizione della struttura \texttt{SrcType} (listato \ref{lst:srctype}), i
+membri della struttura sono assolutamente neutri rispetto al tipo di dato
+utilizzato.
+
+\lstinputlisting[firstline=227,lastline=236,float,caption=Dichiarazione della
+struttura \texttt{SrcType},label=lst:srctype]{../src/fft_buf.hpp}
+
+\subsection{Server UDP come SourceFilter}
+Nel paragrafo \ref{sourcefilter} abbiamo spiegato come in fase di progettazione
+si sia pensato ad una interfaccia generica per leggere i dati da una fonte
+esterna; il listato \ref{lst:sourcefilter} mostra l'implementazione di questa
+interfaccia.
+\lstinputlisting[firstline=4,lastline=10,float,caption=Dichiarazione
+dell'interfaccia
+\texttt{SourceFilter},label=lst:sourcefilter]{../src/filter/source.hpp}
+
+Per implementare questa interfaccia \`e sufficiente ereditare dalla classe
+virtuale \texttt{SourceFilter} ed implementare il metodo \texttt{read()}.
+Vediamo ad esempio la dichiarazione della classe \texttt{udp\_sock}, presentata
+nel listato \ref{lst:udp_sock}: si pu\`o notare che vengono definite due
+funzioni read, una delle quali corrisponde a quella dichiarata nella classe
+virtuale \texttt{SourceFilter}. L'implementazione della \texttt{read()}
+virtuale, presentata nel listato \ref{lst:udp_read}, non fa altro che convertire
+il puntatore a void in un puntatore del tipo specificato dal template. Questo
+permette di usare la classe \texttt{udp\_sock} con qualunque tipo di dato.
+
+\lstinputlisting[firstline=25,lastline=41,caption=Dichiarazione della classe
+\texttt{udp\_sock},float,label=lst:udp_sock,basicstyle=\small]{../src/server.hpp}
+
+\lstinputlisting[firstline=183,lastline=186,caption=Implementazione della
+\texttt{read()} virtuale,float,label=lst:udp_read]{../src/server.hpp}
+
 \subsection{Gestione del threading}
 Quando si introduce il threading in una applicazione, ci sono delle situazioni
 che vanno prese in considerazione: avere diversi thread pu\`o portare problemi

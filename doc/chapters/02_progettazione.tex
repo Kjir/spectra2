@@ -53,6 +53,7 @@ figura \ref{fig:algorithm}.
 \end{figure}
 
 \subsection{SourceFilter}
+\label{sourcefilter}
 Una sorgente ha un unico metodo assolutamente necessario che serve a leggere i
 dati. Una sottoclasse di \texttt{SourceFilter}, ad esempio, \`e il server UDP
 (\texttt{udp\_sock}), che pu\`o essere usata da qualunque codice generico che
@@ -158,7 +159,7 @@ che ci sia dello spazio disponibile nel buffer circolare. Se il buffer \`e
 pieno --- cio\`e se tutti i dati nel buffer devono ancora essere elaborati ---
 il thread si mette in attesa che il carico di lavoro venga smaltito. Quando
 c'\`e dello spazio disponibile nel buffer circolare, si leggono i dati
-dall'SrcFilter e si accodano. Si procede poi alla selezione del buffer di
+dal SourceFilter e si accodano. Si procede poi alla selezione del buffer di
 output.
 \subsubsection{Selezione del buffer di output}
 Una volta ottenuti i dati da elaborare, si verifica se esistono buffer accodati
