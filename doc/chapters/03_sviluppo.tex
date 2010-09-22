@@ -116,16 +116,20 @@ dato,label=lst:consts_def,basicstyle=\tiny]{../src/main.cc}
 
 \subsubsection{Gestione della memoria}
 La libreria \ac{ipp} fornisce alcune funzioni per allocare memoria
-allineata\footnote{TBA} ed effetuare altre operazioni di basso livello. Siccome
-la libreria \`e scritta in C, ogni tipo di dato ha una funzione diversa, quindi
-per poter scrivere codice generico che funzioni con qualunque tipo di dato \`e
-stato necessario creare un'interfaccia \CC che richiami automaticamente le
-funzioni corrette. Il metodo adottato (listato \ref{lst:malloc}) prevede che la
-funzione generica di interfaccia prenda due argomenti invece di uno solo: il
-primo argomento \`e un puntatore al vettore per cui si sta allocando la memoria
-ed il secondo argomento \`e la lunghezza di questo vettore. Il primo argomento
-in realt\`a non viene utilizzato, ma con la tecnica dell'\texttt{overloading}
-permette di selezionare la funzione corretta.
+allineata\footnote{Gli elaboratori quando accedono ai dati in memoria, lo fanno
+leggendo un certo numero di bytes alla volta. Per ottenere migliori
+prestazioni, \`e ideale che la memoria per le variabili venga allocata
+allineata al punto in cui il processore inizier\`a a leggerla.} ed effetuare
+altre operazioni di basso livello. Siccome la libreria \`e scritta in C, ogni
+tipo di dato ha una funzione diversa, quindi per poter scrivere codice generico
+che funzioni con qualunque tipo di dato \`e stato necessario creare
+un'interfaccia \CC che richiami automaticamente le funzioni corrette. Il metodo
+adottato (listato \ref{lst:malloc}) prevede che la funzione generica di
+interfaccia prenda due argomenti invece di uno solo: il primo argomento \`e un
+puntatore al vettore per cui si sta allocando la memoria ed il secondo
+argomento \`e la lunghezza di questo vettore. Il primo argomento in realt\`a
+non viene utilizzato, ma con la tecnica dell'\texttt{overloading} permette di
+selezionare la funzione corretta.
 
 \lstinputlisting[firstline=108,lastline=130,float,caption=Alcune implementazioni
 della funzione
