@@ -20,7 +20,7 @@ integrate nello standard \CC. Queste librerie sono basate sulla versione ANSI
 del \CC, rendendole compatibili con qualunque compilatore che implementi gli
 standard ANSI.In questo progetto vengono utilizzate principalmente per
 semplificare la lettura di argomenti da linea di comando, la lettura/scrittura
-di files, le comunicazioni di rete e il multithreading.
+di files, le comunicazioni di rete e il multi-threading.
 
 \subsection{\ac{ipp}}
 Le Integrated Performance
@@ -34,7 +34,7 @@ funzioni crittografiche (crittografia simmetrica, asimmetrica, funzioni hash,
 ecc.).  Il vantaggio delle IPP \`e che offrono un ampio spettro di funzioni che
 coprono praticamente tutte le necessit\`a nel processamento dei segnali, oltre
 ad essere ottimizzate per processori Intel. Inoltre sono state scritte in modo
-da essere naturalmente utilizzabili in ambienti multithreaded, sfruttando tutte
+da essere naturalmente utilizzabili in ambienti multi-threaded, sfruttando tutte
 le potenzialit\`a di processori multicore o processori multipli. Tutti questi
 fattori hanno concorso nell'adozione di questa libreria al posto di altre
 librerie concorrenti. Questa libreria \`e l'unico componente non Open Source
@@ -82,9 +82,39 @@ fase di tirocinio, sempre presso l'Istituto di Radioastronomia di Medicina.
 Questo codice ha permesso di ridurre notevolmente il tempo dedicato allo
 sviluppo del calcolo della \ac{FFT} lasciando maggior tempo per una corretta
 implementazione delle altre parti. Questo codice \`e stato adattato per
-funzionare in un contesto multithreaded e per accettare input da diverse fonti.
+funzionare in un contesto multi-threaded e per accettare input da diverse fonti.
 
-\section{Gestione del threading}
+\section{Gestione di problemi comuni}
+\subsection{Selezione del tipo di dato}
+Per rendere il programma il pi\`u versatile possibile, non si poteva legare il
+suo funzionamento ad un unico tipo di dati. Siccome le \ac{ipp} includono
+funzioni per diversi tipi di dati, il programma \`e stato sviluppato in modo da
+riuscire a selezionare il giusto tipo di funzione a seconda del tipo di dato in
+input e in output. L'implementazione attuale permette di selezionare il tipo di
+dato impostando delle costanti e ricompilando il codice, un possibile
+miglioramento potrebbe essere la selezione dinamica senza bisogno di
+ricompilazione del tipo di dato, cui parleremo nel paragrafo \ref{dyn_dtype}.
+
+\subsubsection{Dal numero di bit al tipo di variabile}
+Il primo passo da compiere per poter lavorare sul tipo di dato desiderato \`e
+associare al numero di bit selezionati nella costante il corretto tipo di dato.
+Il listato \ref{lst:consts_def} illustra il metodo di selezione dei numeri di bit e
+la definizione delle costanti contenenti i tipi di dato corretti. Come si pu\`o
+osservare, si usano i template per ottenere il risultato che vogliamo e con
+delle \texttt{typedef} definiamo dei nuovi tipi corrispondenti alle dimensioni
+richieste. Parte del codice di \texttt{typer} \`e riportato nel listato
+\ref{lst:typer}. Si pu\`o osservare come molto semplicemente al variare dei due
+parametri del template, si definisce un tipo denominato \texttt{type}
+corrispondente alle caratteristiche richieste.
+
+\lstinputlisting[firstline=25,lastline=34,float,caption=Definizione di costanti
+per la selezione del tipo di dato,label=lst:consts_def,basicstyle=\tiny]{../src/main.cc}
+
+\lstinputlisting[firstline=4,lastline=21,float,caption=La magia dietro
+\texttt{typer},label=lst:typer,basicstyle=\small]{../src/type.hpp}
+
+\subsection{Server UDP come SrcFilter}
+\subsection{Gestione del threading}
 Quando si introduce il threading in una applicazione, ci sono delle situazioni
 che vanno prese in considerazione: avere diversi thread pu\`o portare problemi
 normalmente assenti e non facilmente identificabili. Inoltre alcuni problemi
@@ -93,7 +123,8 @@ dalla schedulazione dei thread da parte del sistema operativo, quindi sono al di
 fuori dal controllo del programmatore. Per questo motivo esistono alcune
 tecniche di programmazione che permettono di evitare problemi quando thread
 diversi devono condividere alcuni dati.
-\subsection{Mutua esclusione}
+
+\subsubsection{Mutua esclusione}
 \lstinputlisting[firstline=3,lastline=12,float,caption=Variabili della
 lista,label=lst:vars]{../src/list.hpp}
 Con la mutua esclusione si assicura che quando un thread accede ad una parte di
@@ -110,7 +141,7 @@ Una mutex, abbreviazione di \textbf{mut}utal \textbf{ex}clusion, serve appunto
 per poter bloccare l'accesso all'oggetto da parte di altri thread e per
 rilasciare il blocco quando si ha finito. Le funzioni presenti in
 \texttt{std::list} vengono reimplementate sfruttando la mutex per assicurare un
-comportamento corretto in caso di multithreading: troviamo un buon esempio nel
+comportamento corretto in caso di multi-threading: troviamo un buon esempio nel
 metodo \texttt{empty()} presentato nel listato \ref{lst:empty}.
 \lstinputlisting[firstline=24,lastline=28,float,caption=Implementazione di
 \texttt{empty()},label=lst:empty]{../src/list.hpp}
@@ -124,7 +155,7 @@ finisce fuori contesto --- cio\`e dopo il \texttt{return} --- il distruttore
 viene chiamato e la mutex viene liberata, lasciando libero accesso ad altri
 threads.
 
-\subsection{Wait/notify}
+\subsubsection{Wait/notify}
 Abbiamo visto nel paragrafo \ref{threadout} come il thread di output si metta in
 attesa sulla lista quando questa \`e vuota. Il codice presente nel thread di
 output \`e simile a questo:
@@ -163,28 +194,185 @@ essere falsa e il thread pu\`o procedere con il suo lavoro.
 \lstinputlisting[firstline=34,lastline=38,float,caption=Notifica di inserimento
 di un nuovo elemento in lista,label=lst:notify]{../src/list.hpp}
 
-\subsection{Debugging}
-Per capire meglio i problemi che possono sorgere osserviamo il seguente codice
-nel listato \ref{lst:threrr}:
+\subsubsection{Debugging}
+Per capire meglio i problemi che possono sorgere osserviamo il codice nel
+listato \ref{lst:threrr}:
 \begin{lstlisting}[numbers=left,frame=l,float,caption=Codice problematico nel caso
 	di pi\`u threads attivi,label=lst:threrr]
 if( list.empty() || list.back()->is_src_full() ) {
-	FFTBuf<DstIppType> buffer( new FFTBuf<DstIppType>(siglen, sums) );
-	*buffer = fft::alloc(buffer->cdata(), siglen);
-	fft::zero_mem(buffer->cdata(), siglen);
+	FFTBuf<DstIppType> *buffer( new FFTBuf<DstIppType>(siglen, sums) );
+	*buffer = IPP::alloc(buffer->cdata(), siglen);
+	IPP::zero_mem(buffer->cdata(), siglen);
 	list.push_back(buffer);
 }
+FFTBuf<DstIppType> *work_buffer = list.back();
 \end{lstlisting}
 questo codice faceva parte del thread principale ed \`e il controllo effettuato
 per verificare se \`e necessario creare un nuovo buffer di output o se si pu\`o
 assegnare l'ultimo buffer in lista come punto di scrittura della trasformazione
-da effettuare, meccanismo descritto nel paragrafo \ref{main_thread}. Nella riga
-1, si controlla innanzitutto se la lista di output \`e vuota o se l'ultimo
-elemento nella lista \`e stato assegnato tante volte quanto sono il numero di
-somme che si vogliono effettuare. Se almeno una delle due condizioni \`e vera,
-significa che dobbiamo accodare un nuovo elemento nella lista. La riga 2 crea il
-puntatore \texttt{buffer} ed inizializza l'oggetto di tipo
+da effettuare, meccanismo descritto nel paragrafo \ref{main_thread}.
+\paragraph{Analisi del codice}
+Siccome il listato non \`e banale, procediamo ad analizzare passo per passo le
+operazioni effettuate:
+
+Nella riga 1, si controlla innanzitutto se la lista di output \`e vuota o se
+l'ultimo elemento nella lista \`e stato assegnato tante volte quanto sono il
+numero di somme che si vogliono effettuare. Se almeno una delle due condizioni
+\`e vera, significa che dobbiamo accodare un nuovo elemento nella lista. La riga
+2 crea il puntatore \texttt{buffer} ed inizializza l'oggetto di tipo
 \texttt{FFTBuf<DstIppType>} assegnando come parametri la lunghezza del segnale
 elaborato (\texttt{siglen}) ed il numero di somme che si intendono fare su quel
-buffer (\texttt{sums}). \texttt{FFTBuf} \`e un oggetto che contiene il segnale
-elaborato dai filtri.
+buffer (\texttt{sums}). \texttt{FFTBuf} \`e un oggetto che contiene il buffer in
+cui viene salvato il segnale una volta applicate le trasformazioni e alcuni
+metodi ausiliari. Uno di questi metodi, usato nella riga 1, \`e
+\texttt{is\_src\_full()} che restituisce un valore booleano vero se l'istanza
+dell'oggetto \`e stata assegnata ad un numero di thread pari al numero di somme
+volute, falso altrimenti. Con questo metodo, quindi, si pu\`o sapere se
+l'istanza dell'oggetto \`e riutilizzabile per un altro thread o meno. La
+costante DstIppType segnala il tipo di dato su cui si opera, in particolare il
+numero di bit usati per ogni punto del segnale: avere questa costante permette
+di adattare il programma molto velocemente per tipi di dati diversi. Alle righe
+3--4 si alloca la memoria per il buffer, utilizzando i metodi delle \ac{ipp} per
+fare s\`i che la memoria sia allineata e la si inizializza a zero.  Nella riga 5
+si accoda il puntatore al buffer in quanto ora l'inizializzazione \`e
+completata. La riga 7 mostra come viene selezionato il buffer su cui lavorare:
+grazie al codice precedente si tratter\`a sempre dell'ultimo buffer inserito
+nella lista.
+
+\paragraph{Comportamento in ambiente multi-threaded}
+Il codice appena descritto funziona perfettamente se non si utilizza il
+threading. Tuttavia, durante la fase di test, il programma funzionava il pi\`u
+delle volte, ma presto o tardi l'esecuzione terminava con un errore di
+\emph{segmentation fault}\footnote{La segmentation fault \`e un errore tipico
+    dei programmi C/\CC. Significa che un programma ha tentato di accedere ad
+    una zona di memoria non di sua competenza e il sistema operativo non
+    concede di farlo per ovvi motivi di sicurezza. Tipicamente questo problema
+    avviene quando si legge oltre la fine di un array o si tenta di accedere ad
+    un puntatore non allocato o impostato a NULL.}.
+Osservando il problema con l'ausilio di un debugger, il problema non risultava
+chiaro perch\'e si presentava in punti differenti del codice e sempre in
+situazioni in cui non ci si aspetta di avere un puntatore nullo, rendendo
+l'investigazione tramite debugger praticamente inutile. Il fatto che il problema
+si mostrasse in modo casuale, in momenti diversi e in punti diversi del codice
+lasciava intuire che si trattasse di un problema di concorrenza, quindi
+riesaminando l'interazione dei vari thread tra di loro si \`e riusciti a scovare
+e risolvere la fonte del problema:  come descritto nel paragrafo
+\ref{threadout}, il thread di output lavora sulla lista di buffer e quando
+finisce di scrivere i dati sull'output, elimina il buffer dalla lista. Se
+osserviamo in particolare la riga 1 del listato \ref{lst:threrr}, vediamo che si
+chiede prima se la lista \`e vuota e in seguito si accede all'ultimo elemento in
+lista. Ma cosa succede se subito dopo l'istruzione \texttt{list.empty()} avviene
+un \emph{context switch} e il thread di output riprende l'esecuzione, scrive
+l'ultimo buffer presente il lista sull'output e lo elimina? In questo scenario
+la successiva chiamata a \texttt{list.back()} ritornerebbe un puntatore nullo e
+la chiamata a \texttt{is\_src\_full()} provoca la segmentation fault. Per
+evitare che questo avvenga, bisogna richiedere il lock sulla mutex della lista
+di buffer di output prima di testare le condizioni, a questo modo mentre si
+verifica questa condizione lo stato della lista non pu\`o essere alterato.
+
+\paragraph{Conclusioni e osservazioni}
+La soluzione al problema, presentata nei listati \ref{lst:thr_correct} e
+\ref{lst:item_needed} \`e stata raggiunta dopo molto tempo perso a ricercare la
+fonte di questo problema causato da una non corretta analisi dei comportamenti
+in ottica multi-threaded.  Individuare questo genere di errori \`e molto
+difficile, mentre commettere questo tipo di errori \`e molto facile: per questo
+motivo \`e generalmente consigliabile evitare la concorrenza a meno che non vi
+siano chiari vantaggi nell'adottarla; e quando si decide di sfruttare la
+concorrenza nel proprio programma, \`e importante considerare tutti gli scenari
+possibili nelle interazioni tra i thread soprattutto quando si effettuano
+operazione non atomiche\footnote{Una operazione, ad esempio \lstinline$int i =
+    5;$ \`e atomica se la sua esecuzione non pu\`o essere interrotta a met\`a: o
+        l'operazione \`e ancora da effettuare, oppure \`e completata. In \CC 
+        l'operazione di cui sopra viene tradotta in diverse istruzioni macchina
+        e quindi pu\`o avvenire un context switch a met\`a dell'operazione. Le
+        istruzioni in \CC, quindi, non sono atomiche. Esistono altri linguaggi
+        di programmazione, pensati appositamente per la programmazione
+        multi-threaded, che garantiscono l'atomicit\`a delle loro istruzioni.}.
+\begin{lstlisting}[float,label=lst:thr_correct,caption=Codice funzionante anche
+in ambiente multi-threaded]
+if(list.item_needed()) {
+	FFTBuf<DstIppType> *buffer( new FFTBuf<DstIppType>(siglen, sums) );
+	*buffer = IPP::alloc(buffer->cdata(), siglen);
+	IPP::zero_mem(buffer->cdata(), siglen);
+	list.push_back(buffer);
+}
+FFTBuf<DstIppType> *work_buffer = list.back();
+\end{lstlisting}
+\lstinputlisting[firstline=55,lastline=58,float,caption=Implementazione del
+metodo \texttt{item\_needed()},label=lst:item_needed]{../src/list.hpp}
+
+\subsection{Memory leak}
+Un altro problema molto diffuso nella programmazione in \CC sono i \emph{memory
+leak}. Con questo termine si indicano quelle perdite di memoria che avvengono
+perch\'e ad allocazione di memoria da una parte, non corrisponde una
+deallocazione da un'altra parte del codice. Se un problema di questo genere
+esiste e non viene corretto, un programma che rimane attivo per un certo periodo
+di tempo incrementa sempre pi\`u il suo utilizzo di memoria, fino a che la
+memoria disponibile nel sistema non viene interamente consumata. A questo punto
+non solo il programma non pu\`o pi\`u funzionare, ma anche gli altri programmi
+presenti sul sistema possono riscontrare problemi per la mancanza di memoria da
+allocare; in alcuni casi il sistema potrebbe diventare addirittura
+inutilizzabile e potebbe diventare necessario un riavvio del sistema. Purtroppo,
+se la perdita di memoria \`e sufficientemente piccola, \`e facile che un
+problema di questo tipo possa sfuggire in fase di test e creare problemi solo
+dopo un lungo utilizzo in fase di produzione. Per questo motivo esistono dei
+tool, come ad esempio la suite di
+Valgrind\footnote{\url{http://www.valgrind.org/}}, che aiutano
+nell'individuazione di questi problemi. Durante lo sviluppo del progetto \`e
+stato incontrato un errore di questo tipo nell'implementazione del buffer per i
+dati di output.
+
+\subsubsection{Implementazione originaria}
+La classe \texttt{FFTBuf} contiene un buffer e qualche metodo per gestire
+l'accesso al buffer stesso. Nella sua prima versione il codice per
+inizializzarlo era il seguente:
+\begin{lstlisting}[caption=Inizializzazione di un FFTBuf (vecchia
+versione),label=lst:old_fftbuf]
+FFTBuf<DstIppType> *buffer( new FFTBuf<DstIppType>(siglen, sums) );
+*buffer = IPP::alloc(buffer->cdata(), siglen);
+IPP::zero_mem(buffer->cdata(), siglen);
+\end{lstlisting}
+Come si pu\`o vedere, l'allocazione della memoria veniva effettuata manualmente
+dopo l'inizializzazione dell'oggetto, mentre non era presente alcuna
+deallocazione della memoria. Per risolvere questo problema ci sono due strade
+possibili: o si aggiunge una deallocazione della memoria dopo che i dati sono
+stati scritti su output, o si sposta il meccanismo di allocazione/deallocazione
+all'interno del costruttore/distruttore della classe. Per rendere l'utilizzo di
+\texttt{FFTBuf} pi\`u trasparente ed evitare che il problema si ripeta se questa
+classe dovesse essere riutilizzata da qualche altra parte, la scelta \`e
+ricaduta sulla seconda soluzione.
+
+\subsubsection{Implementazione corretta}
+La nuova versione dell'allocazione di  memoria per il buffer interno a
+\texttt{FFTBuf} \`e la seguente:
+\begin{lstlisting}
+template<class T> FFTBuf<T>::FFTBuf(long int siglen) : _dst(NULL),
+    _siglen(siglen), _expected_sums(1), _processed_sums(0),
+    _assigned_sources(0), _written(false)
+{
+    _dst = IPP::alloc(_dst, siglen);
+    IPP::zero_mem(_dst, siglen);
+}
+
+template<class T> FFTBuf<T>::FFTBuf(long int siglen, int sums) :
+    _dst(NULL), _siglen(siglen), _expected_sums(sums),
+    _processed_sums(0), _assigned_sources(0), _written(false)
+{
+    _dst = IPP::alloc(_dst, siglen);
+    IPP::zero_mem(_dst, siglen);
+}
+
+template<class T> FFTBuf<T>::~FFTBuf()
+{
+    notify_all();
+    IPP::free(_dst);
+    _dst = NULL;
+}
+\end{lstlisting}
+Ora l'allocazione \`e legata alla creazione di un nuovo oggetto di tipo
+\texttt{FFTBuf} e la deallocazione viene effettuata automaticamente quando
+l'oggetto viene distrutto: a questo modo si ha la certezza che tutti i buffer
+creati vengono distrutti correttamente e che non ci sar\`a perdita di memoria.
+Dopo questa modifica, il programma \`e passato da pochi minuti di operativit\`a
+con consumo di memoria sempre crescente a un consumo di memoria stabile e
+conseguente stabilit\`a del programma stesso.

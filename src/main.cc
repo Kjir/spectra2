@@ -22,7 +22,9 @@
 
 int main(int argc, char **argv)
 {
-    /* CONSTANTS to define data type. Change this & recompile to change data types! */
+    /* CONSTANTS to define data type.
+     * Change this & recompile to change data types!
+     */
 
     const int IPP_DATA_LENGTH = 16;
     const int IPP_OUTPUT_DATA_LENGTH = 32;
