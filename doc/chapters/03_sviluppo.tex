@@ -143,7 +143,7 @@ utilizzato.
 \lstinputlisting[firstline=227,lastline=236,float,caption=Dichiarazione della
 struttura \texttt{SrcType},label=lst:srctype]{../src/fft_buf.hpp}
 
-\subsection{Server UDP come SourceFilter}
+\subsection{Client UDP come SourceFilter}
 Nel paragrafo \ref{sourcefilter} abbiamo spiegato come in fase di progettazione
 si sia pensato ad una interfaccia generica per leggere i dati da una fonte
 esterna; il listato \ref{lst:sourcefilter} mostra l'implementazione di questa
@@ -430,3 +430,31 @@ creati vengono distrutti correttamente e che non ci sar\`a perdita di memoria.
 Dopo questa modifica, il programma \`e passato da pochi minuti di operativit\`a
 con consumo di memoria sempre crescente a un consumo di memoria stabile e
 conseguente stabilit\`a del programma stesso.
+
+\section{Programmi di supporto}
+Allo scopo di testare l'applicazione e verificarne il funzionamento, sono stati
+sviluppati alcuni programmi di supporto. Trattandosi di programmi in cui le
+prestazioni non sono essenziali, il linguaggio di programmazione utilizzato \`e
+Python per favorire uno sviluppo pi\`u rapido.
+\subsection{Server UDP}
+Uno dei programmi sviluppati serve ad inviare dei dati nel formato corretto
+tramite il protocollo UDP. Siccome l'ordinamento \`e importante,
+anche se non \`e grave l'eventuale perdita di alcuni pacchetti, all'inizio di
+ogni pacchetto UDP compare un contatore progressivo lungo 4 byte. Il client
+controlla questo contatore e se il numero non \`e in progressione con il
+pacchetto precedente, sa quanti pacchetti ha perso e svuota i buffer
+eventualmente pieni per ricominciare ad elaborare i dati a partire dal nuovo
+pacchetto ricevuto. Questa operazione viene svolta per evitare di elaborare dati
+incompleti che potrebbero compromettere i risultati. Il server in Python
+permette di leggere i dati da un file ed inviarli tramite rete ad una
+determinata destinazione.
+\subsection{Visualizzatore di grafici}
+\label{pyvis}
+Un altro programma di supporto utlissimo per verificare il funzionamento del
+programma principale \`e il visualizzatore di grafici. Questo programma prende i
+dati elaborati e visualizza un grafico in scala logaritmica(?). La scala
+logaritmica viene utilizzata in quanto permette di visualizzare i dati in
+maniera pi\`u facilmente comprensibile rispetto ad una scala naturale, senza
+cambiarne il significato. Visualizzare i dati \`e un modo semplice per
+verificare la correttezza delle trasformazioni, se il segnale trasformato \`e
+noto.
