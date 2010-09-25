@@ -105,6 +105,13 @@ aumenta il tempo di calcolo; allo stesso modo il compromesso tra numero di
 canali e tempo di calcolo dipende dal tipo di analisi che si intende effettuare.
 
 \section{Verifica delle prestazioni}
+\subsection{Caratteristiche dell'elaboratore}
+Nel verificare le prestazioni del programma, \`e importante tenere in
+considerazione il tipo di elaboratore su cui vengono effettuati questi test. Il
+server collegato ai dati provenienti dall'antenna ha un processore Intel (???),
+4(???) Gb di memoria RAM e come sistema operativo Ubuntu Linux (???). \`E
+collegato ad una rete a 10 Gbit/s con i Jumbo Frames\footnote{???} attivati.
+\subsection{Tests eseguiti}
 \ctable[
     cap=Alcuni tempi di calcolo,
     caption=Esempio di alcuni tempi di calcolo,
@@ -135,7 +142,7 @@ risultati corretti, si pu\`o verificare il livello di prestazioni. Per questo
 sono stati fatti dei test dove si aumentava man mano il numero di canali e il
 numero di integrazioni. L'aumento del numero di integrazioni \`e stato studiato
 in modo che l'ordine di grandezza del tempo di calcolo previsto aumentasse ad
-ogni test: se si osserva le prime righe della tabella \ref{tab:tests} si nota
+ogni test: se si osserva le prime righe della tabella \ref{tab:tests_256} si nota
 che all'aumentare del numero di integrazioni il tempo si moltiplica all'incirca
 per 10.\footnote{Notare che nella prima riga si impiega 20 volte meno tempo
     rispetto alla seconda. Questo perch\'e le integrazioni avrebbero dovuto
@@ -153,3 +160,16 @@ programma nel calcolare le trasformate. Avendo predeterminato i tempi di calcolo
 desiderati, \`e facile verificare la tenuta dell'algoritmo: si osservino le
 tabelle nell'appendice \ref{test_tables}, si noter\`a che tutti i tempi
 rientrano nelle previsioni.
+
+Si \`e arrivati a testare al massimo $2^22 = 4194304$ canali perch/'e essendo il
+segnale a 5 Mhz di banda, non avrebbe senso analizzarlo ad una risoluzione
+minore di $1 \frac{Hz}{canale}$. Tuttavia per verificare in quali condizioni il
+programma smette di funzionare, si sono effettuati dei test con un numero di
+canali ancora maggiore, arrivando sino a $2^27 = 134217728$ canali: attorno ai
+valori $2^26$--$2^27$ il programma non riesce ad allocare tutta la memoria
+necessaria all'elaborazione. Inoltre elaborando a $2^25$ canali si inizia a
+perdere qualche pacchetto UDP dalla rete, segno che il processore non riesce ad
+elaborare il segnale con sufficiente rapidit\`a. Con questi limiti, il programma
+\`e in grado di elaborare segnali fino a 20 Mhz di banda e, con un hardware
+pi\`u potente, potrebbe essere possibile elaborare segnali a banda ancora pi\`u
+larga, ben oltre le reali necessit\`a.
