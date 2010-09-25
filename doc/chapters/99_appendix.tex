@@ -1,0 +1,250 @@
+\appendix
+\chapter{Risultati dei test}
+\label{test_tables}
+\ctable[
+    cap=Risultati test a 256 canali,
+    caption=Tempo di calcolo a 256 canali,
+    label=tab:tests_256
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+256 & 1 & 4.831 & 96423936 & 94164 & 5.13041e-05\NN
+256 & 20 & 5.984 & 5974016 & 5834 & 0.00102571\NN
+256 & 195 & 3.952 & 403456 & 394 & 0.0100305\NN
+256 & 1953 & 6.926 & 70656 & 69 & 0.100377\NN
+256 & 19531 & 6.252 & 6144 & 6 & 1.042\NN
+256 & 195313 & 24.182 & 2048 & 2 & 12.091\LL
+}
+\ctable[
+    cap=Risultati test a 512 canali,
+    caption=Tempo di calcolo a 512 canali,
+    label=tab:tests_512
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+512 & 1 & 5.087 & 101545984 & 49583 & 0.000102596\NN
+512 & 10 & 4.691 & 9361408 & 4571 & 0.00102625\NN
+512 & 98 & 9.040 & 1841152 & 899 & 0.0100556\NN
+512 & 977 & 5.844 & 118784 & 58 & 0.100759\NN
+512 & 9766 & 6.437 & 12288 & 6 & 1.07283\NN
+512 & 97656 & 21.845 & 4096 & 2 & 10.9225\LL
+}
+\ctable[
+    cap=Risultati test a 1024 canali,
+    caption=Tempo di calcolo a 1024 canali,
+    label=tab:tests_1024
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+1024 & 1 & 4.981 & 98603008 & 24073 & 0.000206912\NN
+1024 & 5 & 5.682 & 22687744 & 5539 & 0.00102582\NN
+1024 & 49 & 5.420 & 2207744 & 539 & 0.0100557\NN
+1024 & 488 & 6.635 & 270336 & 66 & 0.10053\NN
+1024 & 4883 & 6.538 & 24576 & 6 & 1.08967\NN
+1024 & 48828 & 31.378 & 12288 & 3 & 10.4593\LL
+}
+\ctable[
+    cap=Risultati test a 2048 canali,
+    caption=Tempo di calcolo a 2048 canali,
+    label=tab:tests_2048
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+2048 & 1 & 3.209 & 63979520 & 7810 & 0.000410883\NN
+2048 & 2 & 4.828 & 48185344 & 5882 & 0.000820809\NN
+2048 & 24 & 4.951 & 4112384 & 502 & 0.00986255\NN
+2048 & 244 & 7.417 & 606208 & 74 & 0.10023\NN
+2048 & 2441 & 6.900 & 49152 & 6 & 1.15\NN
+2048 & 24414 & 31.149 & 24576 & 3 & 10.383\LL
+}
+\ctable[
+    cap=Risultati test a 4096 canali,
+    caption=Tempo di calcolo a 4096 canali,
+    label=tab:tests_4096
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+4096 & 1 & 3.522 & 70238208 & 4287 & 0.000821554\NN
+4096 & 12 & 3.789 & 6291456 & 384 & 0.00986719\NN
+4096 & 122 & 4.611 & 753664 & 46 & 0.100239\NN
+4096 & 1221 & 5.200 & 81920 & 5 & 1.04\NN
+4096 & 12207 & 31.146 & 49152 & 3 & 10.382\LL
+}
+\ctable[
+    cap=Risultati test a 8192 canali,
+    caption=Tempo di calcolo a 8192 canali,
+    label=tab:tests_8192
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+8192 & 1 & 3.261 & 64946176 & 1982 & 0.00164531\NN
+8192 & 6 & 4.353 & 14450688 & 441 & 0.00987075\NN
+8192 & 61 & 4.639 & 1376256 & 42 & 0.110452\NN
+8192 & 610 & 5.950 & 163840 & 5 & 1.19\NN
+8192 & 6104 & 30.472 & 98304 & 3 & 10.1573\LL
+}
+\ctable[
+    cap=Risultati test a 16384 canali,
+    caption=Tempo di calcolo a 16384 canali,
+    label=tab:tests_16384
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+16384 & 1 & 4.293 & 85655552 & 1307 & 0.00328462\NN
+16384 & 3 & 4.723 & 30212096 & 461 & 0.0102451\NN
+16384 & 30 & 5.841 & 3801088 & 58 & 0.100707\NN
+16384 & 305 & 6.282 & 393216 & 6 & 1.047\NN
+16384 & 3052 & 29.566 & 131072 & 2 & 14.783\LL
+}
+\ctable[
+    cap=Risultati test a 32768 canali,
+    caption=Tempo di calcolo a 32768 canali,
+    label=tab:tests_32768
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+32768 & 1 & 4.215 & 83755008 & 639 & 0.00659624\NN
+32768 & 2 & 4.764 & 47448064 & 362 & 0.0131602\NN
+32768 & 15 & 4.316 & 5636096 & 43 & 0.100372\NN
+32768 & 153 & 4.413 & 524288 & 4 & 1.10325\NN
+32768 & 1526 & 30.914 & 393216 & 3 & 10.3047\LL
+}
+\ctable[
+    cap=Risultati test a 65536 canali,
+    caption=Tempo di calcolo a 65536 canali,
+    label=tab:tests_65536
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+65536 & 1 & 5.115 & 101974016 & 389 & 0.0131491\NN
+65536 & 8 & 4.789 & 11796480 & 45 & 0.106422\NN
+65536 & 76 & 6.267 & 1572864 & 6 & 1.0445\NN
+65536 & 768 & 36.736 & 786432 & 3 & 12.2453\LL
+}
+\ctable[
+    cap=Risultati test a 131072 canali,
+    caption=Tempo di calcolo a 131072 canali,
+    label=tab:tests_131072
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+131072 & 1 & 4.305 & 85458944 & 163 & 0.026411\NN
+131072 & 4 & 4.575 & 22020096 & 42 & 0.108929\NN
+131072 & 38 & 5.616 & 2621440 & 5 & 1.1232\NN
+131072 & 381 & 37.403 & 1572864 & 3 & 12.4677\LL
+}
+\ctable[
+    cap=Risultati test a 262144 canali,
+    caption=Tempo di calcolo a 262144 canali,
+    label=tab:tests_262144
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+262144 & 1 & 5.628 & 111149056 & 106 & 0.0530943\NN
+262144 & 2 & 7.484 & 74448896 & 71 & 0.105408\NN
+262144 & 19 & 5.533 & 5242880 & 5 & 1.1066\NN
+262144 & 191 & 37.702 & 3145728 & 3 & 12.5673\LL
+}
+\ctable[
+    cap=Risultati test a 524288 canali,
+    caption=Tempo di calcolo a 524288 canali,
+    label=tab:tests_524288
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+524288 & 1 & 3.962 & 77594624 & 37 & 0.107081\NN
+524288 & 10 & 5.982 & 10485760 & 5 & 1.1964\NN
+524288 & 95 & 38.645 & 6291456 & 3 & 12.8817\LL
+}
+\ctable[
+    cap=Risultati test a 1048576 canali,
+    caption=Tempo di calcolo a 1048576 canali,
+    label=tab:tests_1048576
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+1048576 & 1 & 4.602 & 88080384 & 21 & 0.219143\NN
+1048576 & 5 & 8.509 & 29360128 & 7 & 1.21557\NN
+1048576 & 48 & 33.681 & 12582912 & 3 & 11.227\LL
+}
+\ctable[
+    cap=Risultati test a 2097152 canali,
+    caption=Tempo di calcolo a 2097152 canali,
+    label=tab:tests_2097152
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+2097152 & 1 & 3.675 & 67108864 & 8 & 0.459375\NN
+2097152 & 2 & 4.564 & 41943040 & 5 & 0.9128\NN
+2097152 & 24 & 37.731 & 25165824 & 3 & 12.577\LL
+}
+\ctable[
+    cap=Risultati test a 4194304 canali,
+    caption=Tempo di calcolo a 4194304 canali,
+    label=tab:tests_4194304
+]{llllll}{
+\tnote[a]{Tempo espresso in secondi}
+\tnote[b]{Dimensione dei files in bytes}
+\tnote[c]{Si intende il tempo impiegato per effettuare tutte le \ac{FFT} e le somme dei risultati.}
+}{
+                \FL
+Can. & Integr. & Tempo totale\tmark[a] & Dim. output\tmark[b] & Segnali output & Tempo trasf.\tmark[a]\tmark[c] \ML
+4194304 & 1 & 6.242 & 100663296 & 6 & 1.04033\NN
+4194304 & 12 & 38.022 & 50331648 & 3 & 12.674\LL
+}

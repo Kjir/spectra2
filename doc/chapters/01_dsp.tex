@@ -224,6 +224,7 @@ trasformata, oltre ad essere la trasformata utilizzata direttamente nel
 progetto.
 
 \subsection{Analisi e Sintesi}
+\label{analisi_sintesi}
 Quando applichiamo la trasformata di Fourier, non facciamo altro che passare tra
 due rappresentazioni diverse dello stesso segnale: il segnale originario \`e nel
 dominio del tempo, mentre il segnale trasformato \`e nel dominio delle
@@ -240,7 +241,7 @@ Quando rappresentiamo un segnale in un elaboratore, avremo un vettore,
 al momento del campionamento abbiamo scelto di misurare $N$ campioni, avremo ora
 un vettore di $N$ elementi che vanno da 0 a $N$. Di solito per facilitare la
 computazione tramite elaboratore $N$ viene scelto tra le potenze di
-2\footnote{La FFT richiede segnali che abbiano lunghezza pari ad una potenza di
+2\footnote{La \ac{FFT} richiede segnali che abbiano lunghezza pari ad una potenza di
 due, per poter funzionare.}. La controparte di questo segnale \`e suddivisa in
 due parti, \texttt{ReX[]} contenente i valori per le ampiezze dei coseni
 presenti nel segnale, e \texttt{ImX[]} contenente i valori per le ampiezze dei
@@ -367,7 +368,7 @@ anche su segnali di dimensioni abbastanza grandi, poich\'e la crescita
 logaritmica assicura che il tempo di calcolo non aumenti troppo bruscamente
 all'aumentare dei punti.
 
-Un altro vantaggio non indifferente della FFT \`e la sua scarsa sensibilit\`a
+Un altro vantaggio non indifferente della \ac{FFT} \`e la sua scarsa sensibilit\`a
 agli errori di arrotondamento: poich\'e l'algoritmo diminuisce drasticamente il
 numero di operazioni da effettuare sui numeri, anche gli errori di
 arrotondamento rimangono molto contenuti. Questo assicura una buona stabilit\`a
