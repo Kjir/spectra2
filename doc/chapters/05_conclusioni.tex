@@ -1,10 +1,137 @@
 \chapter{Conclusioni e sviluppi futuri}
 \label{conclusions}
+\section{Conclusoni}
+Lo scopo principale dello sviluppo di questo programma \`e capire che tipo di
+prestazioni ci si pu\`o aspettare da una soluzione software all'elaborazione di
+segnali radioastronomici. Basandosi sui risultati dei test, si vede che il
+programma \`e in grado di elaborare correttamente delle quantit\`a importanti di
+dati; se confrontate con le prestazioni di una macchina DSP\footnote{DSP
+    significa, in questo caso, Digital Signal Processor. Con questo nome si
+    indicano degli elaboratori specializzati che effettuano solamente le
+    trasformate per cui sono costruiti.} sicuramente saranno inferiori, ma se si
+aggiunge al confronto anche i fattori del costo dell'attrezzatura e la
+flessibilità della soluzione alle esigenze si capisce come le prestazioni di
+questo software siano importanti: il software lavora su un normale elaboratore
+il cui prezzo, nel caso di macchine comunque high-end e piuttosto potenti, si
+aggira attorno ai 6000 euro. L'hardware specializzato per il DSP ha costi molto
+pi\`u elevati, nell'ordine dei XXXXXX euro, quindi le maggiori prestazioni
+hanno un costo decisamente elevato, probabilmente troppo elevato per alcuni tipi
+di ricerca. Inoltre, modificare un programma scritto in \CC \`e un'operazione
+relativamente semplice e che molte persone sono in grado di fare, mentre per
+modificare l'algoritmo in una macchina DSP bisogna modificare l'hardware,
+operazione per nulla semplice, n\'e rapida, quindi anche pi\`u costosa. Avere
+una soluzione un po' meno performante, ma comunque di buon livello a costi
+contenuti \`e importante sia in quei campi di ricerca dove le prestazioni non
+sono un aspetto fondamentale del lavoro, sia per progetti a budget molto
+ristretto, dove avere degli strumenti a basso costo \`e fondamentale.
+Un altro aspetto importante \`e il fatto che un elaboratore generico pu\`o
+essere riutilizzato per altri scopi, ad esempio alla fine del progetto o nei
+tempi ``morti'' in cui non serve fare elaborazioni sui segnali, mentre hardware
+specifico per il DSP \`e difficile da riutilizzare in altri ambiti.
+
 \section{Sviluppi futuri}
+Gli ottimi risultati conseguiti aprono la strada a diversi sviluppi possibili:
+si può adattare il programma ad altri scopi, provare implementazioni diverse,
+cercare di migliorarne ancora le prestazioni e tanto altro ancora.
 \subsection{Estensione del programma}
+
+\subsubsection{Implementazione di altre trasformazioni}
+Il modo pi\`u semplice per estendere le funzionalit\`a del programma \`e
+scrivere qualche trasformazione o filtro aggiuntivo da accodare nella
+\texttt{FilterChain}. Essendo gi\`a pronte le interfacce, ed esistendo gi\`a una
+sua implementazione, la parte di lavoro necessaria riguarda solamente la
+scrittura delle funzioni di trasformazione, senza dover sviluppare un modo per
+gestire il flusso dei dati.
+
 \subsubsection{Selezione dinamica del tipo di dato}
 \label{dyn_dtype}
+Nell'implementazione attuale, la selezione del tipo di dati in ingresso ed in
+uscira \`e basato su delle costanti all'interno del codice. Per modificare
+queste costanti bisogna modificare il programma e ricompilarlo, operazione che,
+per quanto semplice, potrebbe essere rimossa completamente permettendo di
+selezionare il tipo di dato ad esempio da linea di comando.
+
+\subsubsection{Controllo interattivo dei parametri}
+Un altro possibile sviluppo del programma \`e la possibilit\`a di controllare in
+modo interattivo i parametri del programma ed avviare/fermare il processo
+tramite una console accessibile tramite rete. Il funzionamento \`e piuttosto
+semplice: connettendosi tramite rete alla console, si possono impartire vari
+comandi per modificare il tipo di trasformazioni effettuate ed i loro parametri,
+la fonte di acquisizione e la destinazione dei dati. Si può anche avviare e
+fermare il ciclo principale di elaborazione e leggere delle statistiche sul suo
+funzionamento.
+
+\subsubsection{Output di rete}
+Attualmente l'unica implementazione del \texttt{SinkFilter} \`e una classe che
+scrive l'output su file. Molto utile potrebbe essere la scrittura su una
+interfaccia di rete, cos\`i che i dati possano essere letti da un computer
+remoto. Questo permetterebbe anche di visualizzare i dati in tempo reale
+spostando sul client il programma di visualizzazione.
+
 \subsubsection{Acquisizione dati \ac{seti}}
 \label{seti}
+L'acquisizione di dati per il progetto \ac{seti} non avviene tramite rete, ma
+utilizza uno speciale hardware dedicato. Leggere i dati da questo hardware
+richiede un certo lavoro via software che potrebbe essere integrato all'interno
+dell'interfaccia \texttt{SourceFilter}, cos\`i che il programma possa essere
+utilizzato per elaborare i dati per il progetto \ac{seti}.
+
 \subsection{Librerie alternative}
 \label{altlib}
+
+Esistono diverse liberie alternative alle \ac{ipp} che svolgono le stesse
+operazioni. Per avere parametri di confronto, sarebbe interessante utilizzarle
+nello stesso tipo di programma per verificare se effettivamente le
+ottimizzazioni presenti nelle \ac{ipp} offrono grandi vantaggi rispetto ad
+implementazioni alternative.
+
+\subsubsection{FFTW: The Fastest Fourier Transform in the West}
+La libreria FFTW \`e un progetto Open Source che sostiene di avere la pi\`u
+rapida implementazione della \ac{FFT}.
+
+\subsubsection{Openweave(???)}
+La libreria Open Source Openweave(???) \`e stata sviluppata da AMD per fare
+concorrenza alle \ac{ipp}. Gli sviluppatori sostengono che questa libreria usi
+la stessa interfaccia delle \ac{ipp}, e che quindi non necessiti alcuna modifica al
+codice. 
+
+\subsubsection{Comesichiamano(?????)}
+Questa libreria si pone su un piano differente: invece di sfruttare la potenza
+della CPU per calcolare le FFT viene usata la GPU della scheda grafica. I
+benchmark proposti dagli sviluppatori mostrano dei tempi veramente interessanti
+e se le prestazioni si dovessero mostrare realmente cos\`i avanzate, si
+incrementerebbe ulteriormente l'utilit\`a di questo programma, soprattutto
+perch/'e riduce i requisiti hardware alla sola scheda video, diminuendo
+ulteriormente il costo.
+
+\subsection{Compilatori}
+Un altro aspetto da esplorare sono i compilatori: nel progetto \`e stato
+utilizzato il compilatore g++, parte della suite di compilatori GNU gcc, con le
+sue opzioni standard. Siccome dalla qualit\`a del compilatore e dalle opzioni
+utilizzate dipende anche la qualit\`a del codice macchina generato e quindi la
+sua rapidit\`a, un miglioramento di prestazioni potrebbe essere possibile
+esplorando diverse opzioni.
+
+\subsubsection{ICC}
+Il compilatore ICC \`e stato sviluppato da Intel ed \`e il compilatore con cui
+sono state compilate le liberie \ac{ipp} stesse. Essendo stato sviluppato
+dall'azienda produttrice di processori, potrebbe essere in grado di sfruttare
+molto meglio l'architettura dei processori Intel rispetto ad altri compilatori.
+
+\subsubsection{Clang e LLVM}
+Clang e LLVM formano insieme un compilatore e la sua interfaccia; sono un
+progetto relativamente giovane e sono stati sviluppati da Apple con una licenza
+di tipo BSD. Questo nuovo compilatore sembra produrre codice molto più rapido
+rispetto gli altri compilatori e sta guadagnando un seguito molto importante
+nella comunit\`a FreeBSD e non solo.
+
+\subsection{Altri sviluppi}
+La natura modulare del programma lo prestano ad un'infinit\`a di manipolazioni
+ed utilizzi nuovi. Con i dovuti arrangiamenti potrebbe addirittura essere
+utilizzato per scopi completamente differenti, come ad esempio la codifica di
+file audio o l'elaborazione di immagini. A seconda delle necessit\`a si possono
+apportare piccoli miglioramenti e l'architettura pensata cerca di essere il
+pi\`u possibile flessibile verso esigenze diverse. Come per ogni progetto
+software, le vere potenzialit\`a ed i veri limiti diventeranno evidenti
+solamente nel tempo e tentando di utilizzare il programma negli ambiti pi\`u
+differenti.
