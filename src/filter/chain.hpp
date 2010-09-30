@@ -2,19 +2,26 @@
 #define __SPECTRA2_CHAIN_HPP_
 
 #include <list>
+#include "data_type.hpp"
+#include "filter/process.hpp"
+#include "filter/merge.hpp"
 
 class FilterChain {
     public:
+        FilterChain(MergeFilter *merge) : _merge(merge) {};
         virtual ~FilterChain() {};
-        void set_src(SourceFilter *src) { _src = src; };
-        void set_sink(SinkFilter *sink) { _sink = sink; };
-        void push_filter(ProcFilter *flt) { _filters.push_back(flt); };
+        void push_filter(ProcessFilter *flt) { _filters.push_back(flt); };
         void pop_filter() { _filters.pop_front(); };
         void clear_filters() { _filters.clear(); }
+        void execute(SrcType<IppType> &src, FFTBufPtr dst);
     private:
-        SourceFilter *_src;
-        SinkFilter *_sink;
-        std::list<ProcFilter *> _filters;
+        std::list<ProcessFilter *> _filters;
+        /*
+         * This abstract class represents a merge strategy: how do I copy the
+         * results coming from my filters to my original destination buffer?
+         * The implementation of this class gives the answer.
+         */
+        MergeFilter *_merge;
 }
 
 #endif /* __SPECTRA2_CHAIN_HPP_ */
