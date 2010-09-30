@@ -23,20 +23,13 @@
 #include "filter/source.hpp"
 #include "filter/sink.hpp"
 
-int main(int argc, char **argv)
-{
     /* CONSTANTS to define data type.
      * Change this & recompile to change data types!
      */
+#include "data_length.hpp"
 
-    const int IPP_DATA_LENGTH = 16;
-    const int IPP_OUTPUT_DATA_LENGTH = 32;
-    const bool IS_COMPLEX_TYPE = false;
-    typedef typer<IPP_DATA_LENGTH, IS_COMPLEX_TYPE>::type IppType;
-    typedef typer<IPP_OUTPUT_DATA_LENGTH, IS_COMPLEX_TYPE>::type DstIppType;
-
-    typedef boost::shared_ptr< FFTBuf<DstIppType> > FFTBufPtr;
-
+int main(int argc, char **argv)
+{
     namespace po = boost::program_options;
     po::variables_map var_map;
 

@@ -1,5 +1,6 @@
 #ifndef __SPECTRA2__TYPE_HPP_
 #define __SPECTRA2__TYPE_HPP_
+#include <ipp.h>
 
 template<int size, bool is_complex> struct typer;
 template<> struct typer<16, false>
