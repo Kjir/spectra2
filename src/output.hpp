@@ -3,9 +3,9 @@
 
 #include <boost/shared_ptr.hpp>
 #include "list.hpp"
-#include <iostream>
 #include "fft_buf.hpp"
+#include "filter/sink.hpp"
 #include <ipp.h>
 
-void output(List< boost::shared_ptr< FFTBuf<Ipp32f> > > &l, std::ostream *s);
+void output(List< boost::shared_ptr< FFTBuf<Ipp32f> > > &l, SinkFilter &s);
 #endif

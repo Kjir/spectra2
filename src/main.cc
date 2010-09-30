@@ -13,12 +13,15 @@
 #include <sstream>
 #include <typeinfo>
 #include "server.hpp"
+#include "file.hpp"
 #include "fft.hpp"
 #include "fft_buf.hpp"
 #include "list.hpp"
 #include "output.hpp"
 #include "type.hpp"
 #include "debug.hpp"
+#include "filter/source.hpp"
+#include "filter/sink.hpp"
 
 int main(int argc, char **argv)
 {
@@ -153,12 +156,8 @@ int main(int argc, char **argv)
         //udp_sock<IppType> s(host, port); //The UDP server
         SourceFilter *src_filter = new udp_sock<IppType>(host, port);
 
-        std::ostream *out = &std::cout;
-        if( ofile != "-" )
-        {
-            out = new std::ofstream(ofile.c_str(), std::ofstream::out|std::ofstream::trunc|std::ofstream::binary);
-        }
-        boost::thread out_thread(output, boost::ref(dst), out);
+        FileSink out(ofile);
+        boost::thread out_thread(output, boost::ref(dst), boost::ref(out));
 
         while(true)
         {
@@ -199,9 +198,7 @@ int main(int argc, char **argv)
         }
 
         out_thread.join();
-        if( *out != std::cout ) {
-            delete out;
-        }
+        delete src_filter;
 
     }
     catch( std::exception &e )
@@ -209,6 +206,7 @@ int main(int argc, char **argv)
         std::stringstream ss;
         ss << "Ex: " << e.what() << std::endl;
         error(ss);
+        return -1;
     }
 
     return 0;
