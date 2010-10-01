@@ -116,11 +116,13 @@ canali e tempo di calcolo dipende dal tipo di analisi che si intende effettuare.
 \subsection{Caratteristiche dell'elaboratore}
 Nel verificare le prestazioni del programma, \`e importante tenere in
 considerazione il tipo di elaboratore su cui vengono effettuati questi test. Il
-server collegato ai dati provenienti dall'antenna ha un processore Intel (???),
-4(???) Gb di memoria RAM e come sistema operativo Ubuntu Linux (???). \`E
-collegato ad una rete a 10 Gbit/s con i Jumbo Frames\footnote{???} attivati.
-Tutti i segnali su cui si sono effettuati i test contenevano valori di 16 bit
-per ogni punto, con banda del segnale di 5 Mhz.
+server collegato ai dati provenienti dall'antenna ha un processore Intel Core 2
+Duo a 3 Ghz, 3 Gb di memoria RAM e come sistema operativo Ubuntu Linux. \`E
+collegato ad una rete a 10 Gbps con i Jumbo Frames\footnote{I Jumbo Frames sono
+    dei frame ethernet con pi\`u di 1500 bytes di payload. Aumentando il
+    payload, si riduce il carico della CPU e si aumenta il throughput.}
+attivati.  Tutti i segnali su cui si sono effettuati i test contenevano valori
+di 16 bit per ogni punto, con banda del segnale di 5 Mhz.
 \subsection{Tests eseguiti}
 \ctable[
     cap=Alcuni tempi di calcolo,
