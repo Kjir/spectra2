@@ -26,11 +26,17 @@ della \ac{FFT} sono una lunghezza del segnale piuttosto importante (circa
 $2^{23}$), un basso numero di integrazioni e la possibilit\`a di ricevere i dati
 sporadicamente, cio\`e il data rate pu\`o essere mantenuto basso.
 
-Un'altro utilizzo \`e l'analisi di space debris dove la sorgente di dati sono
+Un'altro utilizzo \`e l'analisi di \emph{space debris}\footnote{Gli space
+debris, letteralmente detriti spaziali, sono oggetti di media e piccola
+    dimensione generalmente di origine artificiale che orbitano a distanza
+    ravvicinata dalla Terra: si tratta generalmente di vecchi satelliti e altre
+    apparecchiature abbandonate. Siccome possono creari problemi di varia
+    natura, vanno tenuti sotto osservazione.} dove la sorgente di dati sono
 dei pacchetti UDP e la \ac{FFT} \`e caratterizzata da segnali di lunghezza contenuta
-(circa $2^{15}$) con molte integrazioni (circa $100000$). In questo caso \`e
-importante riuscire a mantenere il data rate alto, quindi l'elaborazione deve
-essere il pi\`u veloce possibile.
+(circa $2^{11}$) con poche integrazioni (circa $100$), quindi una frequente
+scrittura su disco e tanti dati per periodi di tempo anche brevi. In questo caso
+\`e importante riuscire a mantenere il data rate alto, quindi l'elaborazione
+deve essere il pi\`u veloce possibile.
 
 \section{Gerarchia di classi}
 Per raggiungere gli obiettivi prefissati, sono necessarie alcune classi per
@@ -83,9 +89,9 @@ corretta sincronizzazione.
 \subsubsection{SrcType}
 \texttt{SrcType} \`e una struttura con un costruttore, un destruttore ed un
 operatore di assegnamento. Tra i membri di questa struttura c'\`e una mutex per
-eseguire operazioni in mutua esclusione, ove necessario. Questa struttura \`e un
-wrapper di un puntatore, ideale per essere usata all'interno di un circular
-buffer.
+eseguire operazioni in mutua esclusione, ove necessario, permettendo un utilizzo
+thread safe dei dati. Questa struttura \`e un wrapper di un puntatore, ideale
+per essere usata all'interno di un circular buffer.
 \subsubsection{FFTBuf} La classe \texttt{FFTBuf} \`e un vettore su cui
 vanno scritti i risultati di una o pi\`u trasformazioni di Fourier. Al momento
 della costruzione, si indica la lunghezza del segnale da salvare e il numero di

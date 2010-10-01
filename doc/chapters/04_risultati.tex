@@ -11,12 +11,19 @@ forma approssimativa che si dovrebbe ottenere, come accennato nel paragrafo
 \ref{pyvis}. In figura \ref{fig:correctness} si vede la visualizzazione di un
 segnale con larghezza di banda di 5 Mhz ed elaborato a 4096 canali di frequenza.
 Come si vede dalla figura, tra i canali 1000 e 3100 circa c'\`e una grande curva
-con piccoli picchi sopra di essa. La curva rappresenta il rumore introdotto
-dallo strumento di misura: l'antenna, quando riceve un segnale, lo distorce in
-un certo modo. Dato che questa distorsione \`e nota, \`e anche facile rimuoverla
-successivamente per poter lavorare unicamente sui segnali effettivi. I picchi
-presenti sopra la curva del rumore introdotto dall'antenna sono invece segnali
-legittimi che possono essere studiati.
+con piccoli picchi sopra di essa. La curva, o \emph{panettone}, rappresenta una
+elaborazione del segnale: prima di arrivare allo spettrometro, il segnale \`e
+pre-processato con alcuni filtri che gli danno l'aspetto in figura. I dati
+rilevanti sono quelli presenti sulla zona piatta in cima al panettone, mentre i
+picchi presenti sopra il panettone rappresentano verosimilmente delle
+interferenze.
+
+Va notato che uno strumento di misura introduce un qualche tipo di
+``distorsione'' detta \emph{bandshape}, o banda caratteristica del ricevitore.
+Questo implica che nell'interpretazione di un segnale va considerata questa
+bandshape per evitare di trarre conclusioni erronee sulla natura del segnale:
+normalmente \`e possibile ``correggere'' il segnale registrato in modo da
+ottenere la forma reale del segnale stesso.
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[width=1\linewidth]{5_4096_1221}
@@ -33,9 +40,9 @@ Verifichiamo anche il corretto funzionamento del metodo delle somme dello stesso
 segnale per attutire il rumore: nella figura \ref{fig:low_int} si vede un
 segnale con 5 Mhz di banda ed elaborato a 512 canali, senza effettuare alcuna
 somma di altre elaborazioni. Si pu\`o osservare con il grafico risultante sia
-estremamente frastagliato e a malapena si riesce ad intuire la forma del rumore
-introdotto dall'antenna, mentre gli eventuali segnali non sono nemmeno
-distringuibili dal rumore di fondo.
+estremamente frastagliato e a malapena si riesce ad intuire la forma del
+segnale, mentre le eventuali interferenze non sono nemmeno distringuibili dal
+rumore di fondo.
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[width=1\linewidth]{5_512_1}
@@ -47,10 +54,11 @@ distringuibili dal rumore di fondo.
 Confrontiamo questa immagine con la figura \ref{fig:high_int} dove vengono
 effettuate 97656 elaborazioni successive di un segnale nel tempo e poi sommate
 tra di loro: in questa seconda immagine \`e perfettamente delineata la forma del
-rumore dell'antenna cos\`i come sono perfettamente visibili i segnali presenti.
-Si intuisce anche come le due immagini rappresentino la stessa cosa, anche se la
+segnale cos\`i come sono perfettamente visibili le interferenze presenti.  Si
+intuisce anche come le due immagini rappresentino la stessa cosa, anche se la
 prima \`e un po' ``sfuocata'', non sufficientemente dettagliata, mentre la
-seconda \`e molto pi\`u netta.
+seconda \`e molto pi\`u netta. Questo avviene perch\'e integrando un segnale
+periodico migliora il rapporto segnale/rumore (SNR).
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[width=1\linewidth]{5_512_97656}
@@ -61,8 +69,8 @@ seconda \`e molto pi\`u netta.
 
 Tuttavia va considerato anche che aumentando il numero di somme, aumenta anche
 il tempo di elaborazione necessario: nel primo caso per calcolare i dati
-rappresentati nell'immagine \`e stato richiesto un tempo di $0,00002$ secondi,
-mentre nel secondo caso sono stati impiegati $2,7$ secondi.  Chiaramente va
+rappresentati nell'immagine \`e stato richiesto un tempo di $0,0001$ secondi,
+mentre nel secondo caso sono stati impiegati $10,9$ secondi.  Chiaramente va
 ricercato un compromesso tra riduzione del rumore e tempo di calcolo,
 compromesso che varia a seconda del tipo di analisi che si desidera fare: per
 alcuni tipi di osservazioni va bene anche un segnale non molto ben definito,
@@ -71,19 +79,19 @@ segnale deve essere definito molto precisamente, al costo di un maggiore tempo
 di calcolo.
 
 \subsection{Variazione del numero di canali}
-Il numero di canali usati nel calcolo della \ac{FFT} influiscono risoluzione di
-ognuno di questi canali: se i canali sono pochi, ogni canale rappresenta una
-banda di frequenza piuttosto ampia, mentre con molti canali la banda di
-frequenza si restringe. Aumentare il numero di canali permette di analizzare un
-segnale pi\`u nel dettaglio, osservando anche variazioni tra frequenze molto
-vicine tra loro. Al contrario, con pochi canali le frequenze vicine tra loro
-vengono mediate. Per verificare questo fenomeno, si confrontino la figura
-\ref{fig:low_chans} con la figura \ref{fig:high_chans}: nella seconda figura
-tutta la zona colorata di blu \`e composta da oscillazioni vicinissime tra loro,
-presenti anche nella prima figura, ma abbastanza distanziate da essere ben
-visibili. Nella prima figura, ogni canale ha una risoluzione di $19531,25
-Hz/canale$, mentre nella seconda ogni canale ha una risoluzione di $1,192
-Hz/canale$.
+Il numero di canali usati nel calcolo della \ac{FFT} influiscono sulla
+risoluzione di ognuno di questi canali: se i canali sono pochi, ogni canale
+rappresenta una banda di frequenza piuttosto ampia, mentre con molti canali la
+banda di frequenza si restringe. Aumentare il numero di canali permette di
+analizzare un segnale pi\`u nel dettaglio, osservando anche variazioni tra
+frequenze molto vicine tra loro. Al contrario, con pochi canali l'energia del
+segnale viene distribuita in porzioni di banda vicine tra loro. Per verificare
+questo fenomeno, si confrontino la figura \ref{fig:low_chans} con la figura
+\ref{fig:high_chans}: nella seconda figura tutta la zona colorata di blu \`e
+composta da oscillazioni vicinissime tra loro, presenti anche nella prima
+figura, ma abbastanza distanziate da essere ben visibili. Nella prima figura,
+ogni canale ha una risoluzione di $19531,25 Hz/canale$, mentre nella seconda
+ogni canale ha una risoluzione di $1,192 Hz/canale$.
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[width=1\linewidth]{5_256_20}
@@ -152,7 +160,7 @@ per 10.\footnote{Notare che nella prima riga si impiega 20 volte meno tempo
 Per valutare il numero di integrazioni necessarie, la formula utilizzata \`e
 $integrations = \frac{bandwidth}{channels} * time$. Considerando che tutti i
 segnali utilizzati hanno 5 Mhz di banda, \`e facile ricavare il numero di
-integrazioni richieste. I tempi testati oscillano tra $10^-3$ e $10$.
+integrazioni richieste. I tempi testati oscillano tra $10^{-3}$ e $10$.
 I canali aumentano raddoppiando, per motivi visti nel paragrafo
 \ref{analisi_sintesi}, e ogni volta che si incrementa il numero di canali,
 conseguentemente incrementa il tempo di calcolo.
@@ -163,13 +171,13 @@ desiderati, \`e facile verificare la tenuta dell'algoritmo: si osservino le
 tabelle nell'appendice \ref{test_tables}, si noter\`a che tutti i tempi
 rientrano nelle previsioni.
 
-Si \`e arrivati a testare al massimo $2^22 = 4194304$ canali perch/'e essendo il
+Si \`e arrivati a testare al massimo $2^{22} = 4194304$ canali perch/'e essendo il
 segnale a 5 Mhz di banda, non avrebbe senso analizzarlo ad una risoluzione
 minore di $1 \frac{Hz}{canale}$. Tuttavia per verificare in quali condizioni il
 programma smette di funzionare, si sono effettuati dei test con un numero di
-canali ancora maggiore, arrivando sino a $2^27 = 134217728$ canali: attorno ai
-valori $2^26$--$2^27$ il programma non riesce ad allocare tutta la memoria
-necessaria all'elaborazione. Inoltre elaborando a $2^25$ canali si inizia a
+canali ancora maggiore, arrivando sino a $2^{27} = 134217728$ canali: attorno ai
+valori $2^{26}$--$2^{27}$ il programma non riesce ad allocare tutta la memoria
+necessaria all'elaborazione. Inoltre elaborando a $2^{25}$ canali si inizia a
 perdere qualche pacchetto UDP dalla rete, segno che il processore non riesce ad
 elaborare il segnale con sufficiente rapidit\`a. Con questi limiti, il programma
 \`e in grado di elaborare segnali fino a 20 Mhz di banda e, con un hardware
