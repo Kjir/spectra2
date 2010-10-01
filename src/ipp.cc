@@ -240,6 +240,41 @@ void IPP::zero_mem(Ipp64fc *d, long int length) {
     ippsZero_64fc(d, length);
 }
 
+/* Add */
+
+Ipp16s *add(Ipp16s *dst, Ipp16s *addend, long int length) {
+    IppStatus status = ippsAdd_16s_I(dst, addend, length);
+    if( status != ippStsNoErr ) {
+        std::stringstream ss;
+        ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
+        error(ss);
+        exit(7);
+    }
+    return dst;
+}
+
+Ipp32f *add(Ipp32f *dst, Ipp32f *addend, long int length) {
+    IppStatus status = ippsAdd_32f_I(dst, addend, length);
+    if( status != ippStsNoErr ) {
+        std::stringstream ss;
+        ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
+        error(ss);
+        exit(7);
+    }
+    return dst;
+}
+
+Ipp64f *add(Ipp64f *dst, Ipp64f *addend, long int length) {
+    IppStatus status = ippsAdd_64f_I(dst, addend, length);
+    if( status != ippStsNoErr ) {
+        std::stringstream ss;
+        ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
+        error(ss);
+        exit(7);
+    }
+    return dst;
+}
+
 /* Other funcs */
 
 long int IPP::order_to_length(int order) {

@@ -8,8 +8,9 @@ FilterChain::execute(SrcType<IppType> &src, FFTBufPtr dst)
 {
     DstIppType *tmpdst = IPP::alloc(tmpdst, dst->get_siglen());
     //foreach
-    ProcessFilter f = _filters.front();
-    f.transform(src.data, tmpdst);
+    list<ProcessFilter>::iterator f;
+    for(f = _filters.begin(); f != _filters.end(); f++)
+        f->transform(src.data, tmpdst);
     //endforeach
     {
         boost::mutex::scoped_lock lock(data.get_mutex());
