@@ -13,7 +13,7 @@ funzionamento delle parti attenenti alla libreria.
 
 \subsection{Boost}
 Le librerie Boost\footnote{\url{http://www.boost.org/}} sono molto usate nella
-programmazione in \CC perch\'e implementano moltissime funzioni di comune
+programmazione in \CC\, perch\'e implementano moltissime funzioni di comune
 utilizzo fornendo una interfaccia molto semplice. L'ottima qualit\`a di queste
 librerie \`e confermato dal fatto che spesso alcune sue componenti vengono
 integrate nello standard \CC. Queste librerie sono basate sulla versione ANSI
@@ -107,9 +107,9 @@ richieste. Parte del codice di \texttt{typer} \`e riportato nel listato
 parametri del template, si definisce un tipo denominato \texttt{type}
 corrispondente alle caratteristiche richieste.
 
-\lstinputlisting[firstline=25,lastline=34,float,caption=Definizione di costanti
+\lstinputlisting[firstline=7,lastline=17,float,caption=Definizione di costanti
 per la selezione del tipo di
-dato,label=lst:consts_def,basicstyle=\tiny]{../src/main.cc}
+dato,label=lst:consts_def,basicstyle=\tiny]{../src/data_length.hpp}
 
 \lstinputlisting[firstline=4,lastline=21,float,caption=La magia dietro
 \texttt{typer},label=lst:typer,basicstyle=\small]{../src/type.hpp}
@@ -123,7 +123,7 @@ allineata al punto in cui il processore inizier\`a a leggerla.} ed effetuare
 altre operazioni di basso livello. Siccome la libreria \`e scritta in C, ogni
 tipo di dato ha una funzione diversa, quindi per poter scrivere codice generico
 che funzioni con qualunque tipo di dato \`e stato necessario creare
-un'interfaccia \CC che richiami automaticamente le funzioni corrette. Il metodo
+un'interfaccia \CC\, che richiami automaticamente le funzioni corrette. Il metodo
 adottato (listato \ref{lst:malloc}) prevede che la funzione generica di
 interfaccia prenda due argomenti invece di uno solo: il primo argomento \`e un
 puntatore al vettore per cui si sta allocando la memoria ed il secondo
@@ -340,7 +340,7 @@ concorrenza nel proprio programma, \`e importante considerare tutti gli scenari
 possibili nelle interazioni tra i thread soprattutto quando si effettuano
 operazione non atomiche\footnote{Una operazione, ad esempio \lstinline$int i =
     5;$ \`e atomica se la sua esecuzione non pu\`o essere interrotta a met\`a: o
-        l'operazione \`e ancora da effettuare, oppure \`e completata. In \CC 
+        l'operazione \`e ancora da effettuare, oppure \`e completata. In \CC\, 
         l'operazione di cui sopra viene tradotta in diverse istruzioni macchina
         e quindi pu\`o avvenire un context switch a met\`a dell'operazione. Le
         istruzioni in \CC, quindi, non sono atomiche. Esistono altri linguaggi
@@ -360,7 +360,7 @@ FFTBuf<DstIppType> *work_buffer = list.back();
 metodo \texttt{item\_needed()},label=lst:item_needed]{../src/list.hpp}
 
 \subsection{Memory leak}
-Un altro problema molto diffuso nella programmazione in \CC sono i \emph{memory
+Un altro problema molto diffuso nella programmazione in \CC\, sono i \emph{memory
 leak}. Con questo termine si indicano quelle perdite di memoria che avvengono
 perch\'e ad allocazione di memoria da una parte, non corrisponde una
 deallocazione da un'altra parte del codice. Se un problema di questo genere

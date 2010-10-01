@@ -10,12 +10,12 @@ dati; se confrontate con le prestazioni di una macchina DSP\footnote{DSP
     indicano degli elaboratori specializzati che effettuano solamente le
     trasformate per cui sono costruiti.} sicuramente saranno inferiori, ma se si
 aggiunge al confronto anche i fattori del costo dell'attrezzatura e la
-flessibilità della soluzione alle esigenze si capisce come le prestazioni di
+flessibilit\`a della soluzione alle esigenze si capisce come le prestazioni di
 questo software siano importanti: il software lavora su un normale elaboratore
 il cui prezzo, nel caso di macchine comunque high-end e piuttosto potenti, si
 aggira attorno ai 6000 euro. L'hardware specializzato per il DSP ha costi molto
 pi\`u elevati, nell'ordine dei 10000 euro, anche se spesso i consumi sono
-minori. Inoltre, modificare un programma scritto in \CC \`e un'operazione
+minori. Inoltre, modificare un programma scritto in \CC\, \`e un'operazione
 relativamente semplice e che molte persone sono in grado di fare, mentre per
 modificare l'algoritmo in una macchina DSP bisogna modificare l'hardware,
 operazione per nulla semplice, n\'e rapida, quindi anche pi\`u costosa. Avere
@@ -90,18 +90,22 @@ rapida implementazione della \ac{FFT}.
 
 \subsubsection{Framewave}
 La libreria Open Source Framewave \`e stata sviluppata da AMD per fare
-concorrenza alle \ac{ipp}. Gli sviluppatori sostengono che questa libreria usi
-la stessa interfaccia delle \ac{ipp}, e che quindi non richieda alcuna modifica al
-codice. 
+concorrenza alle \ac{ipp}. L'interfaccia di Framewave \`e molto simile a quella
+delle \ac{ipp}, rendendo quindi pi\`u semplice l'adattamento del programma
+all'utilizzo di questa libreria.
 
-\subsubsection{Comesichiamano(?????)}
-Questa libreria si pone su un piano differente: invece di sfruttare la potenza
-della CPU per calcolare le FFT viene usata la GPU della scheda grafica. I
-benchmark proposti dagli sviluppatori mostrano dei tempi veramente interessanti
-e se le prestazioni si dovessero mostrare realmente cos\`i avanzate, si
-incrementerebbe ulteriormente l'utilit\`a di questo programma, soprattutto
-perch/'e riduce i requisiti hardware alla sola scheda video, diminuendo
-ulteriormente il costo.
+\subsubsection{\ac{FFT} sulla GPU}
+Esistono diverse librerie che invece di sfruttare il processore per calcolare la
+\ac{FFT}, utilizzano la GPU della scheda grafica. Alcuni
+benchmark\footnote{\url{http://www.cv.nrao.edu/~pdemores/gpu/}} mostrano un
+miglioramento interessante delle prestazioni rispetto a librerie per CPU,
+soprattutto con l'aumentare il numero di canali. Esistono diverse librerie che
+permettono di sfruttare la GPU, tra cui
+CUDA\footnote{\url{http://www.nvidia.com/object/cuda_home_new.html}} e
+GPUFFTW\footnote{\url{http://gamma.cs.unc.edu/GPUFFTW/}}. Se queste librerie si
+dovessero mostrare realmente efficaci, i requisiti hardware si limiterebbero
+fondamentalmente alla scheda grafica, permettendo di ridurre ulteriormente il
+costo di una soluzione software.
 
 \subsection{Compilatori}
 Un altro aspetto da esplorare sono i compilatori: nel progetto \`e stato
@@ -110,6 +114,14 @@ sue opzioni standard. Siccome dalla qualit\`a del compilatore e dalle opzioni
 utilizzate dipende anche la qualit\`a del codice macchina generato e quindi la
 sua rapidit\`a, un miglioramento di prestazioni potrebbe essere possibile
 esplorando diverse opzioni.
+
+\subsubsection{GCC/g++}
+Il compilatore GNU gcc, nella sua versione per il \CC\, g++, \`e il pi\`u
+diffuso in ambiente *NIX. Supporta numerose architetture e per ogni architettura
+ha delle specifiche opzioni per ottimizzare il codice prodotto. Siccome nel
+progetto \`e stato utilizzato senza particolari opzioni, sarebbe interessante
+verificare se \`e possibile spremere prestazioni migliori con l'utilizzo delle
+funzionalit\`a avanzate di g++.
 
 \subsubsection{ICC}
 Il compilatore ICC \`e stato sviluppato da Intel ed \`e il compilatore con cui
