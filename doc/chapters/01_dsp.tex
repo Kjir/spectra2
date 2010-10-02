@@ -4,7 +4,7 @@
 In questo capitolo introdurremo alcuni concetti basilari sull'elaborazione dei
 segnali necessari alla comprensione del funzionamento di uno
 spettrometro e del suo campo di applicazione. Sapere cosa sia un segnale, come
-si estraggono ed elaborano le informazioni in esso contenuto, quali siano i
+si estraggono ed elaborano le informazioni in esso contenuto o quali siano i
 concetti matematici utilizzati \`e fondamentale per capire il lavoro svolto.\\
 Questo materiale introduttivo \`e sufficiente per avere una panoramica sui
 concetti teorici utilizzati.
@@ -43,7 +43,7 @@ Una importante classe di segnali sono i segnali periodici. Un segnale \`e
 periodico se si ripete in un certo periodo di tempo: definendo $T$ il periodo con
 cui si ripete il segnale e con $t$ un qualunque momento nel tempo, per ogni $k$,
 vale $f(t) = f(t + kT)$. Un segnale periodico $f(t)$ \`e quindi univocamente
-individuato nell'intervallo $\frac{T}{2} \le t \le \frac{T}{2}$.
+individuato nell'intervallo $-\frac{T}{2} \le t \le \frac{T}{2}$.
 
 Si definisce  \emph{frequenza} di un segnale periodico $f(t)$ il numero di
 ripetizioni del periodo $T$ nell'unit\`a di tempo. Risulta quindi:
@@ -167,7 +167,7 @@ interesse possano interferire con le frequenze che andremo ad elaborare.
 
 \section{La Trasformata Discreta di Fourier}
 \subsection{Introduzione alla Trasformata di Fourier}
-Jean Baptiste Joseph Fourier, vissuto a cavallo tra il XVIII e IX secolo, era
+Jean Baptiste Joseph Fourier, vissuto a cavallo tra il XVIII e XIX secolo, era
 un matematico francese che, presentando i suoi  studi sulla propagazione del
 calore, affermava che qualunque segnale periodico continuo potesse essere
 rappresentato come somme pesate di sinusoidi. Questa teoria fu molto osteggiata
@@ -187,7 +187,7 @@ Esistono quattro tipi di segnali possibili, ognuno con la sua trasformata di
 Fourier. Un segnale pu\`o essere periodico o aperiodico, continuo o discreto. Ne
 conseguono i quattro tipi di trasformate:
 \begin{itemize}
-	\item \textbf{Aperiodico - Continuo}: Il segnale non ha \`e periodico ed
+	\item \textbf{Aperiodico - Continuo}: Il segnale non \`e periodico ed
 		assume infiniti valori. Per analizzarlo si utilizza la \emph{Trasformata
 		di Fourier}.
 	\item \textbf{Periodico - Continuo}: Il segnale assume infiniti valori che
@@ -241,8 +241,8 @@ Quando rappresentiamo un segnale in un elaboratore, avremo un vettore,
 al momento del campionamento abbiamo scelto di misurare $N$ campioni, avremo ora
 un vettore di $N$ elementi che vanno da 0 a $N$. Di solito per facilitare la
 computazione tramite elaboratore $N$ viene scelto tra le potenze di
-2\footnote{La \ac{FFT} richiede segnali che abbiano lunghezza pari ad una potenza di
-due, per poter funzionare.}. La controparte di questo segnale \`e suddivisa in
+2.\footnote{La \ac{FFT} richiede segnali che abbiano lunghezza pari ad una potenza di
+due, per poter funzionare.} La controparte di questo segnale \`e suddivisa in
 due parti, \texttt{ReX[]} contenente i valori per le ampiezze dei coseni
 presenti nel segnale, e \texttt{ImX[]} contenente i valori per le ampiezze dei
 seni presenti nel segnale.\footnote{Le notazioni \texttt{ReX[]} e \texttt{ImX[]}
@@ -278,7 +278,7 @@ Tre aspetti importanti vanno notati:
 		$\sin\left(\frac{2\pi 0i}{N}\right) = \sin(0) = 0, \quad \forall i \in
 		(0 \dots N-1)$
 	\item $\boldsymbol{s_{N/2}}$ ha valore 0 in tutti i punti $N$:
-		$\sin\left(\frac{2\pi N/2i}{N}\right) = \sin(\pi i) = 0, \quad \forall i \in
+		$\sin\left(\frac{2\pi (N/2)i}{N}\right) = \sin(\pi i) = 0, \quad \forall i \in
 		(0 \dots N-1)$
 \end{itemize}
 
@@ -346,8 +346,8 @@ variabili. Purtroppo questo metodo di risoluzione non \`e efficiente e non
 viene usato per calcolare la trasformata con l'ausilio di un elaboratore.
 \subsection{FFT: Fast Fourier Transform}
 \label{fft}
-Quando si utilizza un elaboratore per fare dei calcoli, \`e importante valutare
-l'efficienza dell'algoritmo utilizzo, cio\`e valutare quanto tempo impiega il
+Quando si sfrutta un elaboratore per fare dei calcoli, \`e importante valutare
+l'efficienza dell'algoritmo utilizzato, cio\`e valutare quanto tempo impiega il
 nostro algoritmo per eseguire il calcolo e di quanto cresce il tempo di
 esecuzione all'aumentare dei dati inseriti in ingresso. Il calcolo della DFT
 tramite correlazione\footnote{cfr. \cite{TSEGDSP97}, capitoli 6---8} richiede un

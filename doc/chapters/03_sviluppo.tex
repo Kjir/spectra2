@@ -1,7 +1,7 @@
 \chapter{Sviluppo del progetto}
 \label{sw_devel}
 
-Durante lo sviluppo del progetto si ha fatto uso di librerie e strumenti
+Durante lo sviluppo del progetto si \`e fatto uso di librerie e strumenti
 software per semplificare il pi\`u possibile il lavoro da svolgere ed ottenere
 il massimo delle prestazioni possibili. 
 
@@ -18,7 +18,7 @@ utilizzo fornendo una interfaccia molto semplice. L'ottima qualit\`a di queste
 librerie \`e confermato dal fatto che spesso alcune sue componenti vengono
 integrate nello standard \CC. Queste librerie sono basate sulla versione ANSI
 del \CC, rendendole compatibili con qualunque compilatore che implementi gli
-standard ANSI.In questo progetto vengono utilizzate principalmente per
+standard ANSI. In questo progetto vengono utilizzate principalmente per
 semplificare la lettura di argomenti da linea di comando, la lettura/scrittura
 di files, le comunicazioni di rete e il multi-threading.
 
@@ -50,7 +50,7 @@ istruzioni permettono di effettuare operazioni su vettori in parallelo,
 guadagnando grandi vantaggi prestazionali in alcuni tipi di operazioni, tra cui
 anche i calcoli necessari per l'elaborazione di segnali. Siccome diversi
 processori supportano diversi tipi di istruzioni, possono esistere diverse
-implementazioni di alcune funzione in base al tipo di istruzioni supportate. Per
+implementazioni di alcune funzioni in base al tipo di istruzioni supportate. Per
 selezionare automaticamente la funzione corretta, le \ac{ipp} dispongono di un
 dispatcher che, durante l'inizializzazione a run-time, individuano le capacit\`a
 del processore e quindi la categoria di libreria da utilizzare. Questo permette
@@ -93,7 +93,7 @@ riuscire a selezionare il giusto tipo di funzione a seconda del tipo di dato in
 input e in output. L'implementazione attuale permette di selezionare il tipo di
 dato impostando delle costanti e ricompilando il codice, un possibile
 miglioramento potrebbe essere la selezione dinamica senza bisogno di
-ricompilazione del tipo di dato, cui parleremo nel paragrafo \ref{dyn_dtype}.
+ricompilazione del tipo di dato, di cui parleremo nel paragrafo \ref{dyn_dtype}.
 
 \subsubsection{Dal numero di bit al tipo di variabile}
 Il primo passo da compiere per poter lavorare sul tipo di dato desiderato \`e
@@ -111,7 +111,7 @@ corrispondente alle caratteristiche richieste.
 per la selezione del tipo di
 dato,label=lst:consts_def,basicstyle=\tiny]{../src/data_length.hpp}
 
-\lstinputlisting[firstline=4,lastline=21,float,caption=La magia dietro
+\lstinputlisting[firstline=5,lastline=22,float,caption=La magia dietro
 \texttt{typer},label=lst:typer,basicstyle=\small]{../src/type.hpp}
 
 \subsubsection{Gestione della memoria}
@@ -119,7 +119,7 @@ La libreria \ac{ipp} fornisce alcune funzioni per allocare memoria
 allineata\footnote{Gli elaboratori quando accedono ai dati in memoria, lo fanno
 leggendo un certo numero di bytes alla volta. Per ottenere migliori
 prestazioni, \`e ideale che la memoria per le variabili venga allocata
-allineata al punto in cui il processore inizier\`a a leggerla.} ed effetuare
+allineata al punto in cui il processore inizier\`a a leggerla.} ed effettuare
 altre operazioni di basso livello. Siccome la libreria \`e scritta in C, ogni
 tipo di dato ha una funzione diversa, quindi per poter scrivere codice generico
 che funzioni con qualunque tipo di dato \`e stato necessario creare

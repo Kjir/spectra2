@@ -30,7 +30,7 @@ Un'altro utilizzo \`e l'analisi di \emph{space debris}\footnote{Gli space
 debris, letteralmente detriti spaziali, sono oggetti di media e piccola
     dimensione generalmente di origine artificiale che orbitano a distanza
     ravvicinata dalla Terra: si tratta generalmente di vecchi satelliti e altre
-    apparecchiature abbandonate. Siccome possono creari problemi di varia
+    apparecchiature abbandonate. Siccome possono creare problemi di varia
     natura, vanno tenuti sotto osservazione.} dove la sorgente di dati sono
 dei pacchetti UDP e la \ac{FFT} \`e caratterizzata da segnali di lunghezza contenuta
 (circa $2^{11}$) con poche integrazioni (circa $100$), quindi una frequente
@@ -69,7 +69,7 @@ otterrebbero i dati da un'altra fonte senza dover cambiare una riga di codice al
 di fuori della inizializzazione.
 \subsection{ProcessFilter}
 Un \texttt{ProcessFilter} rappresenta una qualunque elaborazione intermedia del
-segnale, sia essa una trasformata di Fourier o un filtro passa---basso o una
+segnale, sia essa una trasformata di Fourier o un filtro passa-basso o una
 qualunque altra manipolazione. Siccome in questa fase si prende un segnale e lo
 si manipola in qualche maniera, l'interfaccia richiede un metodo
 \texttt{transform} che abbia in input i dati da elaborare e scriva su un vettore
@@ -97,7 +97,7 @@ vanno scritti i risultati di una o pi\`u trasformazioni di Fourier. Al momento
 della costruzione, si indica la lunghezza del segnale da salvare e il numero di
 integrazioni che si prevede di fare; a questa maniera \`e possibile assegnare
 questo buffer a tanti thread quante dovranno essere le integrazioni da fare. La
-classe offre strumenti anche per tener traccia di quante integrazioni sono già
+classe offre strumenti anche per tener traccia di quante integrazioni sono gi\`a
 state effettuate e sapere cos\`i se il buffer \`e pronto per essere scritto su
 output.
 \subsubsection{List}
@@ -158,7 +158,7 @@ proprio ciclo da capo.
 Avviato il thread di output, il thread principale entra nel suo ciclo
 principale, dove effettua tre operazioni che esploriamo nel dettaglio:
 \emph{lettura dei dati}, \emph{selezione del buffer di output} e
-\emph{assegnamento al thread pool}.
+\emph{assegnazione al thread pool}.
 \subsubsection{Lettura dei dati}
 La prima operazione effettuata all'interno del ciclo principale \`e verificare
 che ci sia dello spazio disponibile nel buffer circolare. Se il buffer \`e
@@ -180,7 +180,7 @@ questo numero \`e minore rispetto al numero di somme desiderate, il buffer \`e
 selezionabile, altrimenti se ne crea uno nuovo e lo si accoda in lista.
 \subsubsection{Assegnazione al thread pool}
 Dopo aver letto i dati del segnale da trasformare ed aver individuato il buffer
-di output su cui scrivere i dati elaborati, si può assegnare il lavoro al thread
+di output su cui scrivere i dati elaborati, si pu\`o assegnare il lavoro al thread
 pool. Per farlo, \`e sufficiente indicare i puntatori ai due buffer ed un
 puntatore alla funzione che deve occuparsi di elaborare i dati. Il thread pool
 si occuper\`a automaticamente di assegnare il lavoro al primo thread libero
