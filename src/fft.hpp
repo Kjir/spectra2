@@ -8,16 +8,16 @@
 #include "filter/process.hpp"
 #include "fft_buf.hpp"
 
-class fft : ProcessFilter {
+class fft : public ProcessFilter {
     public:
         /* Constructors */
-        fft(const IppsFFTSpec_R_16s *spec);
-        fft(const IppsFFTSpec_R_32s *spec);
-        fft(const IppsFFTSpec_R_32f *spec);
-        fft(const IppsFFTSpec_R_64f *spec);
+        fft(const IppsFFTSpec_R_16s *spec, int order, int scaling, int pscaling);
+        fft(const IppsFFTSpec_R_32s *spec, int order, int scaling, int pscaling);
+        fft(const IppsFFTSpec_R_32f *spec, int order, int scaling, int pscaling);
+        fft(const IppsFFTSpec_R_64f *spec, int order, int scaling, int pscaling);
 
         /* Interface implementation */
-        virtual DstIppType *transform(IppType *original_signal, DstIppType *current_signal);
+        virtual DstIppType *transform(const IppType *original_signal, DstIppType *current_signal);
 
         /* Transforms */
         Ipp16s *transform(const Ipp16s *src, Ipp16s *dst, int order, int scaling = 1, int pscaling = 12);
@@ -30,6 +30,7 @@ class fft : ProcessFilter {
         int _bufsize;
         std::stack<Ipp8u *> _buffers;
         boost::mutex _bufmut;
+        int _order, _scaling, _pscaling;
 
         /* FFTSpec */
         //const IppsFFTSpec FFTSpec;

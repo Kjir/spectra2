@@ -2,7 +2,7 @@
 #define __SPECTRA2_CHAIN_HPP_
 
 #include <list>
-#include "data_type.hpp"
+#include "data_length.hpp"
 #include "filter/process.hpp"
 #include "filter/merge.hpp"
 
@@ -13,7 +13,7 @@ class FilterChain {
         void push_filter(ProcessFilter *flt) { _filters.push_back(flt); };
         void pop_filter() { _filters.pop_front(); };
         void clear_filters() { _filters.clear(); }
-        void execute(SrcType<IppType> &src, FFTBufPtr dst);
+        void execute(const SrcType<IppType> &src, FFTBufPtr dst);
     private:
         std::list<ProcessFilter *> _filters;
         /*
@@ -22,6 +22,6 @@ class FilterChain {
          * The implementation of this class gives the answer.
          */
         MergeFilter *_merge;
-}
+};
 
 #endif /* __SPECTRA2_CHAIN_HPP_ */

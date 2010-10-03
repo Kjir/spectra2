@@ -242,8 +242,8 @@ void IPP::zero_mem(Ipp64fc *d, long int length) {
 
 /* Add */
 
-Ipp16s *add(Ipp16s *dst, Ipp16s *addend, long int length) {
-    IppStatus status = ippsAdd_16s_I(dst, addend, length);
+Ipp16s *IPP::add(Ipp16s *addend, Ipp16s *dst, long int length) {
+    IppStatus status = ippsAdd_16s_I(addend, dst, length);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
@@ -253,8 +253,8 @@ Ipp16s *add(Ipp16s *dst, Ipp16s *addend, long int length) {
     return dst;
 }
 
-Ipp32f *add(Ipp32f *dst, Ipp32f *addend, long int length) {
-    IppStatus status = ippsAdd_32f_I(dst, addend, length);
+Ipp32f *IPP::add(Ipp32f *addend, Ipp32f *dst, long int length) {
+    IppStatus status = ippsAdd_32f_I(addend, dst, length);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";
@@ -264,8 +264,8 @@ Ipp32f *add(Ipp32f *dst, Ipp32f *addend, long int length) {
     return dst;
 }
 
-Ipp64f *add(Ipp64f *dst, Ipp64f *addend, long int length) {
-    IppStatus status = ippsAdd_64f_I(dst, addend, length);
+Ipp64f *IPP::add(Ipp64f *addend, Ipp64f *dst, long int length) {
+    IppStatus status = ippsAdd_64f_I(addend, dst, length);
     if( status != ippStsNoErr ) {
         std::stringstream ss;
         ss << "IPP Error in Add: " << ippGetStatusString(status) << "\n";

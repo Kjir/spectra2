@@ -1,20 +1,21 @@
 #include <boost/thread/mutex.hpp>
+#include <list>
 #include "data_length.hpp"
 #include "filter/chain.hpp"
 #include "fft_buf.hpp"
 #include "ipp.hpp"
 
-FilterChain::execute(SrcType<IppType> &src, FFTBufPtr dst)
+void FilterChain::execute(const SrcType<IppType> &src, FFTBufPtr dst)
 {
     DstIppType *tmpdst = IPP::alloc(tmpdst, dst->get_siglen());
     //foreach
-    list<ProcessFilter>::iterator f;
-    for(f = _filters.begin(); f != _filters.end(); f++)
-        f->transform(src.data, tmpdst);
+    std::list<ProcessFilter *>::iterator f;
+    for(f = _filters.begin(); f != _filters.end(); f++) {
+        (*f)->transform(src.data, tmpdst);
+    }
     //endforeach
     {
-        boost::mutex::scoped_lock lock(data.get_mutex());
-        _merge.merge(src, dst, tmpdst);
+        _merge->merge(src, dst, tmpdst);
     }
     IPP::free(src.data);
     {

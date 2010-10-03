@@ -4,9 +4,9 @@
 #include "data_length.hpp"
 #include "filter/merge.hpp"
 
-class AddMerger : MergeFilter
+class AddMerger : public MergeFilter
 {
     public:
-        virtual void merge(SrcType<IppType> &src, FFTBufPtr dst, DstIppType *result);
-}
+        virtual void merge(const SrcType<IppType> &src, FFTBufPtr dst, DstIppType *result);
+};
 #endif /* __SPECTRA2_ADDMERGER_HPP_ */

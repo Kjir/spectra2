@@ -20,8 +20,11 @@
 #include "output.hpp"
 #include "type.hpp"
 #include "debug.hpp"
+#include "filter/chain.hpp"
+#include "filter/merge.hpp"
 #include "filter/source.hpp"
 #include "filter/sink.hpp"
+#include "ipp/AddMerger.hpp"
 
     /* CONSTANTS to define data type.
      * Change this & recompile to change data types!
@@ -138,7 +141,11 @@ int main(int argc, char **argv)
 
         IppsFFTSpec_R_16s *spec = IPP::allocSpec(&spec, order, fast);
 
-        fft f(spec); //The FFT object
+        fft f(spec, order, scaling, pscaling); //The FFT filter
+
+        MergeFilter *am = new AddMerger;
+        FilterChain chain(am);
+        chain.push_filter(&f);
 
         {
             std::stringstream ss;
@@ -185,13 +192,14 @@ int main(int argc, char **argv)
             fbuf->inc_assigned_sources();
             tp.schedule(
                     boost::bind(
-                        static_cast<DstIppType *(fft::*) (const SrcType<IppType> &, FFTBufPtr, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), fbuf, order, scaling, pscaling
+                        &FilterChain::execute, boost::ref(chain), boost::cref(cbuf.back()), fbuf
                         )
                     );
         }
 
         out_thread.join();
         delete src_filter;
+        delete am;
 
     }
     catch( std::exception &e )

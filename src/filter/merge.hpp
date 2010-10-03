@@ -6,8 +6,8 @@
 
 class MergeFilter {
     public:
-        virtual ~FilterChain() {};
-        virtual void merge(SrcType<IppType> &src, FFTBufPtr dst, DstIppType *result) = 0;
-}
+        virtual ~MergeFilter() {};
+        virtual void merge(const SrcType<IppType> &src, FFTBufPtr dst, DstIppType *result) = 0;
+};
 
 #endif /* __SPECTRA2_MERGE_HPP_ */

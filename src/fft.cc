@@ -8,7 +8,7 @@
 
 /* Constructors */
 
-fft::fft(const IppsFFTSpec_R_16s *spec) : R_16s(spec) {
+fft::fft(const IppsFFTSpec_R_16s *spec, int order, int scaling, int pscaling) : R_16s(spec), _order(order), _scaling(scaling), _pscaling(pscaling) {
     IppStatus status;
 
     status = ippsFFTGetBufSize_R_16s( spec, &_bufsize );
@@ -29,19 +29,19 @@ fft::fft(const IppsFFTSpec_R_16s *spec) : R_16s(spec) {
     */
 }
 
-fft::fft(const IppsFFTSpec_R_32s *spec) : R_32s(spec) {}
-fft::fft(const IppsFFTSpec_R_32f *spec) : R_32f(spec) {}
-fft::fft(const IppsFFTSpec_R_64f *spec) : R_64f(spec) {}
+fft::fft(const IppsFFTSpec_R_32s *spec, int order, int scaling, int pscaling) : R_32s(spec), _order(order), _scaling(scaling), _pscaling(pscaling) {}
+fft::fft(const IppsFFTSpec_R_32f *spec, int order, int scaling, int pscaling) : R_32f(spec), _order(order), _scaling(scaling), _pscaling(pscaling) {}
+fft::fft(const IppsFFTSpec_R_64f *spec, int order, int scaling, int pscaling) : R_64f(spec), _order(order), _scaling(scaling), _pscaling(pscaling) {}
 
 /* Interface implementation */
 DstIppType *fft::transform(const IppType *original_signal, DstIppType *current_signal)
 {
-    return transform(original_signal, current_signal, 8, 0, 0);
+    return transform(original_signal, current_signal, _order, _scaling, _pscaling);
 }
 
 /* Transform */
 
-Ipp16s *fft::transform(Ipp16s *src, Ipp16s *data, int order, int scaling, int pscaling) {
+Ipp16s *fft::transform(const Ipp16s *src, Ipp16s *data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
     long int siglen = IPP::order_to_length(order);
@@ -92,7 +92,7 @@ Ipp16s *fft::transform(Ipp16s *src, Ipp16s *data, int order, int scaling, int ps
     return data;
 }
 
-Ipp32f *fft::transform(Ipp16s *src, Ipp32f *data, int order, int scaling, int pscaling) {
+Ipp32f *fft::transform(const Ipp16s *src, Ipp32f *data, int order, int scaling, int pscaling) {
     IppStatus status;
     Ipp16s *tmpdst;
     long int siglen = IPP::order_to_length(order);
