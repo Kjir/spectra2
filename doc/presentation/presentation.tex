@@ -1,0 +1,64 @@
+\documentclass{beamer}
+
+\usepackage[italian]{babel}
+
+\mode<presentation>{
+    \usetheme[left]{Marburg}
+    \useinnertheme[shadow]{rounded}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>{Contenuti}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\title[Software per segnali radioastronomici]{Sviluppo di un software per l'analisi real-time di dati
+radioastronomici su macchine multicore}
+\author{St\'ephane Bisinger}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}{Riassunto}
+\tableofcontents
+\end{frame}
+\section{Teoria}
+\subsection{Analisi dei segnali}
+\begin{frame}{Cosa sono i segnali?}
+I segnali sono bla bla bla.
+
+Ad esempio:
+\begin{itemize}
+    \item Suoni (pressione acustica su spazio)\pause
+    \item Immagini (concentrazione di colore su coordinate spaziali)\pause
+    \item Video (come le immagini, solo con in pi\`u la dimensione del tempo)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Come si analizza un segnale?}
+\begin{itemize}
+    \item Un qualunque segnale pu\`o essere espresso come somma pesata di
+    sinusoidi. \pause
+    \item Quindi un segnale pu\`o essere espresso in relazione alla frequenza
+    delle sinusoidi parte del segnale \pause $->$ Rappresentazione del segnale nel
+    dominio delle frequenze.
+\end{itemize}
+\end{frame}
+
+\subsection{Radioastronomia}
+\begin{frame}{I radiotelescopi}
+Un radiotelescopio osserva le onde elettromagnetiche provenienti dallo spazio
+con frequenza inferiore a 3 Ghz.
+\end{frame}
+\section{Il software}
+\subsection{La struttura}
+\subsection{Threading}
+\section{Risultati e Conclusioni}
+\subsection{Risultati dei test}
+\subsection{Conclusioni}
+\subsection{Sviluppi futuri}
+\end{document}
