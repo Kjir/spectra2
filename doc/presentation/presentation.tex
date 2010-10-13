@@ -3,6 +3,7 @@
 \usepackage[italian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{pgf}
+\usepackage{wrapfig}
 
 \graphicspath{{./images/}}
 
@@ -78,19 +79,27 @@ radioastronomici su macchine multicore}
 \end{frame}
 
 \begin{frame}{I radiotelescopi di Medicina}
-	\only<2>{ \pgfputat{
-		\pgfxy(5.5,0)}{
-			\pgfbox[left,base]{
-				\includegraphics[width=0.45\textwidth]{img/croce_del_nord}
-			}
-		}
-	}
-	\only<3>{ \pgfputat{
-		\pgfxy(5.5,0) }{
-			\pgfbox[left,base]{
-				\includegraphics[width=0.45\textwidth]{img/parabolica}}
-			}
-		}
+	\begin{wrapfigure}{r}{0.5\textwidth}
+		\only<1>{\pgfimage[width=0.45\textwidth ]{img/stazione1}
+		}\only<2>{\pgfimage[width=0.45\textwidth ]{img/croce_del_nord}
+		}\only<3>{\pgfimage[width=0.45\textwidth ]{img/parabolica} }
+		\label{fig:rtscopes}
+	\end{wrapfigure}
+			Inaugurata nel 1964, la stazione ``Croce del Nord'' di Medicina (BO)
+			ha sancito l'inizio dell'osservazione radioastronomica in Italia,
+			con la costruzione del primo radiotelescopio.
+
+			La stazione è attualmente munita di due diversi radiotelescopi:
+			\pause
+			\begin{itemize}[<+->]
+				\item La \alert{Croce del Nord}, costituita da due bracci,
+					Nord-Sud ed Est-Ovest, per un'area collettrice di 30000
+					$m^2$ totali.
+				\item L'\alert{Antenna Parabolica}, con un diametro di 32 m,
+					operabile sia in modalità \emph{single dish} che in rete con
+					altre antenne. Partecipa al progetto \emph{VLBI}.
+			\end{itemize}
+
 \end{frame}
 
 \section{Il software}
