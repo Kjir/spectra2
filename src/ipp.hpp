@@ -34,6 +34,11 @@ class IPP {
         /* Free */
         static void free(void *p) { ippsFree(p); }
 
+        /* Add */
+        static Ipp16s *add(Ipp16s *addend, Ipp16s *dst, long int length);
+        static Ipp32f *add(Ipp32f *addend, Ipp32f *dst, long int length);
+        static Ipp64f *add(Ipp64f *addend, Ipp64f *dst, long int length);
+
         /* Other funcs */
         static long int order_to_length(int order);
 };

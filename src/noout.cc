@@ -1,7 +1,8 @@
 #include "output.hpp"
+#include "filter/sink.hpp"
 #include <boost/thread/mutex.hpp>
 
-void output(List< boost::shared_ptr< FFTBuf<Ipp32f> > > &l, std::ostream *s)
+void output(List< boost::shared_ptr< FFTBuf<Ipp32f> > > &l, SinkFilter &s)
 {
     while(true)
     {
@@ -10,7 +11,7 @@ void output(List< boost::shared_ptr< FFTBuf<Ipp32f> > > &l, std::ostream *s)
             std::stringstream ss;
             ss << "Before empty wait" << std::endl;
             debug(ss.str());
-            s->flush();
+            s.flush();
             l.wait();
             ss.clear(); ss.str("");
             ss << "After empty wait" << std::endl;

@@ -1,0 +1,102 @@
+lessju@bee2:~$ cat /proc/meminfo
+MemTotal:        3091504 kB
+MemFree:          859628 kB
+Buffers:          349624 kB
+Cached:           901924 kB
+SwapCached:       165596 kB
+Active:           654224 kB
+Inactive:        1120508 kB
+Active(anon):     176820 kB
+Inactive(anon):   355176 kB
+Active(file):     477404 kB
+Inactive(file):   765332 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:       9124880 kB
+SwapFree:        7707180 kB
+Dirty:                 4 kB
+Writeback:             8 kB
+AnonPages:        431300 kB
+Mapped:            51528 kB
+Shmem:              8812 kB
+Slab:             203420 kB
+SReclaimable:     149340 kB
+SUnreclaim:        54080 kB
+KernelStack:        5776 kB
+PageTables:       128668 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:    10670632 kB
+Committed_AS:    3707492 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:      367460 kB
+VmallocChunk:   34359367164 kB
+HardwareCorrupted:     0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:        7680 kB
+DirectMap2M:     3137536 kB
+
+lessju@bee2:~$ cat /proc/cpuinfo
+processor       : 0
+vendor_id       : GenuineIntel
+cpu family      : 6
+model           : 23
+model name      : Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+stepping        : 6
+cpu MHz         : 1998.000
+cache size      : 6144 KB
+physical id     : 0
+siblings        : 2
+core id         : 0
+cpu cores       : 2
+apicid          : 0
+initial apicid  : 0
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 10
+wp              : yes
+flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
+cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm
+constant_tsc arch_perfmon pebs bts rep_good aperfmperf pni dtes64 monitor
+ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 lahf_lm tpr_shadow vnmi
+flexpriority
+bogomips        : 6010.59
+clflush size    : 64
+cache_alignment : 64
+address sizes   : 36 bits physical, 48 bits virtual
+power management:
+
+processor       : 1
+vendor_id       : GenuineIntel
+cpu family      : 6
+model           : 23
+model name      : Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+stepping        : 6
+cpu MHz         : 1998.000
+cache size      : 6144 KB
+physical id     : 0
+siblings        : 2
+core id         : 1
+cpu cores       : 2
+apicid          : 1
+initial apicid  : 1
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 10
+wp              : yes
+flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
+cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm
+constant_tsc arch_perfmon pebs bts rep_good aperfmperf pni dtes64 monitor
+ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 lahf_lm tpr_shadow vnmi
+flexpriority
+bogomips        : 6011.08
+clflush size    : 64
+cache_alignment : 64
+address sizes   : 36 bits physical, 48 bits virtual
+power management:
+

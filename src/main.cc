@@ -13,25 +13,26 @@
 #include <sstream>
 #include <typeinfo>
 #include "server.hpp"
+#include "file.hpp"
 #include "fft.hpp"
 #include "fft_buf.hpp"
 #include "list.hpp"
 #include "output.hpp"
 #include "type.hpp"
 #include "debug.hpp"
+#include "filter/chain.hpp"
+#include "filter/merge.hpp"
+#include "filter/source.hpp"
+#include "filter/sink.hpp"
+#include "ipp/AddMerger.hpp"
+
+    /* CONSTANTS to define data type.
+     * Change this & recompile to change data types!
+     */
+#include "data_length.hpp"
 
 int main(int argc, char **argv)
 {
-    /* CONSTANTS to define data type. Change this & recompile to change data types! */
-
-    const int IPP_DATA_LENGTH = 16;
-    const int IPP_OUTPUT_DATA_LENGTH = 32;
-    const bool IS_COMPLEX_TYPE = false;
-    typedef typer<IPP_DATA_LENGTH, IS_COMPLEX_TYPE>::type IppType;
-    typedef typer<IPP_OUTPUT_DATA_LENGTH, IS_COMPLEX_TYPE>::type DstIppType;
-
-    typedef boost::shared_ptr< FFTBuf<DstIppType> > FFTBufPtr;
-
     namespace po = boost::program_options;
     po::variables_map var_map;
 
@@ -140,7 +141,11 @@ int main(int argc, char **argv)
 
         IppsFFTSpec_R_16s *spec = IPP::allocSpec(&spec, order, fast);
 
-        fft f(spec); //The FFT object
+        fft f(spec, order, scaling, pscaling); //The FFT filter
+
+        MergeFilter *am = new AddMerger;
+        FilterChain chain(am);
+        chain.push_filter(&f);
 
         {
             std::stringstream ss;
@@ -151,12 +156,8 @@ int main(int argc, char **argv)
         //udp_sock<IppType> s(host, port); //The UDP server
         SourceFilter *src_filter = new udp_sock<IppType>(host, port);
 
-        std::ostream *out = &std::cout;
-        if( ofile != "-" )
-        {
-            out = new std::ofstream(ofile.c_str(), std::ofstream::out|std::ofstream::trunc|std::ofstream::binary);
-        }
-        boost::thread out_thread(output, boost::ref(dst), out);
+        FileSink out(ofile);
+        boost::thread out_thread(output, boost::ref(dst), boost::ref(out));
 
         while(true)
         {
@@ -191,15 +192,14 @@ int main(int argc, char **argv)
             fbuf->inc_assigned_sources();
             tp.schedule(
                     boost::bind(
-                        static_cast<DstIppType *(fft::*) (const SrcType<IppType> &, FFTBufPtr, int, int, int)>(&fft::transform), &f, boost::cref(cbuf.back()), fbuf, order, scaling, pscaling
+                        &FilterChain::execute, boost::ref(chain), boost::cref(cbuf.back()), fbuf
                         )
                     );
         }
 
         out_thread.join();
-        if( *out != std::cout ) {
-            delete out;
-        }
+        delete src_filter;
+        delete am;
 
     }
     catch( std::exception &e )
@@ -207,6 +207,7 @@ int main(int argc, char **argv)
         std::stringstream ss;
         ss << "Ex: " << e.what() << std::endl;
         error(ss);
+        return -1;
     }
 
     return 0;

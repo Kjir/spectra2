@@ -1,0 +1,464 @@
+\chapter{Sviluppo del progetto}
+\label{sw_devel}
+
+Durante lo sviluppo del progetto si \`e fatto uso di librerie e strumenti
+software per semplificare il pi\`u possibile il lavoro da svolgere ed ottenere
+il massimo delle prestazioni possibili. 
+
+\section{Librerie}
+L'utilizzo delle giuste librerie permette di sviluppare pi\`u velocemente i
+propri progetti, ottenere prestazioni spesso migliori rispetto ad una soluzione
+sviluppata in proprio e sicuramente avere pi\`u certezze riguardo al corretto
+funzionamento delle parti attenenti alla libreria.
+
+\subsection{Boost}
+Le librerie Boost\footnote{\url{http://www.boost.org/}} sono molto usate nella
+programmazione in \CC\, perch\'e implementano moltissime funzioni di comune
+utilizzo fornendo una interfaccia molto semplice. L'ottima qualit\`a di queste
+librerie \`e confermato dal fatto che spesso alcune sue componenti vengono
+integrate nello standard \CC. Queste librerie sono basate sulla versione ANSI
+del \CC, rendendole compatibili con qualunque compilatore che implementi gli
+standard ANSI. In questo progetto vengono utilizzate principalmente per
+semplificare la lettura di argomenti da linea di comando, la lettura/scrittura
+di files, le comunicazioni di rete e il multi-threading.
+
+\subsection{\ac{ipp}}
+Le Integrated Performance
+Primitives\footnote{\url{http://software.intel.com/en-us/intel-ipp/}} sono delle
+librerie che implementano un insieme molto completo di funzioni e algoritmi
+relativi al processamento di segnali e crittografia. In particolare implementano
+funzioni utili al processamento di segnali audio (filtri, codifiche audio,
+compressione dei dati, ecc.), funzioni per il processamento di immagini
+(trasformazioni, codifica video, ecc.), funzioni per calcoli su matrice e
+funzioni crittografiche (crittografia simmetrica, asimmetrica, funzioni hash,
+ecc.).  Il vantaggio delle IPP \`e che offrono un ampio spettro di funzioni che
+coprono praticamente tutte le necessit\`a nel processamento dei segnali, oltre
+ad essere ottimizzate per processori Intel. Inoltre sono state scritte in modo
+da essere naturalmente utilizzabili in ambienti multi-threaded, sfruttando tutte
+le potenzialit\`a di processori multicore o processori multipli. Tutti questi
+fattori hanno concorso nell'adozione di questa libreria al posto di altre
+librerie concorrenti. Questa libreria \`e l'unico componente non Open Source
+utilizzato nell'intero progetto, anche se il suo utilizzo \`e gratuito per usi
+accademici. Le librerie alternative potrebbero essere comparate per verificare
+l'effettiva qualit\`a a livello di prestazioni\footnote{cfr. paragrafo
+\ref{altlib}}.
+
+\subsubsection{Multithreading e prestazioni nelle \ac{ipp}}
+Le \ac{ipp} sono state sviluppate con l'intenzione di sfruttare a pieno le
+istruzioni \ac{SIMD} e \ac{SSE} presenti nei moderni processori. Queste
+istruzioni permettono di effettuare operazioni su vettori in parallelo,
+guadagnando grandi vantaggi prestazionali in alcuni tipi di operazioni, tra cui
+anche i calcoli necessari per l'elaborazione di segnali. Siccome diversi
+processori supportano diversi tipi di istruzioni, possono esistere diverse
+implementazioni di alcune funzioni in base al tipo di istruzioni supportate. Per
+selezionare automaticamente la funzione corretta, le \ac{ipp} dispongono di un
+dispatcher che, durante l'inizializzazione a run-time, individuano le capacit\`a
+del processore e quindi la categoria di libreria da utilizzare. Questo permette
+di usare trasparentemente le funzioni di libreria sfruttando sempre
+l'implementazione pi\`u efficiente per il processore utilizzato.
+
+Alcune funzioni di base della libreria sfruttano il threading per migliorare le
+proprie prestazioni, in particolare sfruttando le librerie OpenMP sviluppate da
+Intel. Quando si utilizza la versione multi-threaded della libreria, i thread
+vengono automaticamente inizializzati al numero di processori e core presenti: a
+questo modo la libreria avvier\`a al massimo tanti thread quante sono le unit\`a
+di calcolo presenti nel sistema, evitando di sovracaricare il sistema e
+ottenendo cos\`i la migliore prestazione possibile dal sistema in uso. Sono
+presenti anche due funzioni, \texttt{ippSetNumThreads()} e
+\texttt{ippGetNumThreads()}, che permettono di manipolare il numero di threads
+utilizzati dalla libreria. Il numero di thread non sar\`a mai maggiore rispetto
+al numero di unit\`a di calcolo del sistema, anche se impostati manualmente ad
+un valore maggiore.
+
+Tutte le funzioni IPP sono thread-safe, cio\`e possono essere usate da diversi
+thread di esecuzione contemporaneamente senza che questo implichi un qualunque
+malfunzionamento.\footnote{Per approfondimenti, cfr.
+\url{http://software.intel.com/en-us/articles/threading-and-intel-integrated-performance-primitives/}}
+
+
+\section{Codice pre-esistente}
+Parte del codice del progetto \`e stato prelevato dal software sviluppato in
+fase di tirocinio, sempre presso l'Istituto di Radioastronomia di Medicina.
+Questo codice ha permesso di ridurre notevolmente il tempo dedicato allo
+sviluppo del calcolo della \ac{FFT} lasciando maggior tempo per una corretta
+implementazione delle altre parti. Questo codice \`e stato adattato per
+funzionare in un contesto multi-threaded e per accettare input da diverse fonti.
+
+\section{Gestione di problemi comuni}
+\subsection{Selezione del tipo di dato}
+Per rendere il programma il pi\`u versatile possibile, non si poteva legare il
+suo funzionamento ad un unico tipo di dati. Siccome le \ac{ipp} includono
+funzioni per diversi tipi di dati, il programma \`e stato sviluppato in modo da
+riuscire a selezionare il giusto tipo di funzione a seconda del tipo di dato in
+input e in output. L'implementazione attuale permette di selezionare il tipo di
+dato impostando delle costanti e ricompilando il codice, un possibile
+miglioramento potrebbe essere la selezione dinamica senza bisogno di
+ricompilazione del tipo di dato, di cui parleremo nel paragrafo \ref{dyn_dtype}.
+
+\subsubsection{Dal numero di bit al tipo di variabile}
+Il primo passo da compiere per poter lavorare sul tipo di dato desiderato \`e
+associare al numero di bit selezionati nella costante il corretto tipo di dato.
+Il listato \ref{lst:consts_def} illustra il metodo di selezione dei numeri di bit e
+la definizione delle costanti contenenti i tipi di dato corretti. Come si pu\`o
+osservare, si usano i template per ottenere il risultato che vogliamo e con
+delle \texttt{typedef} definiamo dei nuovi tipi corrispondenti alle dimensioni
+richieste. Parte del codice di \texttt{typer} \`e riportato nel listato
+\ref{lst:typer}. Si pu\`o osservare come molto semplicemente al variare dei due
+parametri del template, si definisce un tipo denominato \texttt{type}
+corrispondente alle caratteristiche richieste.
+
+\lstinputlisting[firstline=7,lastline=17,float,caption=Definizione di costanti
+per la selezione del tipo di
+dato,label=lst:consts_def,basicstyle=\tiny]{../src/data_length.hpp}
+
+\lstinputlisting[firstline=5,lastline=22,float,caption=La magia dietro
+\texttt{typer},label=lst:typer,basicstyle=\small]{../src/type.hpp}
+
+\subsubsection{Gestione della memoria}
+La libreria \ac{ipp} fornisce alcune funzioni per allocare memoria
+allineata\footnote{Gli elaboratori quando accedono ai dati in memoria, lo fanno
+leggendo un certo numero di bytes alla volta. Per ottenere migliori
+prestazioni, \`e ideale che la memoria per le variabili venga allocata
+allineata al punto in cui il processore inizier\`a a leggerla.} ed effettuare
+altre operazioni di basso livello. Siccome la libreria \`e scritta in C, ogni
+tipo di dato ha una funzione diversa, quindi per poter scrivere codice generico
+che funzioni con qualunque tipo di dato \`e stato necessario creare
+un'interfaccia \CC\, che richiami automaticamente le funzioni corrette. Il metodo
+adottato (listato \ref{lst:malloc}) prevede che la funzione generica di
+interfaccia prenda due argomenti invece di uno solo: il primo argomento \`e un
+puntatore al vettore per cui si sta allocando la memoria ed il secondo
+argomento \`e la lunghezza di questo vettore. Il primo argomento in realt\`a
+non viene utilizzato, ma con la tecnica dell'\texttt{overloading} permette di
+selezionare la funzione corretta.
+
+\lstinputlisting[firstline=108,lastline=130,float,caption=Alcune implementazioni
+della funzione
+\texttt{IPP::malloc},label=lst:malloc,basicstyle=\small]{../src/ipp.cc}
+
+\subsubsection{Buffer di dati}
+Per le classi e strutture contenente i dati \`e stata scelta una strategia
+diversa: siccome non \`e necessario chiamare funzioni di libreria, ma i metodi
+sono generici ed indipendenti dal tipo di dato su cui si opera, sono stati
+adottati i template come soluzione generica. Come si pu\`o vedere nella
+definizione della struttura \texttt{SrcType} (listato \ref{lst:srctype}), i
+membri della struttura sono assolutamente neutri rispetto al tipo di dato
+utilizzato.
+
+\lstinputlisting[firstline=227,lastline=236,float,caption=Dichiarazione della
+struttura \texttt{SrcType},label=lst:srctype]{../src/fft_buf.hpp}
+
+\subsection{Client UDP come SourceFilter}
+Nel paragrafo \ref{sourcefilter} abbiamo spiegato come in fase di progettazione
+si sia pensato ad una interfaccia generica per leggere i dati da una fonte
+esterna; il listato \ref{lst:sourcefilter} mostra l'implementazione di questa
+interfaccia.
+\lstinputlisting[firstline=4,lastline=10,float,caption=Dichiarazione
+dell'interfaccia
+\texttt{SourceFilter},label=lst:sourcefilter]{../src/filter/source.hpp}
+
+Per implementare questa interfaccia \`e sufficiente ereditare dalla classe
+virtuale \texttt{SourceFilter} ed implementare il metodo \texttt{read()}.
+Vediamo ad esempio la dichiarazione della classe \texttt{udp\_sock}, presentata
+nel listato \ref{lst:udp_sock}: si pu\`o notare che vengono definite due
+funzioni read, una delle quali corrisponde a quella dichiarata nella classe
+virtuale \texttt{SourceFilter}. L'implementazione della \texttt{read()}
+virtuale, presentata nel listato \ref{lst:udp_read}, non fa altro che convertire
+il puntatore a void in un puntatore del tipo specificato dal template. Questo
+permette di usare la classe \texttt{udp\_sock} con qualunque tipo di dato.
+
+\lstinputlisting[firstline=25,lastline=41,caption=Dichiarazione della classe
+\texttt{udp\_sock},float,label=lst:udp_sock,basicstyle=\small]{../src/server.hpp}
+
+\lstinputlisting[firstline=183,lastline=186,caption=Implementazione della
+\texttt{read()} virtuale,float,label=lst:udp_read]{../src/server.hpp}
+
+\subsection{Gestione del threading}
+Quando si introduce il threading in una applicazione, ci sono delle situazioni
+che vanno prese in considerazione: avere diversi thread pu\`o portare problemi
+normalmente assenti e non facilmente identificabili. Inoltre alcuni problemi
+legati al threading possono essere difficili da riprodurre perch\'e  dipendono
+dalla schedulazione dei thread da parte del sistema operativo, quindi sono al di
+fuori dal controllo del programmatore. Per questo motivo esistono alcune
+tecniche di programmazione che permettono di evitare problemi quando thread
+diversi devono condividere alcuni dati.
+
+\subsubsection{Mutua esclusione}
+\lstinputlisting[firstline=3,lastline=12,float,caption=Variabili della
+lista,label=lst:vars]{../src/list.hpp}
+Con la mutua esclusione si assicura che quando un thread accede ad una parte di
+dati protetta, nessun altro thread pu\`o accedervi contemporaneamente. La mutua
+esclusione \`e stata implementata, ad esempio, come wrapper attorno alla
+struttura standard \texttt{std::list} per renderla utilizzabile da pi\`u thread
+contemporaneamente.
+
+Per rendere la lista thread-safe, servono tre variabili: una contiene la lista
+standard, una per la mutex ed una per la condition variable, come mostrato nel
+listato \ref{lst:vars}
+
+Una mutex, abbreviazione di \textbf{mut}utal \textbf{ex}clusion, serve appunto
+per poter bloccare l'accesso all'oggetto da parte di altri thread e per
+rilasciare il blocco quando si ha finito. Le funzioni presenti in
+\texttt{std::list} vengono reimplementate sfruttando la mutex per assicurare un
+comportamento corretto in caso di multi-threading: troviamo un buon esempio nel
+metodo \texttt{empty()} presentato nel listato \ref{lst:empty}.
+\lstinputlisting[firstline=24,lastline=28,float,caption=Implementazione di
+\texttt{empty()},label=lst:empty]{../src/list.hpp}
+
+La creazione dell'oggetto di tipo \texttt{boost::mutex::scoped\_lock} sospende
+l'esecuzione del thread se ci sono gi\`a altri thread che possiedono l'esclusiva
+sull'oggetto \texttt{\_mut}, altrimenti acquisisce il diritto di esclusiva
+sulla mutex e procede con l'operazione. Nel distruttore dell'oggetto
+\texttt{lock} avviene il rilascio della mutex, quindi non appena l'oggetto
+finisce fuori contesto --- cio\`e dopo il \texttt{return} --- il distruttore
+viene chiamato e la mutex viene liberata, lasciando libero accesso ad altri
+threads.
+
+\subsubsection{Wait/notify}
+Abbiamo visto nel paragrafo \ref{threadout} come il thread di output si metta in
+attesa sulla lista quando questa \`e vuota. Il codice presente nel thread di
+output \`e simile a questo:
+\begin{lstlisting}
+while(list.empty()) {
+    list.wait();
+}
+//Do something
+\end{lstlisting}
+
+Questo codice mette in uno stato ``dormiente'' il thread, lasciando il posto
+agli altri thread e ottimizzando cos\`i il tempo di scheduling assegnato al
+programma: l'alternativa sarebbe fare un ciclo continuo --- detto \emph{busy waiting} --- per verificare la stessa
+condizione ripetutamente, ma in questo modo si sprecherebbero tantissime risorse
+su un controllo che non cambier\`a risultato prima che avvengano altre cose. Per
+monitorare lo stato di questa condizione, si pu\`o utilizzare una
+\texttt{boost::condition\_variable}, come mostrato nel listato \ref{lst:cond_wait}.
+\lstinputlisting[firstline=50,lastline=53,float,caption=Uso della
+\texttt{boost::condition\_variable},label=lst:cond_wait]{../src/list.hpp}
+Il codice inizialmente acquisisce un lock esclusivo sulla mutex, poi si mette in
+attesa sulla \texttt{condition\_variable} \texttt{\_empty}. A questo punto
+il lock viene rilasciato ed il thread si mette in attesa, senza occupare risorse
+sul sistema. Per risvegliare questo thread bisogna notificarlo del fatto che la
+condizione su cui stava aspettando `e stata modificata, quindi quando si
+inserisce un nuovo elemento nella lista bisogna anche notificare il thread di
+output che la lista non \`e pi\`u vuota, come illustrato nel listato
+\ref{lst:notify}. Il metodo \texttt{notify\_one()} \`e definito come:
+\begin{lstlisting}[frame=none]
+    void notify_one() { _empty.notify_one(); }
+\end{lstlisting}
+Utilizza, quindi, la \texttt{condition\_variable} per notificare uno dei thread
+in attesa sulla variabile stessa. A questo punto il thread di output si
+risveglia, aspetta di poter riacquisire il lock sull'oggetto e continua con
+l'esecuzione. A questo punto la condizione \texttt{list.empty()} dovrebbe
+essere falsa e il thread pu\`o procedere con il suo lavoro.
+\lstinputlisting[firstline=34,lastline=38,float,caption=Notifica di inserimento
+di un nuovo elemento in lista,label=lst:notify]{../src/list.hpp}
+
+\subsubsection{Debugging}
+Per capire meglio i problemi che possono sorgere osserviamo il codice nel
+listato \ref{lst:threrr}:
+\begin{lstlisting}[numbers=left,frame=l,float,caption=Codice problematico nel caso
+	di pi\`u threads attivi,label=lst:threrr]
+if( list.empty() || list.back()->is_src_full() ) {
+	FFTBuf<DstIppType> *buffer( new FFTBuf<DstIppType>(siglen, sums) );
+	*buffer = IPP::alloc(buffer->cdata(), siglen);
+	IPP::zero_mem(buffer->cdata(), siglen);
+	list.push_back(buffer);
+}
+FFTBuf<DstIppType> *work_buffer = list.back();
+\end{lstlisting}
+questo codice faceva parte del thread principale ed \`e il controllo effettuato
+per verificare se \`e necessario creare un nuovo buffer di output o se si pu\`o
+assegnare l'ultimo buffer in lista come punto di scrittura della trasformazione
+da effettuare, meccanismo descritto nel paragrafo \ref{main_thread}.
+\paragraph{Analisi del codice}
+Siccome il listato non \`e banale, procediamo ad analizzare passo per passo le
+operazioni effettuate:
+
+Nella riga 1, si controlla innanzitutto se la lista di output \`e vuota o se
+l'ultimo elemento nella lista \`e stato assegnato tante volte quanto sono il
+numero di somme che si vogliono effettuare. Se almeno una delle due condizioni
+\`e vera, significa che dobbiamo accodare un nuovo elemento nella lista. La riga
+2 crea il puntatore \texttt{buffer} ed inizializza l'oggetto di tipo
+\texttt{FFTBuf<DstIppType>} assegnando come parametri la lunghezza del segnale
+elaborato (\texttt{siglen}) ed il numero di somme che si intendono fare su quel
+buffer (\texttt{sums}). \texttt{FFTBuf} \`e un oggetto che contiene il buffer in
+cui viene salvato il segnale una volta applicate le trasformazioni e alcuni
+metodi ausiliari. Uno di questi metodi, usato nella riga 1, \`e
+\texttt{is\_src\_full()} che restituisce un valore booleano vero se l'istanza
+dell'oggetto \`e stata assegnata ad un numero di thread pari al numero di somme
+volute, falso altrimenti. Con questo metodo, quindi, si pu\`o sapere se
+l'istanza dell'oggetto \`e riutilizzabile per un altro thread o meno. La
+costante DstIppType segnala il tipo di dato su cui si opera, in particolare il
+numero di bit usati per ogni punto del segnale: avere questa costante permette
+di adattare il programma molto velocemente per tipi di dati diversi. Alle righe
+3--4 si alloca la memoria per il buffer, utilizzando i metodi delle \ac{ipp} per
+fare s\`i che la memoria sia allineata e la si inizializza a zero.  Nella riga 5
+si accoda il puntatore al buffer in quanto ora l'inizializzazione \`e
+completata. La riga 7 mostra come viene selezionato il buffer su cui lavorare:
+grazie al codice precedente si tratter\`a sempre dell'ultimo buffer inserito
+nella lista.
+
+\paragraph{Comportamento in ambiente multi-threaded}
+Il codice appena descritto funziona perfettamente se non si utilizza il
+threading. Tuttavia, durante la fase di test, il programma funzionava il pi\`u
+delle volte, ma presto o tardi l'esecuzione terminava con un errore di
+\emph{segmentation fault}\footnote{La segmentation fault \`e un errore tipico
+    dei programmi C/\CC. Significa che un programma ha tentato di accedere ad
+    una zona di memoria non di sua competenza e il sistema operativo non
+    concede di farlo per ovvi motivi di sicurezza. Tipicamente questo problema
+    avviene quando si legge oltre la fine di un array o si tenta di accedere ad
+    un puntatore non allocato o impostato a NULL.}.
+Osservando il problema con l'ausilio di un debugger, il problema non risultava
+chiaro perch\'e si presentava in punti differenti del codice e sempre in
+situazioni in cui non ci si aspetta di avere un puntatore nullo, rendendo
+l'investigazione tramite debugger praticamente inutile. Il fatto che il problema
+si mostrasse in modo casuale, in momenti diversi e in punti diversi del codice
+lasciava intuire che si trattasse di un problema di concorrenza, quindi
+riesaminando l'interazione dei vari thread tra di loro si \`e riusciti a scovare
+e risolvere la fonte del problema:  come descritto nel paragrafo
+\ref{threadout}, il thread di output lavora sulla lista di buffer e quando
+finisce di scrivere i dati sull'output, elimina il buffer dalla lista. Se
+osserviamo in particolare la riga 1 del listato \ref{lst:threrr}, vediamo che si
+chiede prima se la lista \`e vuota e in seguito si accede all'ultimo elemento in
+lista. Ma cosa succede se subito dopo l'istruzione \texttt{list.empty()} avviene
+un \emph{context switch} e il thread di output riprende l'esecuzione, scrive
+l'ultimo buffer presente il lista sull'output e lo elimina? In questo scenario
+la successiva chiamata a \texttt{list.back()} ritornerebbe un puntatore nullo e
+la chiamata a \texttt{is\_src\_full()} provoca la segmentation fault. Per
+evitare che questo avvenga, bisogna richiedere il lock sulla mutex della lista
+di buffer di output prima di testare le condizioni, a questo modo mentre si
+verifica questa condizione lo stato della lista non pu\`o essere alterato.
+
+\paragraph{Conclusioni e osservazioni}
+La soluzione al problema, presentata nei listati \ref{lst:thr_correct} e
+\ref{lst:item_needed} \`e stata raggiunta dopo molto tempo perso a ricercare la
+fonte di questo problema causato da una non corretta analisi dei comportamenti
+in ottica multi-threaded.  Individuare questo genere di errori \`e molto
+difficile, mentre commettere questo tipo di errori \`e molto facile: per questo
+motivo \`e generalmente consigliabile evitare la concorrenza a meno che non vi
+siano chiari vantaggi nell'adottarla; e quando si decide di sfruttare la
+concorrenza nel proprio programma, \`e importante considerare tutti gli scenari
+possibili nelle interazioni tra i thread soprattutto quando si effettuano
+operazione non atomiche\footnote{Una operazione, ad esempio \lstinline$int i =
+    5;$ \`e atomica se la sua esecuzione non pu\`o essere interrotta a met\`a: o
+        l'operazione \`e ancora da effettuare, oppure \`e completata. In \CC\, 
+        l'operazione di cui sopra viene tradotta in diverse istruzioni macchina
+        e quindi pu\`o avvenire un context switch a met\`a dell'operazione. Le
+        istruzioni in \CC, quindi, non sono atomiche. Esistono altri linguaggi
+        di programmazione, pensati appositamente per la programmazione
+        multi-threaded, che garantiscono l'atomicit\`a delle loro istruzioni.}.
+\begin{lstlisting}[float,label=lst:thr_correct,caption=Codice funzionante anche
+in ambiente multi-threaded]
+if(list.item_needed()) {
+	FFTBuf<DstIppType> *buffer( new FFTBuf<DstIppType>(siglen, sums) );
+	*buffer = IPP::alloc(buffer->cdata(), siglen);
+	IPP::zero_mem(buffer->cdata(), siglen);
+	list.push_back(buffer);
+}
+FFTBuf<DstIppType> *work_buffer = list.back();
+\end{lstlisting}
+\lstinputlisting[firstline=55,lastline=58,float,caption=Implementazione del
+metodo \texttt{item\_needed()},label=lst:item_needed]{../src/list.hpp}
+
+\subsection{Memory leak}
+Un altro problema molto diffuso nella programmazione in \CC\, sono i \emph{memory
+leak}. Con questo termine si indicano quelle perdite di memoria che avvengono
+perch\'e ad allocazione di memoria da una parte, non corrisponde una
+deallocazione da un'altra parte del codice. Se un problema di questo genere
+esiste e non viene corretto, un programma che rimane attivo per un certo periodo
+di tempo incrementa sempre pi\`u il suo utilizzo di memoria, fino a che la
+memoria disponibile nel sistema non viene interamente consumata. A questo punto
+non solo il programma non pu\`o pi\`u funzionare, ma anche gli altri programmi
+presenti sul sistema possono riscontrare problemi per la mancanza di memoria da
+allocare; in alcuni casi il sistema potrebbe diventare addirittura
+inutilizzabile e potebbe diventare necessario un riavvio del sistema. Purtroppo,
+se la perdita di memoria \`e sufficientemente piccola, \`e facile che un
+problema di questo tipo possa sfuggire in fase di test e creare problemi solo
+dopo un lungo utilizzo in fase di produzione. Per questo motivo esistono dei
+tool, come ad esempio la suite di
+Valgrind\footnote{\url{http://www.valgrind.org/}}, che aiutano
+nell'individuazione di questi problemi. Durante lo sviluppo del progetto \`e
+stato incontrato un errore di questo tipo nell'implementazione del buffer per i
+dati di output.
+
+\subsubsection{Implementazione originaria}
+La classe \texttt{FFTBuf} contiene un buffer e qualche metodo per gestire
+l'accesso al buffer stesso. Nella sua prima versione il codice per
+inizializzarlo era il seguente:
+\begin{lstlisting}[caption=Inizializzazione di un FFTBuf (vecchia
+versione),label=lst:old_fftbuf]
+FFTBuf<DstIppType> *buffer( new FFTBuf<DstIppType>(siglen, sums) );
+*buffer = IPP::alloc(buffer->cdata(), siglen);
+IPP::zero_mem(buffer->cdata(), siglen);
+\end{lstlisting}
+Come si pu\`o vedere, l'allocazione della memoria veniva effettuata manualmente
+dopo l'inizializzazione dell'oggetto, mentre non era presente alcuna
+deallocazione della memoria. Per risolvere questo problema ci sono due strade
+possibili: o si aggiunge una deallocazione della memoria dopo che i dati sono
+stati scritti su output, o si sposta il meccanismo di allocazione/deallocazione
+all'interno del costruttore/distruttore della classe. Per rendere l'utilizzo di
+\texttt{FFTBuf} pi\`u trasparente ed evitare che il problema si ripeta se questa
+classe dovesse essere riutilizzata da qualche altra parte, la scelta \`e
+ricaduta sulla seconda soluzione.
+
+\subsubsection{Implementazione corretta}
+La nuova versione dell'allocazione di  memoria per il buffer interno a
+\texttt{FFTBuf} \`e la seguente:
+\begin{lstlisting}
+template<class T> FFTBuf<T>::FFTBuf(long int siglen) : _dst(NULL),
+    _siglen(siglen), _expected_sums(1), _processed_sums(0),
+    _assigned_sources(0), _written(false)
+{
+    _dst = IPP::alloc(_dst, siglen);
+    IPP::zero_mem(_dst, siglen);
+}
+
+template<class T> FFTBuf<T>::FFTBuf(long int siglen, int sums) :
+    _dst(NULL), _siglen(siglen), _expected_sums(sums),
+    _processed_sums(0), _assigned_sources(0), _written(false)
+{
+    _dst = IPP::alloc(_dst, siglen);
+    IPP::zero_mem(_dst, siglen);
+}
+
+template<class T> FFTBuf<T>::~FFTBuf()
+{
+    notify_all();
+    IPP::free(_dst);
+    _dst = NULL;
+}
+\end{lstlisting}
+Ora l'allocazione \`e legata alla creazione di un nuovo oggetto di tipo
+\texttt{FFTBuf} e la deallocazione viene effettuata automaticamente quando
+l'oggetto viene distrutto: a questo modo si ha la certezza che tutti i buffer
+creati vengono distrutti correttamente e che non ci sar\`a perdita di memoria.
+Dopo questa modifica, il programma \`e passato da pochi minuti di operativit\`a
+con consumo di memoria sempre crescente a un consumo di memoria stabile e
+conseguente stabilit\`a del programma stesso.
+
+\section{Programmi di supporto}
+Allo scopo di testare l'applicazione e verificarne il funzionamento, sono stati
+sviluppati alcuni programmi di supporto. Trattandosi di programmi in cui le
+prestazioni non sono essenziali, il linguaggio di programmazione utilizzato \`e
+Python per favorire uno sviluppo pi\`u rapido.
+\subsection{Server UDP}
+Uno dei programmi sviluppati serve ad inviare dei dati nel formato corretto
+tramite il protocollo UDP. Siccome l'ordinamento \`e importante,
+anche se non \`e grave l'eventuale perdita di alcuni pacchetti, all'inizio di
+ogni pacchetto UDP compare un contatore progressivo lungo 4 byte. Il client
+controlla questo contatore e se il numero non \`e in progressione con il
+pacchetto precedente, sa quanti pacchetti ha perso e svuota i buffer
+eventualmente pieni per ricominciare ad elaborare i dati a partire dal nuovo
+pacchetto ricevuto. Questa operazione viene svolta per evitare di elaborare dati
+incompleti che potrebbero compromettere i risultati. Il server in Python
+permette di leggere i dati da un file ed inviarli tramite rete ad una
+determinata destinazione.
+\subsection{Visualizzatore di grafici}
+\label{pyvis}
+Un altro programma di supporto utlissimo per verificare il funzionamento del
+programma principale \`e il visualizzatore di grafici. Questo programma prende i
+dati elaborati e visualizza un grafico in scala logaritmica(?). La scala
+logaritmica viene utilizzata in quanto permette di visualizzare i dati in
+maniera pi\`u facilmente comprensibile rispetto ad una scala naturale, senza
+cambiarne il significato. Visualizzare i dati \`e un modo semplice per
+verificare la correttezza delle trasformazioni, se il segnale trasformato \`e
+noto.

@@ -4,27 +4,33 @@
 #include <boost/shared_ptr.hpp>
 #include <ipp.h>
 #include <stack>
+#include "data_length.hpp"
+#include "filter/process.hpp"
 #include "fft_buf.hpp"
 
-class fft {
+class fft : public ProcessFilter {
     public:
         /* Constructors */
-        fft(const IppsFFTSpec_R_16s *spec);
-        fft(const IppsFFTSpec_R_32s *spec);
-        fft(const IppsFFTSpec_R_32f *spec);
-        fft(const IppsFFTSpec_R_64f *spec);
+        fft(const IppsFFTSpec_R_16s *spec, int order, int scaling, int pscaling);
+        fft(const IppsFFTSpec_R_32s *spec, int order, int scaling, int pscaling);
+        fft(const IppsFFTSpec_R_32f *spec, int order, int scaling, int pscaling);
+        fft(const IppsFFTSpec_R_64f *spec, int order, int scaling, int pscaling);
+
+        /* Interface implementation */
+        virtual DstIppType *transform(const IppType *original_signal, DstIppType *current_signal);
 
         /* Transforms */
-        Ipp16s *transform(const SrcType<Ipp16s> & src, boost::shared_ptr<FFTBuf<Ipp16s> > dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp16s *transform(const Ipp16s *src, Ipp16s *dst, int order, int scaling = 1, int pscaling = 12);
         //FIXME: Missing functions?
         //Ipp32s *transform(const SrcType<Ipp32s> & src, FFTBuf<Ipp32s> & dst, int order, int scaling = 1, int pscaling = 12);
-        Ipp32f *transform(const SrcType<Ipp16s> & src, boost::shared_ptr< FFTBuf<Ipp32f> > dst, int order, int scaling = 1, int pscaling = 12);
-        Ipp32f *transform(const SrcType<Ipp32f> & src, boost::shared_ptr<FFTBuf<Ipp32f> > dst, int order, int scaling = 1, int pscaling = 12);
-        Ipp64f *transform(const SrcType<Ipp64f> & src, boost::shared_ptr<FFTBuf<Ipp64f> > dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp32f *transform(const Ipp16s *src, Ipp32f *dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp32f *transform(const Ipp32f *src, Ipp32f *dst, int order, int scaling = 1, int pscaling = 12);
+        Ipp64f *transform(const Ipp64f *src, Ipp64f *dst, int order, int scaling = 1, int pscaling = 12);
     private:
         int _bufsize;
         std::stack<Ipp8u *> _buffers;
         boost::mutex _bufmut;
+        int _order, _scaling, _pscaling;
 
         /* FFTSpec */
         //const IppsFFTSpec FFTSpec;
